@@ -2,290 +2,282 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Mercatto • Sistema de Requisições</title>
+<title>Demo • Sistema de Requisições</title>
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-
-/* ===== BASE ===== */
 :root{
 --azul:#1677ff;
 --verde:#22c55e;
---amarelo:#facc15;
---vermelho:#ef4444;
---roxo:#8b5cf6;
 --bg:#f1f5f9;
---card:#ffffff;
---text:#0f172a;
---muted:#64748b;
+--card:#fff;
 --border:#e2e8f0;
 }
 
 *{box-sizing:border-box}
+body{margin:0;font-family:Inter;background:var(--bg)}
 
-body{
-margin:0;
-font-family:Inter;
-background:var(--bg);
-color:var(--text);
-}
-
-/* ===== HEADER ===== */
-.header{
+/* HEADER */
+header{
 display:flex;
 justify-content:space-between;
-align-items:center;
 padding:12px 20px;
 background:#fff;
 border-bottom:1px solid var(--border);
 }
 
-.header-left{
-display:flex;
-align-items:center;
-gap:10px;
-font-weight:800;
-}
-
-.logo{
-background:var(--azul);
-color:#fff;
-padding:8px 10px;
-border-radius:6px;
-}
-
-.btn-top{
+.btn{
 background:var(--verde);
 color:#fff;
 border:none;
-padding:10px 14px;
+padding:8px 14px;
 border-radius:8px;
-font-weight:700;
 cursor:pointer;
+font-weight:700;
 }
 
-/* ===== STATUS CARDS ===== */
-.status{
+/* LOGIN */
+.login{
 display:flex;
-gap:10px;
-flex-wrap:wrap;
-padding:15px;
+height:100vh;
+align-items:center;
 justify-content:center;
 }
 
-.card-status{
+.box{
 background:#fff;
-padding:10px 16px;
-border-radius:10px;
-display:flex;
-align-items:center;
-gap:8px;
-font-weight:700;
-box-shadow:0 4px 10px rgba(0,0,0,.05);
+padding:25px;
+border-radius:12px;
+width:300px;
 }
 
-.badge{
-background:#000;
-color:#fff;
-padding:4px 8px;
-border-radius:6px;
-}
-
-/* ===== HERO ===== */
-.hero{
-text-align:center;
-padding:30px 20px 10px;
-}
-
-.hero h1{
-margin:0;
-font-size:28px;
-}
-
-.hero p{
-color:var(--muted);
+input{
+width:100%;
+padding:10px;
 margin-top:8px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
-/* ===== PREÇO ===== */
-.price{
-text-align:center;
-margin-top:15px;
-font-size:34px;
-font-weight:900;
-color:var(--azul);
-}
+/* APP */
+.app{display:none}
 
-/* ===== MOCKUPS ===== */
-.mockups{
+.grid{
 display:grid;
-grid-template-columns:1fr 1fr;
+grid-template-columns:400px 1fr;
 gap:20px;
 padding:20px;
 }
 
-.mockups img{
-width:100%;
-border-radius:10px;
-border:1px solid var(--border);
-}
-
-/* ===== FEATURES ===== */
-.features{
-padding:20px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:15px;
-}
-
-.feature{
+/* FORM */
+.form{
 background:#fff;
-padding:15px;
-border-radius:10px;
-border:1px solid var(--border);
+padding:20px;
+border-radius:12px;
 }
 
-.feature h3{
-margin:0;
-font-size:15px;
+.form h2{text-align:center}
+
+.unidades{
+display:flex;
+gap:8px;
+margin-top:10px;
 }
 
-.feature p{
-font-size:13px;
-color:var(--muted);
-margin-top:5px;
-}
-
-/* ===== CTA ===== */
-.cta{
-padding:30px;
-text-align:center;
-}
-
-.btn-main{
-background:var(--azul);
-color:#fff;
-padding:14px 24px;
-border:none;
-border-radius:10px;
-font-weight:800;
-font-size:16px;
+.unidades button{
+flex:1;
+padding:8px;
+border-radius:20px;
+border:2px solid var(--azul);
+background:#fff;
 cursor:pointer;
 }
 
-/* ===== RESPONSIVO ===== */
-@media(max-width:900px){
-.mockups{
-grid-template-columns:1fr;
-}
-.hero h1{
-font-size:22px;
-}
+.active{
+background:var(--azul);
+color:#fff;
 }
 
+/* TABELA */
+.painel{
+background:#fff;
+border-radius:12px;
+overflow:hidden;
+}
+
+thead{
+background:var(--azul);
+color:#fff;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+padding:8px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+/* RESPONSIVO */
+@media(max-width:900px){
+.grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-<div class="header-left">
-<div class="logo">CB</div>
-<span>REQUISIÇÕES DE USO E CONSUMO</span>
+<!-- LOGIN -->
+<div class="login" id="login">
+<div class="box">
+<h3>Login Demo</h3>
+<input id="user" placeholder="Usuário">
+<input id="pass" placeholder="Senha" type="password">
+<button class="btn" onclick="entrar()">Entrar</button>
+</div>
 </div>
 
-<button class="btn-top" onclick="ativar()">
-🚀 Ativar Sistema
+<!-- APP -->
+<div class="app" id="app">
+
+<header>
+<div><b>CB SYSTEMS</b> • Requisições</div>
+<button class="btn" onclick="ativar()">🚀 Ativar R$29,90</button>
+</header>
+
+<div class="grid">
+
+<!-- FORM -->
+<div class="form">
+<h2>Requisição</h2>
+
+<input id="produto" placeholder="Produto">
+<input id="qtd" placeholder="Quantidade">
+
+<div class="unidades">
+<button onclick="setU(this,'UN')">UN</button>
+<button onclick="setU(this,'KG')">KG</button>
+<button onclick="setU(this,'CX')" class="active">CX</button>
+</div>
+
+<button class="btn" style="margin-top:10px;width:100%" onclick="enviar()">
+ENVIAR
 </button>
 </div>
 
-<!-- STATUS (VISUAL IGUAL AO SISTEMA) -->
-<div class="status">
-<div class="card-status">🕓 PENDENTE <span class="badge">5</span></div>
-<div class="card-status" style="background:#dbeafe">🛒 CARRINHO <span class="badge">0</span></div>
-<div class="card-status" style="background:#fef3c7">💰 COMPRADO <span class="badge">0</span></div>
-<div class="card-status" style="background:#fee2e2">❌ NEGADO <span class="badge">0</span></div>
-<div class="card-status" style="background:#dcfce7">✅ ENTREGUE <span class="badge">0</span></div>
-<div class="card-status" style="background:#ede9fe">🚫 SEM ESTOQUE <span class="badge">0</span></div>
-</div>
-
-<!-- HERO -->
-<div class="hero">
-<h1>Sistema Completo de Requisições</h1>
-<p>Controle total de pedidos, compras e estoque em tempo real</p>
-<div class="price">R$ 29,90 / mês</div>
-</div>
-
-<!-- MOCKUPS -->
-<div class="mockups">
-<img src="https://i.imgur.com/8Km9tLL.png">
-<img src="https://i.imgur.com/Nz7b2F5.png">
-</div>
-
-<!-- FEATURES -->
-<div class="features">
-
-<div class="feature">
-<h3>📦 Requisição Simples</h3>
-<p>Funcionários fazem pedidos rapidamente com histórico automático</p>
-</div>
-
-<div class="feature">
-<h3>📊 Painel Completo</h3>
-<p>Controle total com filtros, status e relatórios</p>
-</div>
-
-<div class="feature">
-<h3>⚡ Tempo Real</h3>
-<p>Atualização instantânea entre setores</p>
-</div>
-
-<div class="feature">
-<h3>📱 Mobile Perfeito</h3>
-<p>Funciona 100% no celular</p>
+<!-- PAINEL -->
+<div class="painel">
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Qtd</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="tabela"></tbody>
+</table>
 </div>
 
 </div>
 
-<!-- CTA -->
-<div class="cta">
-<button class="btn-main" onclick="ativar()">
-🚀 Ativar por R$ 29,90
-</button>
 </div>
 
 <script>
 
-/* CONFIG */
-const numero = "5577999999999"; // 🔥 COLOCA SEU WHATS
+let unidade="CX"
 
+/* LOGIN */
+function entrar(){
+if(pass.value==="1234"){
+login.style.display="none"
+app.style.display="block"
+carregar()
+}else{
+alert("Senha: 1234")
+}
+}
+
+/* STORAGE COM EXPIRAÇÃO */
+function salvar(dados){
+localStorage.setItem("demo",JSON.stringify({
+data:Date.now(),
+dados
+}))
+}
+
+function carregar(){
+const data=JSON.parse(localStorage.getItem("demo"))
+if(!data)return
+
+if(Date.now()-data.data>72000000){ // 20h
+localStorage.removeItem("demo")
+return
+}
+
+render(data.dados)
+}
+
+/* UNIDADE */
+function setU(btn,u){
+unidade=u
+document.querySelectorAll(".unidades button").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+}
+
+/* ENVIAR */
+function enviar(){
+
+const item={
+produto:produto.value,
+qtd:qtd.value,
+status:"PENDENTE"
+}
+
+let lista=[]
+
+const data=JSON.parse(localStorage.getItem("demo"))
+if(data) lista=data.dados
+
+lista.unshift(item)
+
+salvar(lista)
+render(lista)
+
+produto.value=""
+qtd.value=""
+}
+
+/* RENDER */
+function render(lista){
+tabela.innerHTML=""
+
+lista.forEach(i=>{
+tabela.innerHTML+=`
+<tr>
+<td>${i.produto}</td>
+<td>${i.qtd}</td>
+<td>${i.status}</td>
+</tr>`
+})
+}
+
+/* WHATS */
 function ativar(){
 
-const msg = `
-Olá! Quero ativar o Sistema de Requisições.
+const msg=`
+Quero ativar o sistema de requisições
 
-💰 Plano: R$ 29,90/mês
-
-📦 Inclui:
-• Requisição de produtos
-• Painel de gestão
-
-📊 Recursos:
-• Controle por setor
-• Status de pedidos
-• Relatórios completos
-• Tempo real
-
-Quero ativar agora.
+Plano: R$29,90/mês
 `;
 
-window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, "_blank");
-
+window.open("https://wa.me/5577999999999?text="+encodeURIComponent(msg))
 }
 
 </script>
