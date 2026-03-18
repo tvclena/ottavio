@@ -431,21 +431,29 @@ width:6px;
 background:#d1d5db;
 border-radius:10px;
 }
-  
 .client{
-position:relative; /* 🔥 ESSENCIAL */
+position:relative;
+overflow:visible; /* garante que o menu não seja cortado */
 }
 
 .menu{
 position:absolute;
 
-top:55px; /* abaixo do botão */
+top:40px; /* posição abaixo do botão */
 right:10px;
+
+background:white;
+border:1px solid #e5e7eb;
+border-radius:10px;
+
+padding:6px;
 
 display:none;
 flex-direction:column;
 
 z-index:9999;
+
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
   
 
@@ -744,27 +752,28 @@ document.getElementById("frameRepertorio").src=url
 
 /* MENU */
 
-function abrirMenu(e,telefone){
+function abrirMenu(evento, telefone){
 
-e.stopPropagation()
+evento.stopPropagation()
 
-// fecha todos
-document.querySelectorAll(".menu").forEach(m=>{
-m.style.display="none"
+/* fecha todos os menus */
+document.querySelectorAll(".menu").forEach(function(menu){
+  menu.style.display = "none"
 })
 
-const menu=document.getElementById("menu-"+telefone)
+const menu = document.getElementById("menu-" + telefone)
 
-// 🔥 só mostra (sem calcular posição)
-menu.style.display="flex"
+/* pega posição do botão */
+const botao = evento.target
+const posicao = botao.getBoundingClientRect()
+
+/* mostra menu */
+menu.style.display = "flex"
+
+/* posiciona corretamente */
+menu.style.top = posicao.bottom + "px"
+menu.style.left = (posicao.left - 120) + "px"
 }
-/* FECHAR MENU */
-
-document.addEventListener("click",()=>{
-document.querySelectorAll(".menu").forEach(m=>{
-m.style.display="none"
-})
-})
 
 /* VERIFICAR PAUSA */
 
