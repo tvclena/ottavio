@@ -572,21 +572,26 @@ for (const c of clientes){
     </div>
 
 <div class="menuDots" onclick="event.stopPropagation(); abrirMenu(event,'${c.telefone}')">⋮</div>
+
 <div class="menu" id="menu-${c.telefone}">
+
 <button onclick="event.stopPropagation(); editarContato('${c.telefone}')">
 Editar contato
-      </button>
+</button>
 
-<button onclick="event.stopPropagation(); toggleBot('${c.telefone}')">
+<button 
+onclick="event.stopPropagation(); toggleBot('${c.telefone}')"
+style="
 background:${pausado?'#22c55e':'#ef4444'};
-        color:white;
-        padding:6px 10px;
-        border-radius:6px;
-        font-size:12px;
-      ">
-        ${pausado ? "ATIVAR BOT" : "DESATIVAR BOT"}
-      </button>
-    </div>
+color:white;
+padding:6px 10px;
+border-radius:6px;
+font-size:12px;
+">
+${pausado ? "ATIVAR BOT" : "DESATIVAR BOT"}
+</button>
+
+</div>
   `
 
   /* 🔥 CLICK CORRETO */
@@ -1002,8 +1007,7 @@ function abrirChatIframe(telefone){
 
   frame.src = "./chat.html?telefone=" + telefone
 
-  const sendBox = document.getElementById("sendBox")
-  sendBox.style.display = "flex"
+
 
 }
 
