@@ -531,8 +531,7 @@ if(
   console.log("🚨 RECLAMAÇÃO OU FEEDBACK DETECTADO")
 
   /* BUSCAR NOME */
-  const nomeCliente = nomeMemoria || "Não identificado"
-
+const nomeCliente = nomeMemoria || nomeDetectado || "Não identificado"
   /* MENSAGEM PARA ADMIN */
   const alertaAdmin = `
 🚨 *ALERTA DE CLIENTE*
