@@ -301,7 +301,46 @@ Responda apenas com UMA palavra.
     .trim()
 }
 
+/* ================= FUNÇÃO ENVIO WHATSAPP (PADRÃO) ================= */
 
+async function enviarMensagemWhatsApp(cliente, resposta, url){
+
+  const send = await fetch(url,{
+    method:"POST",
+    headers:{
+      Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      messaging_product:"whatsapp",
+      to:cliente,
+      type:"text",
+      text:{ body:resposta }
+    })
+  }).then(r => r.json())
+
+  console.log("📤 META:", send)
+
+  const messageId = send?.messages?.[0]?.id
+
+  if(!messageId){
+    console.log("❌ ERRO: sem message_id")
+    return
+  }
+
+  await supabase
+  .from("conversas_whatsapp")
+  .insert({
+    telefone:cliente,
+    mensagem:resposta,
+    role:"assistant",
+    message_id: messageId,
+    status:"sent"
+  })
+
+}
+
+/* ================= HANDLER ================= */
 
 
 module.exports = async function handler(req,res){
