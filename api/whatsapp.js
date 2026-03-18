@@ -646,22 +646,32 @@ Deseja confirmar o pedido?`
 
 let nomeDetectado = null
 
+/* 🔥 REGEX MELHORADO */
 const regexNome = mensagem.match(
-/(?:meu nome completo é|meu nome é|me chamo|sou|aqui é|pode chamar de)\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)?)/i
+/(?:meu nome completo é|meu nome é|me chamo|sou|aqui é|pode chamar de)\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){0,2})/i
 )
 
 const regexAqui = mensagem.match(
 /^([A-Za-zÀ-ÿ]+)\s+aqu[ií]/i
 )
 
+/* 🔥 NOVO: nome simples tipo "nalbert" */
+const regexSimples = mensagem.match(
+/^([A-Za-zÀ-ÿ]{3,})$/
+)
+
+/* 🔥 PRIORIDADE */
 if(regexNome){
-nomeDetectado = regexNome[1]
+  nomeDetectado = regexNome[1]
+} 
+else if(regexAqui){
+  nomeDetectado = regexAqui[1]
+}
+else if(regexSimples){
+  nomeDetectado = regexSimples[1]
 }
 
-if(regexAqui){
-nomeDetectado = regexAqui[1]
-}
-
+/* 🔥 SALVAR + ATUALIZAR MEMÓRIA */
 if(nomeDetectado){
 
 nomeDetectado = nomeDetectado
@@ -678,6 +688,9 @@ telefone:cliente,
 nome:nomeDetectado,
 ultima_interacao:new Date().toISOString()
 })
+
+/* 🚀 ESSA LINHA É O QUE FALTAVA */
+nomeMemoria = nomeDetectado
 
 }
 const confirmou =
