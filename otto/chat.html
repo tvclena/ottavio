@@ -498,7 +498,7 @@ const texto = msg.value.trim()
 const temp = {
 id:"temp-"+Date.now(),
 mensagem:texto,
-created_at:new Date().toISOString(),
+created_at:new Date().toLocaleString("sv-SE").replace("T"," "),
   role:"assistant",
 status:"sent"
 }
