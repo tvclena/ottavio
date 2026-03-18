@@ -195,6 +195,15 @@ const db = supabase.createClient(
 
 /* ===== VARS ===== */
 let telefone = new URLSearchParams(location.search).get("telefone")
+const msgs = document.getElementById("msgs")
+const scrollBtn = document.getElementById("scrollBtn")
+const preview = document.getElementById("preview")
+const fileInput = document.getElementById("fileInput")
+const msg = document.getElementById("msg")
+
+
+
+  
 let mensagensIds = new Set()
 let oldestDate = null
 let loading = false
