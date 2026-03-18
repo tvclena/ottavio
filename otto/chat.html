@@ -174,23 +174,8 @@ align-items:center;
 
 <body>
 
-<div class="header" style="display:flex;justify-content:space-between;align-items:center">
+<div class="header">Mercatto • WhatsApp</div>
 
-<div id="nomeTopo">
-Carregando...
-</div>
-
-<button onclick="abrirControle()" style="
-background:#2563eb;
-color:white;
-padding:6px 12px;
-border-radius:10px;
-font-size:12px;
-">
-Controle
-</button>
-
-</div>
 <div id="msgs" class="messages"></div>
 
 <div id="scrollBtn" class="scrollBtn" onclick="scrollBottom()">↓</div>
@@ -211,12 +196,9 @@ const db = supabase.createClient(
 "https://dxkszikemntfusfyrzos.supabase.co",
 "sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
 )
-document.getElementById("nomeTopo").innerText =
-  nome || telefone || "Sem contato"
+
 /* ===== VARS ===== */
-const params = new URLSearchParams(location.search)
-let telefone = params.get("telefone")
-let nome = params.get("nome")
+let telefone = new URLSearchParams(location.search).get("telefone")
 let mensagensIds = new Set()
 let oldestDate = null
 let loading = false
@@ -591,13 +573,7 @@ preview.style.display="none"
 
 /* ===== START ===== */
 iniciar()
-function abrirControle(){
 
-window.parent.postMessage({
-  tipo:"abrirControle"
-},"*")
-
-}
 </script>
 
 </body>
