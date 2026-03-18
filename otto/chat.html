@@ -245,15 +245,7 @@ timeZone:"America/Bahia"
 
 }
 
-/* ===== DATA ===== */
-function dataLabel(d){
-const date = new Date(d)
-const hoje = new Date()
-const diff = Math.floor((hoje - date)/(1000*60*60*24))
-if(diff===0) return "HOJE"
-if(diff===1) return "ONTEM"
-return date.toLocaleDateString("pt-BR")
-}
+
 
 /* ===== SCROLL ===== */
 function scrollBottom(){
