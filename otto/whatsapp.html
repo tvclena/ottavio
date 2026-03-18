@@ -312,32 +312,8 @@ from{opacity:0;transform:translateY(6px)}
 to{opacity:1}
 }
 
-/* ================= SEND BOX ================= */
 
-.sendBox{
-padding:16px;
-border-top:1px solid #334155;
-background:#020617;
-display:flex;
-gap:10px;
-}
 
-.sendBox textarea{
-flex:1;
-resize:none;
-border-radius:10px;
-border:1px solid #334155;
-background:#020617;
-color:white;
-padding:10px;
-font-family:Inter;
-height:60px;
-}
-
-.sendBox button{
-background:#22c55e;
-color:white;
-}
 
 /* ================= POPUP ================= */
 
@@ -646,19 +622,6 @@ background:#020617;
 "></iframe>
 </div>
 
-<div class="sendBox" id="sendBox" style="display:none">
-
-<textarea id="msgManual" placeholder="Digite a mensagem"></textarea>
-
-<button onclick="enviarManual()">
-Enviar
-</button>
-
-<button onclick="falarComAgente()" style="background:#2563eb">
-Agente
-</button>
-
-</div>
 
 </div>
 
@@ -824,9 +787,6 @@ ativarScroll()
 /* 🔥 ISSO TEM QUE FICAR AQUI DENTRO */
 
 const pausado = await verificarPausa(telefone)
-const sendBox = document.getElementById("sendBox")
-
-sendBox.style.display = "flex"
 
 if(!pausado){
   sendBox.style.opacity = "0.5"
