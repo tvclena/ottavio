@@ -467,11 +467,57 @@ console.log("Mensagem vazia")
 return res.status(200).end()
 }
 
-console.log("Cliente:",cliente)
-console.log("Mensagem:",mensagem)
 const texto = mensagem.toLowerCase()
 const textoNormalizado = normalizar(texto)
-/* ================= DETECTAR RECLAMAÇÃO ================= */
+
+/* ================= DETECTAR NOME (ANTES DE TUDO) ================= */
+
+let nomeDetectado = null
+
+const regexNome = mensagem.match(
+/(?:meu nome completo é|meu nome é|me chamo|sou|aqui é|pode chamar de)\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+){0,2})/i
+)
+
+const regexAqui = mensagem.match(
+/^([A-Za-zÀ-ÿ]+)\s+aqu[ií]/i
+)
+
+const regexSimples = mensagem.match(
+/^([A-Za-zÀ-ÿ]{3,})$/
+)
+
+if(regexNome){
+  nomeDetectado = regexNome[1]
+} 
+else if(regexAqui){
+  nomeDetectado = regexAqui[1]
+}
+else if(regexSimples){
+  nomeDetectado = regexSimples[1]
+}
+
+if(nomeDetectado){
+
+nomeDetectado = nomeDetectado
+.split(" ")
+.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+.join(" ")
+
+console.log("Nome detectado:", nomeDetectado)
+
+await supabase
+.from("memoria_clientes")
+.upsert({
+telefone:cliente,
+nome:nomeDetectado,
+ultima_interacao:new Date().toISOString()
+})
+
+nomeMemoria = nomeDetectado
+
+}
+
+/* ================= AGORA SIM CLASSIFICA ================= */
 
 const tipoMensagem = await classificarMensagem(mensagem)
 
