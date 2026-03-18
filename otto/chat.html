@@ -415,6 +415,7 @@ id:"temp-"+Date.now(),
 mensagem:texto,
 created_at:new Date().toISOString(),
 role:"assistant"
+status:"sent"  
 }
 
 render(temp)
@@ -440,7 +441,7 @@ else tipo="documento"
 }
 
 /* API */
-await fetch("/api/send",{
+const send = await fetch("/api/send",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
@@ -450,7 +451,9 @@ media_url:media,
 tipo,
 nome_arquivo:nomeArquivo
 })
-})
+}).then(r => r.json())
+
+const messageId = send?.message_id
 
 /* BANCO */
 await db.from("conversas_whatsapp").insert({
@@ -459,7 +462,9 @@ mensagem:texto,
 tipo,
 media_url:media,
 nome_arquivo:nomeArquivo,
-role:"assistant"
+role:"assistant",
+message_id: messageId,
+status: "sent"
 })
 
 arquivo=null
