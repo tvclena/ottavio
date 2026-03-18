@@ -397,22 +397,29 @@ Esqueci minha senha
 
 <script>
 
-/* CONFIG */
-const supabase = supabase.createClient(
+/* ===== CONFIG ===== */
+const SUPABASE = supabase.createClient(
   "SUA_URL_MASTER",
   "SUA_ANON_KEY_MASTER"
 );
 
-/* LOGIN */
+/* ===== LOGIN REAL ===== */
 async function login(){
 
-const email = document.getElementById('email').value;
-const senha = document.getElementById('senha').value;
+const email = document.getElementById('email').value.trim();
+const senha = document.getElementById('senha').value.trim();
 const erro = document.getElementById('erro');
 
 erro.innerText = "";
 
-const { error } = await supabase.auth.signInWithPassword({
+/* validação básica */
+if(!email || !senha){
+erro.innerText = "Preencha email e senha";
+return;
+}
+
+/* LOGIN SUPABASE */
+const { data, error } = await SUPABASE.auth.signInWithPassword({
 email,
 password: senha
 });
@@ -422,30 +429,37 @@ erro.innerText = "Email ou senha inválidos";
 return;
 }
 
-const { data: empresa } = await supabase
+/* sessão salva automaticamente pelo Supabase */
+
+/* BUSCAR EMPRESA */
+const { data: empresa, error: erroEmpresa } = await SUPABASE
 .from('empresas')
 .select('*')
 .eq('email', email)
 .single();
 
-if(!empresa){
+if(erroEmpresa || !empresa){
 erro.innerText = "Empresa não encontrada";
 return;
 }
 
+/* STATUS */
 if(empresa.status !== 'ativo'){
 erro.innerText = "Acesso bloqueado";
 return;
 }
 
+/* SALVAR CONFIG DINÂMICA */
 localStorage.setItem("SUPABASE_URL", empresa.supabase_url);
 localStorage.setItem("SUPABASE_KEY", empresa.supabase_anon_key);
+localStorage.setItem("EMPRESA_ID", empresa.id);
 
+/* REDIRECIONA */
 window.location.href = "home.html";
 
 }
 
-/* RESET */
+/* ===== RECUPERAR SENHA ===== */
 async function recuperar(){
 
 const email = document.getElementById('email').value;
@@ -455,18 +469,39 @@ alert("Digite o email");
 return;
 }
 
-await supabase.auth.resetPasswordForEmail(email,{
+const { error } = await SUPABASE.auth.resetPasswordForEmail(email,{
 redirectTo: window.location.origin + "/reset.html"
 });
 
-alert("Email enviado");
+if(error){
+alert("Erro ao enviar email");
+return;
+}
+
+alert("Email enviado com sucesso");
 
 }
+
+/* ===== SCROLL LOGIN ===== */
 function scrollToLogin(){
-  document.querySelector('.login').scrollIntoView({
-    behavior: 'smooth'
-  });
+document.querySelector('.login').scrollIntoView({
+behavior: 'smooth'
+});
 }
+
+/* ===== AUTO LOGIN (SE JÁ LOGADO) ===== */
+async function checkSession(){
+
+const { data } = await SUPABASE.auth.getSession();
+
+if(data.session){
+window.location.href = "home.html";
+}
+
+}
+
+checkSession();
+
 </script>
 
 </body>
