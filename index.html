@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<title>CB SYSTEMS • Plataforma</title>
+<title>CB SYSTEMS • Plataforma Inteligente</title>
 
 <meta name="viewport"
 content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -23,6 +23,7 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 --muted:#94a3b8;
 
 --primary:#22c55e;
+--primary-dark:#16a34a;
 --danger:#ef4444;
 
 --radius:18px;
@@ -31,21 +32,22 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 /* ===== RESET ===== */
 *{
 box-sizing:border-box;
+margin:0;
+padding:0;
 -webkit-tap-highlight-color:transparent;
 }
 
 body{
-margin:0;
 font-family:Inter;
-background:radial-gradient(circle at top,#020617,#020617 60%,#000);
+background:radial-gradient(circle at top,#020617,#000);
 color:var(--text);
-overflow:hidden;
+overflow-x:hidden;
 }
 
-/* ===== CONTAINER ===== */
-.container{
+/* ===== HERO ===== */
+.hero{
 display:flex;
-height:100vh;
+min-height:100vh;
 }
 
 /* ===== LEFT ===== */
@@ -57,56 +59,62 @@ flex-direction:column;
 justify-content:center;
 }
 
-/* LOGO */
 .logo{
-font-size:38px;
+font-size:40px;
 font-weight:900;
 letter-spacing:-1px;
+background:linear-gradient(90deg,#22c55e,#4ade80);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
-/* DESC */
-.desc{
+.title{
+font-size:42px;
+font-weight:900;
+margin-top:20px;
+line-height:1.2;
+}
+
+.subtitle{
 margin-top:20px;
 color:var(--muted);
-max-width:420px;
+max-width:520px;
 line-height:1.6;
+font-size:16px;
 }
 
-/* GRID APPS */
-.apps{
+/* ===== FEATURES ===== */
+.features{
 margin-top:40px;
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:16px;
+gap:18px;
 }
 
-/* CARD */
-.app{
+.feature{
 background:linear-gradient(145deg,#0f172a,#020617);
 border:1px solid var(--border);
 padding:18px;
 border-radius:14px;
 transition:.25s;
-cursor:pointer;
 }
 
-.app:hover{
+.feature:hover{
 transform:translateY(-6px);
 border-color:var(--primary);
 }
 
-/* ===== RIGHT ===== */
+/* ===== RIGHT LOGIN ===== */
 .right{
 width:420px;
+background:#020617;
 border-left:1px solid var(--border);
 display:flex;
 align-items:center;
 justify-content:center;
 padding:30px;
-background:#020617;
 }
 
-/* BOX */
 .box{
 width:100%;
 max-width:340px;
@@ -116,7 +124,6 @@ h2{
 margin-bottom:20px;
 }
 
-/* INPUT */
 input{
 width:100%;
 padding:14px;
@@ -126,14 +133,12 @@ border:1px solid var(--border);
 background:#020617;
 color:#fff;
 outline:none;
-transition:.2s;
 }
 
 input:focus{
 border-color:var(--primary);
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:14px;
@@ -150,7 +155,6 @@ button:hover{
 opacity:.9;
 }
 
-/* LINKS */
 .link{
 margin-top:10px;
 font-size:13px;
@@ -158,33 +162,79 @@ color:var(--muted);
 cursor:pointer;
 }
 
-/* ERROR */
 .error{
 margin-top:10px;
 color:var(--danger);
 font-size:13px;
 }
 
-/* LOADING */
 .loading{
 opacity:.6;
 pointer-events:none;
 }
 
-/* MOBILE */
+/* ===== PRODUTOS ===== */
+.products{
+padding:60px;
+background:#020617;
+}
+
+.products h3{
+font-size:30px;
+margin-bottom:30px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
+}
+
+.card{
+background:linear-gradient(145deg,#0f172a,#020617);
+border:1px solid var(--border);
+padding:20px;
+border-radius:16px;
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+border-color:var(--primary);
+}
+
+.card b{
+display:block;
+margin-bottom:8px;
+font-size:18px;
+}
+
+.card span{
+color:var(--muted);
+font-size:14px;
+}
+
+/* ===== MOBILE ===== */
 @media(max-width:900px){
-.container{
+
+.hero{
 flex-direction:column;
 }
 
 .left{
-display:none;
+padding:30px;
 }
 
 .right{
 width:100%;
-height:100vh;
+border-left:none;
+border-top:1px solid var(--border);
 }
+
+.products{
+padding:30px;
+}
+
 }
 
 </style>
@@ -192,30 +242,33 @@ height:100vh;
 
 <body>
 
-<div class="container">
+<!-- ===== HERO ===== -->
+<div class="hero">
 
-<!-- ===== APRESENTAÇÃO ===== -->
 <div class="left">
 
 <div class="logo">CB SYSTEMS</div>
 
-<div class="desc">
-Controle total da sua empresa em um único sistema inteligente.
-Acesse todos os módulos com segurança e performance.
+<div class="title">
+Plataforma completa para gestão empresarial
 </div>
 
-<div class="apps">
-<div class="app">📊 Analytics</div>
-<div class="app">🧾 CMV</div>
-<div class="app">🛒 PDV</div>
-<div class="app">📦 Estoque</div>
-<div class="app">👥 RH</div>
-<div class="app">📅 Agenda</div>
+<div class="subtitle">
+Controle vendas, estoque, financeiro, equipe e operações em um único sistema inteligente, rápido e escalável.
 </div>
+
+<div class="features">
+
+<div class="feature">⚡ Performance extrema</div>
+<div class="feature">🔒 Segurança por empresa</div>
+<div class="feature">📊 Analytics avançado</div>
+<div class="feature">📱 Mobile otimizado</div>
 
 </div>
 
-<!-- ===== LOGIN ===== -->
+</div>
+
+<!-- LOGIN -->
 <div class="right">
 
 <div class="box" id="box">
@@ -237,9 +290,60 @@ Acesse todos os módulos com segurança e performance.
 
 </div>
 
+<!-- ===== PRODUTOS ===== -->
+<div class="products">
+
+<h3>Soluções disponíveis</h3>
+
+<div class="grid">
+
+<div class="card">
+<b>📊 Analytics</b>
+<span>Relatórios completos com métricas avançadas.</span>
+</div>
+
+<div class="card">
+<b>🧾 CMV Inteligente</b>
+<span>Controle de custos e margem em tempo real.</span>
+</div>
+
+<div class="card">
+<b>🛒 PDV Garçom</b>
+<span>Pedidos rápidos direto da mesa.</span>
+</div>
+
+<div class="card">
+<b>🍹 PDV Bebidas</b>
+<span>Controle completo de bar e bebidas.</span>
+</div>
+
+<div class="card">
+<b>📦 Estoque</b>
+<span>Gestão automática de produtos e insumos.</span>
+</div>
+
+<div class="card">
+<b>👥 RH</b>
+<span>Controle de equipe e escalas.</span>
+</div>
+
+<div class="card">
+<b>📅 Agenda</b>
+<span>Reservas e eventos organizados.</span>
+</div>
+
+<div class="card">
+<b>📣 Marketing</b>
+<span>Gestão de campanhas e mídias.</span>
+</div>
+
+</div>
+
+</div>
+
 <script>
 
-/* ===== CONFIG MASTER ===== */
+/* ===== CONFIG ===== */
 const supabase = supabase.createClient(
   "SUA_URL_MASTER",
   "SUA_ANON_KEY_MASTER"
@@ -259,7 +363,6 @@ erro.innerText = "";
 
 try{
 
-/* LOGIN AUTH */
 const { data, error } = await supabase.auth.signInWithPassword({
 email,
 password: senha
@@ -271,8 +374,7 @@ box.classList.remove('loading');
 return;
 }
 
-/* BUSCAR EMPRESA */
-const { data: empresa, error: erroEmpresa } = await supabase
+const { data: empresa } = await supabase
 .from('empresas')
 .select('*')
 .eq('email', email)
@@ -284,14 +386,13 @@ box.classList.remove('loading');
 return;
 }
 
-/* STATUS */
 if(empresa.status !== 'ativo'){
 erro.innerText = "Acesso bloqueado";
 box.classList.remove('loading');
 return;
 }
 
-/* SALVAR CONFIG CLIENTE */
+/* SALVA CONFIG */
 localStorage.setItem("SUPABASE_URL", empresa.supabase_url);
 localStorage.setItem("SUPABASE_KEY", empresa.supabase_anon_key);
 localStorage.setItem("EMPRESA_NOME", empresa.nome);
@@ -306,7 +407,7 @@ box.classList.remove('loading');
 
 }
 
-/* ===== RECUPERAR SENHA ===== */
+/* ===== RECUPERAR ===== */
 async function recuperar(){
 
 const email = document.getElementById('email').value;
@@ -320,7 +421,7 @@ await supabase.auth.resetPasswordForEmail(email,{
 redirectTo: window.location.origin + "/reset.html"
 });
 
-alert("Email de recuperação enviado");
+alert("Email enviado");
 
 }
 
