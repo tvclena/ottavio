@@ -245,8 +245,13 @@ carregarMais()
 /* ===== RENDER ===== */
 function render(m,top=false){
 
-if(mensagensIds.has(m.id)) return
-mensagensIds.add(m.id)
+const existente = document.getElementById(m.id)
+
+if(existente){
+  existente.innerHTML = gerarHTML(m)
+  return
+}
+  mensagensIds.add(m.id)
 
 /* DATA */
 const label = dataLabel(m.created_at)
