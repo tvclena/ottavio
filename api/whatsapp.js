@@ -566,7 +566,36 @@ console.log("NOME IGNORADO (já existe e não pediu alteração)")
 }
 
 }
+/* ================= BLOQUEIO: ATUALIZAÇÃO DE NOME ================= */
 
+if(
+  nomeDetectado &&
+  (
+    querAtualizarNome ||
+    mensagem.match(/(meu nome é|me chamo|nome correto é)/i)
+  )
+){
+
+console.log("🚀 ATUALIZAÇÃO DE NOME DETECTADA - PARANDO FLUXO")
+
+await fetch(url,{
+  method:"POST",
+  headers:{
+    Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify({
+    messaging_product:"whatsapp",
+    to:cliente,
+    type:"text",
+    text:{
+      body:`Perfeito! Atualizei seu nome para ${nomeMemoria} 😊`
+    }
+  })
+})
+
+return res.status(200).end()
+}
 /* ================= AGORA SIM CLASSIFICA ================= */
 
 const tipoMensagem = await classificarMensagem(mensagem)
