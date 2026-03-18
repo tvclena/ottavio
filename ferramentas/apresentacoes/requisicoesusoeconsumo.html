@@ -8,7 +8,6 @@
 content="width=device-width,
 initial-scale=1,
 maximum-scale=1,
-minimum-scale=1,
 user-scalable=no,
 viewport-fit=cover">
 
@@ -26,9 +25,8 @@ viewport-fit=cover">
 --primary-dark:#1e40af;
 --success:#16a34a;
 --border:#e5e7eb;
-
---radius:20px;
---shadow:0 10px 30px rgba(0,0,0,.08);
+--radius:22px;
+--shadow:0 15px 40px rgba(0,0,0,.08);
 }
 
 *{box-sizing:border-box}
@@ -42,67 +40,63 @@ color:var(--text);
 
 /* ===== HEADER ===== */
 .header{
-padding:20px;
+padding:18px 25px;
 background:#fff;
 border-bottom:1px solid var(--border);
 display:flex;
 justify-content:space-between;
 align-items:center;
+position:sticky;
+top:0;
+z-index:10;
 }
 
 .logo{
 font-weight:900;
-font-size:20px;
+font-size:18px;
 }
 
-.btn-whats{
+.btn-top{
 background:var(--success);
 color:#fff;
-padding:10px 16px;
+padding:10px 18px;
 border-radius:12px;
-text-decoration:none;
 font-weight:700;
+cursor:pointer;
 }
 
 /* ===== HERO ===== */
 .hero{
+padding:40px 20px;
+text-align:center;
+}
+
+.hero h1{
+font-size:32px;
+margin:0;
+}
+
+.hero p{
+margin-top:10px;
+color:var(--muted);
+}
+
+/* ===== MOCKUP ===== */
+.mockups{
 display:grid;
-grid-template-columns:1.5fr 1fr;
+grid-template-columns:1fr 1fr;
 gap:20px;
 padding:20px;
 }
 
-.hero-box{
-background:linear-gradient(135deg,#2563eb,#1e40af);
-color:#fff;
-padding:30px;
-border-radius:var(--radius);
+.mockups img{
+width:100%;
+border-radius:16px;
 box-shadow:var(--shadow);
 }
 
-.hero-box h1{
-margin:0;
-font-size:28px;
-}
-
-.hero-box p{
-margin-top:10px;
-opacity:.9;
-}
-
-.banner{
-background:#000;
-border-radius:var(--radius);
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:800;
-font-size:18px;
-}
-
 /* ===== CARDS ===== */
-.grid{
+.cards{
 padding:20px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -111,8 +105,8 @@ gap:20px;
 
 .card{
 background:var(--card);
+padding:25px;
 border-radius:var(--radius);
-padding:20px;
 box-shadow:var(--shadow);
 transition:.2s;
 }
@@ -121,62 +115,50 @@ transition:.2s;
 transform:translateY(-5px);
 }
 
-.icon{
-font-size:32px;
-margin-bottom:10px;
-}
-
 .card h2{
 margin:0;
 font-size:18px;
 }
 
 .card p{
-color:var(--muted);
 font-size:14px;
-margin:10px 0;
-}
-
-/* ===== BUTTONS ===== */
-.actions{
-display:flex;
-gap:10px;
+color:var(--muted);
 margin-top:10px;
 }
 
-.btn{
-flex:1;
-padding:12px;
-border-radius:10px;
+/* ===== CTA ===== */
+.cta{
+padding:30px 20px;
 text-align:center;
-font-weight:700;
-cursor:pointer;
-text-decoration:none;
 }
 
-.btn-primary{
-background:var(--primary);
+.btn-main{
+background:linear-gradient(135deg,var(--primary),var(--primary-dark));
 color:#fff;
-}
-
-.btn-outline{
-border:2px solid var(--primary);
-color:var(--primary);
-background:#fff;
+padding:16px 28px;
+border:none;
+border-radius:14px;
+font-size:16px;
+font-weight:800;
+cursor:pointer;
+box-shadow:var(--shadow);
 }
 
 /* ===== FOOTER ===== */
 .footer{
 padding:20px;
 text-align:center;
-color:var(--muted);
 font-size:13px;
+color:var(--muted);
 }
 
 /* ===== RESPONSIVO ===== */
 @media(max-width:900px){
-.hero{
+.mockups{
 grid-template-columns:1fr;
+}
+.hero h1{
+font-size:24px;
 }
 }
 
@@ -187,63 +169,66 @@ grid-template-columns:1fr;
 
 <!-- HEADER -->
 <div class="header">
-<div class="logo">🚀 Mercatto Sistemas</div>
-<a class="btn-whats" id="btnTopo">📲 Adquirir</a>
+<div class="logo">📦 Mercatto Systems</div>
+<div class="btn-top" onclick="ativarProduto()">Ativar Produto</div>
 </div>
 
 <!-- HERO -->
 <div class="hero">
-
-<div class="hero-box">
-<h1>Sistema de Requisições Inteligente</h1>
+<h1>Sistema Completo de Requisições</h1>
 <p>
-Controle total de pedidos, compras e estoque em tempo real.
-Mais organização, menos erro e muito mais produtividade.
+Controle total de pedidos internos, compras e estoque em tempo real.
 </p>
 </div>
 
-<div class="banner">
-🔥 CONTROLE TOTAL DO ESTOQUE
+<!-- MOCKUPS -->
+<div class="mockups">
+<img src="https://i.imgur.com/8Km9tLL.png">
+<img src="https://i.imgur.com/Nz7b2F5.png">
 </div>
 
-</div>
+<!-- BENEFÍCIOS -->
+<div class="cards">
 
-<!-- CARDS -->
-<div class="grid">
-
-<!-- CARD 1 -->
 <div class="card">
-<div class="icon">📦</div>
-<h2>Requisição de Mercadorias</h2>
+<h2>📦 Lançamento de Pedidos</h2>
 <p>
-Sistema para lançamento de pedidos pelos setores com login,
-histórico e controle automático.
+Funcionários solicitam produtos de forma simples,
+com histórico automático e controle por setor.
 </p>
-
-<div class="actions">
-<a href="requisicoesdemercadorias.html" class="btn btn-primary">Abrir</a>
-<button class="btn btn-outline" onclick="comprar('Requisição de Mercadorias')">
-Adquirir
-</button>
-</div>
 </div>
 
-<!-- CARD 2 -->
 <div class="card">
-<div class="icon">📊</div>
-<h2>Painel de Requisições</h2>
+<h2>📊 Gestão Inteligente</h2>
 <p>
-Gestão completa com filtros, status, relatórios e controle em tempo real.
+Controle completo com status, filtros, relatórios
+e organização por setor ou solicitante.
 </p>
+</div>
 
-<div class="actions">
-<a href="requisicoesrecebidas.html" class="btn btn-primary">Abrir</a>
-<button class="btn btn-outline" onclick="comprar('Painel de Requisições')">
-Adquirir
+<div class="card">
+<h2>⚡ Tempo Real</h2>
+<p>
+Atualização instantânea entre equipe e compras,
+evitando erros e atrasos.
+</p>
+</div>
+
+<div class="card">
+<h2>📱 Fácil e Rápido</h2>
+<p>
+Sistema leve, mobile-first e pronto para uso
+em qualquer dispositivo.
+</p>
+</div>
+
+</div>
+
+<!-- CTA -->
+<div class="cta">
+<button class="btn-main" onclick="ativarProduto()">
+🚀 Ativar Sistema Agora
 </button>
-</div>
-</div>
-
 </div>
 
 <!-- FOOTER -->
@@ -253,33 +238,30 @@ Adquirir
 
 <script>
 
-/* ===== WHATSAPP ===== */
-
+/* ===== CONFIG ===== */
 const numero = "5577999999999"; // 🔥 ALTERA AQUI
 
-function comprar(produto){
+function ativarProduto(){
 
 const mensagem = `
-Olá! Quero adquirir o sistema:
+Olá! Quero ativar o Sistema de Requisições do Mercatto.
 
-🧾 Produto: ${produto}
+📦 Módulos inclusos:
+• Requisição de Produtos
+• Painel de Gestão de Requisições
 
-Funcionalidades:
-- Controle de requisições
-- Gestão de pedidos
-- Painel com relatórios
-- Controle de estoque
+📊 Funcionalidades:
+• Controle por setor
+• Status (Pendente, Comprado, Entregue)
+• Histórico de pedidos
+• Relatórios completos
+• Atualização em tempo real
 
-Pode me passar mais informações?
+Quero mais informações para ativação.
 `;
 
 const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 window.open(url, "_blank");
-}
-
-/* BOTÃO TOPO */
-document.getElementById("btnTopo").onclick=()=>{
-comprar("Sistema Completo de Requisições");
 }
 
 </script>
