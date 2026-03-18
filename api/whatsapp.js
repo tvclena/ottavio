@@ -2205,17 +2205,10 @@ console.log("Erro ao processar reserva:",e)
 
 }
 
-/* ================= SALVAR RESPOSTA ================= */
 
-await supabase
-.from("conversas_whatsapp")
-.insert({
-  telefone:cliente,
-  mensagem:resposta,
-  role:"assistant",
-  message_id: messageId,
-  status: "sent"
-})
+
+
+  
 /* ================= TEMPO NATURAL ================= */
 
 const tempoDigitando = Math.min(
@@ -2228,25 +2221,34 @@ await new Promise(resolve => setTimeout(resolve, tempoDigitando))
 /* ================= ENVIAR WHATSAPP ================= */
 
 const send = await fetch(url,{
-method:"POST",
-headers:{
-Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-messaging_product:"whatsapp",
-to:cliente,
-type:"text",
-text:{ body:resposta }
-})
+  method:"POST",
+  headers:{
+    Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify({
+    messaging_product:"whatsapp",
+    to:cliente,
+    type:"text",
+    text:{ body:resposta }
+  })
 }).then(r => r.json())
 
+  
 console.log("📤 ENVIO META:", send)
 
 /* ================= PEGAR MESSAGE ID ================= */
 
 const messageId = send?.messages?.[0]?.id
-
+await supabase
+.from("conversas_whatsapp")
+.insert({
+  telefone:cliente,
+  mensagem:resposta,
+  role:"assistant",
+  message_id: messageId,
+  status: "sent"
+})
 if(!messageId){
 console.log("❌ ERRO: message_id não retornado")
 }
