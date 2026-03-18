@@ -196,17 +196,7 @@ color:#111827;
 opacity:1;
 }
 
-.menu{
-position:absolute;
-background:white;
-border:1px solid var(--border);
-border-radius:10px;
-padding:6px;
-display:none;
-flex-direction:column;
-z-index:1000;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
+
 
 .menu button{
 background:none;
@@ -770,11 +760,7 @@ const menu = document.getElementById("menu-" + telefone)
 menu.style.display = "flex"
 }
 
-  
-/* posiciona corretamente */
-menu.style.top = posicao.bottom + "px"
-menu.style.left = (posicao.left - 120) + "px"
-}
+
 
 /* VERIFICAR PAUSA */
 
