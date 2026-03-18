@@ -209,33 +209,50 @@ let ultimaDataRender = null
 /* ===== TIME ===== */
 function hora(d){
 
-const data = new Date(d.replace(" ", "T"))
+let data
+
+if(d.includes("Z")){
+  // veio do Supabase (UTC)
+  data = new Date(d)
+}else{
+  // veio do seu envio local
+  data = new Date(d.replace(" ", "T"))
+}
 
 return new Intl.DateTimeFormat("pt-BR",{
-hour:"2-digit",
-minute:"2-digit",
-timeZone:"America/Bahia"
+  hour:"2-digit",
+  minute:"2-digit",
+  timeZone:"America/Bahia"
 }).format(data)
 
 }
   
 function dataLabel(d){
 
-const data = new Date(d.replace(" ", "T"))
+let data
 
+// 🔥 trata os dois formatos (Supabase + local)
+if(d.includes("Z")){
+  data = new Date(d) // UTC
+}else{
+  data = new Date(d.replace(" ", "T")) // banco local
+}
+
+// formatter padrão (comparação)
 const formatter = new Intl.DateTimeFormat("en-CA",{
-timeZone:"America/Bahia",
-year:"numeric",
-month:"2-digit",
-day:"2-digit"
+  timeZone:"America/Bahia",
+  year:"numeric",
+  month:"2-digit",
+  day:"2-digit"
 })
 
 const hoje = formatter.format(new Date())
 const dataMsg = formatter.format(data)
 
+// HOJE
 if(dataMsg === hoje) return "HOJE"
 
-/* ontem */
+// ONTEM
 const ontemDate = new Date()
 ontemDate.setDate(ontemDate.getDate()-1)
 
@@ -243,15 +260,12 @@ const ontem = formatter.format(ontemDate)
 
 if(dataMsg === ontem) return "ONTEM"
 
-/* padrão */
+// PADRÃO (data normal)
 return new Intl.DateTimeFormat("pt-BR",{
-timeZone:"America/Bahia"
+  timeZone:"America/Bahia"
 }).format(data)
 
 }
-
-
-
 /* ===== SCROLL ===== */
 function scrollBottom(){
 msgs.scrollTop = msgs.scrollHeight
