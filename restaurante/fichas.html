@@ -1704,7 +1704,6 @@ function aplicarFiltros() {
 
   const statusFiltro = (window.filtroStatus?.value || "");
   const cmvFaixa = (window.filtroCMV?.value || "");
-  const margemFaixa = (window.filtroMargem?.value || "");
   const sort = (window.filtroSort?.value || "recent");
 
   // 1) filtra e já calcula métricas pra usar em faixa + sort
@@ -1726,9 +1725,6 @@ function aplicarFiltros() {
     const m = calcMetricsForList(p);
 
     const cmvOk = inRangeCMV(m.cmvPerc, cmvFaixa);
-    const margemOk = inRangeMargem(m.margem, margemFaixa);
-
-    if(!cmvOk || !margemOk) continue;
 
     base.push({ p, m });
   }
@@ -1881,7 +1877,6 @@ filtroTipo.addEventListener("change", () => {
 });
 filtroStatus.addEventListener("change", aplicarFiltros);
 filtroCMV.addEventListener("change", aplicarFiltros);
-filtroMargem.addEventListener("change", aplicarFiltros);
 filtroSort.addEventListener("change", aplicarFiltros);
 
 
