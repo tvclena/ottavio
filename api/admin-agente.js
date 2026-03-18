@@ -238,18 +238,6 @@ const agoraTexto = `${hojeISO} ${hora}`
 const ontem = new Date(hoje)
 ontem.setDate(hoje.getDate() - 1)
 
-const amanha = new Date(hoje)
-amanha.setDate(hoje.getDate() + 1)
-
-const hojeISO = hoje.toISOString().split("T")[0]
-const ontemISO = ontem.toISOString().split("T")[0]
-const amanhaISO = amanha.toISOString().split("T")[0]
-
-const agoraTexto = hoje.toLocaleString("pt-BR",{
-  timeZone:"America/Bahia",
-  dateStyle:"full",
-  timeStyle:"long"
-})
   
 /* ================= OPENAI ================= */
 
