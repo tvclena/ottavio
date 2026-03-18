@@ -92,9 +92,11 @@ color:#fff;
 box-shadow:0 6px 16px rgba(37,99,235,.35);
 }
 .logo{
-font-size:22px;
+color:#ffffff;
+font-size:20px;
 font-weight:800;
 margin-bottom:30px;
+letter-spacing:.5px;
 }
 
 .menu{
@@ -104,9 +106,20 @@ gap:10px;
 }
 
 .menu div{
-padding:10px;
-border-radius:8px;
+padding:12px 14px;
+border-radius:10px;
 cursor:pointer;
+font-weight:500;
+transition:0.2s;
+}
+
+.menu div:hover{
+background:rgba(255,255,255,0.15);
+transform:translateX(3px);
+}
+
+.menu div.active{
+background:rgba(255,255,255,0.25);
 }
 
 .menu div:hover{
@@ -119,11 +132,15 @@ display:flex;
 flex-direction:column;
 height:100vh;
 overflow-y:auto;
-width:calc(100% - 260px);
-padding:10px 16px;
-gap:12px;
-}
 
+width:calc(100% - 260px);
+
+/* 🔥 RESPIRO */
+padding:20px 24px;
+gap:16px;
+
+background:var(--bg);
+}
 
  
 .header{
@@ -318,11 +335,13 @@ height:100vh;
 background:linear-gradient(180deg,#2563eb,#1e40af);
 color:#ffffff;
 
-border-right:none;
 padding:20px;
 
 overflow-y:auto;
 z-index:1000;
+
+/* 🔥 AQUI ESTÁ O SEGREDO */
+box-shadow:6px 0 30px rgba(0,0,0,0.25);
 }
 
 
@@ -358,6 +377,20 @@ color:#ffffff;
 background:rgba(255,255,255,0.2);
 border-radius:8px;
 }
+
+
+.sidebar::after{
+content:"";
+position:absolute;
+top:0;
+right:0;
+width:1px;
+height:100%;
+background:rgba(255,255,255,0.15);
+}
+
+
+ 
 </style>
 </head>
 
