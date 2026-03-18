@@ -148,12 +148,19 @@ gap:10px;
 }
 
 input,button{
-background:#020617;
+background:#ffffff;
 border:1px solid var(--line);
-color:white;
-padding:5px 8px;
-border-radius:6px;
-font-size:13px;
+color:#0f172a;
+}
+
+button{
+background:var(--accent);
+color:#fff;
+border:none;
+}
+
+button:hover{
+background:#1e40af;
 }
 
 button{cursor:pointer}
@@ -310,8 +317,10 @@ left:0;
 width:260px;
 height:100vh;
 
-background:#020617;
-border-right:1px solid var(--line);
+background:linear-gradient(180deg,#2563eb,#1e40af);
+color:#ffffff;
+
+border-right:none;
 padding:20px;
 
 overflow-y:auto;
@@ -334,7 +343,22 @@ box-shadow:0 4px 14px rgba(0,0,0,0.25);
 position:relative;
 z-index:1;
 }
+.logo{
+color:#ffffff;
+}
 
+.menu div{
+color:#e0e7ff;
+}
+
+.menu div:hover{
+background:rgba(255,255,255,0.15);
+color:#ffffff;
+}
+.menu div.active{
+background:rgba(255,255,255,0.2);
+border-radius:8px;
+}
 </style>
 </head>
 
