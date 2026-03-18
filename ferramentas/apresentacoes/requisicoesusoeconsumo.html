@@ -17,7 +17,6 @@
 --card:#ffffff;
 --border:#e2e8f0;
 --text:#0f172a;
---muted:#64748b;
 }
 
 *{box-sizing:border-box}
@@ -37,7 +36,7 @@ border-bottom:1px solid var(--border);
 }
 
 .hero h1{margin:0;font-size:28px;}
-.hero p{color:var(--muted);margin-top:10px;}
+.hero p{color:#64748b;margin-top:10px;}
 
 .btn{
 background:var(--verde);
@@ -57,9 +56,6 @@ align-items:center;
 padding:12px 20px;
 background:#fff;
 border-bottom:1px solid var(--border);
-position:sticky;
-top:0;
-z-index:10;
 }
 
 /* GRID */
@@ -113,7 +109,6 @@ border-radius:20px;
 border:2px solid var(--azul);
 background:#fff;
 cursor:pointer;
-font-weight:600;
 }
 
 .unidades button.active{
@@ -128,7 +123,7 @@ font-weight:800;
 border-bottom:1px solid var(--border);
 }
 
-/* STATUS DENTRO DO PAINEL */
+/* STATUS */
 .status{
 display:flex;
 gap:10px;
@@ -158,10 +153,6 @@ font-size:12px;
 }
 
 /* TABELA */
-.table-container{
-padding:0 0 10px 0;
-}
-
 thead{
 background:var(--azul);
 color:#fff;
@@ -179,24 +170,10 @@ border:1px solid #ddd;
 text-align:center;
 }
 
-/* DESCRIÇÃO */
-.descricao{
-background:#fff;
-padding:40px 20px;
-margin-top:30px;
-text-align:center;
-}
-
-.descricao h2{
-font-size:26px;
-margin-bottom:10px;
-}
-
-.descricao p{
-color:var(--muted);
-max-width:700px;
-margin:auto;
-line-height:1.6;
+/* STATUS SELECT */
+select.status-select{
+padding:5px;
+border-radius:6px;
 }
 
 /* RESPONSIVO */
@@ -212,7 +189,7 @@ line-height:1.6;
 <!-- HERO -->
 <div class="hero">
 <h1>Sistema de Requisições Inteligente</h1>
-<p>Controle total de pedidos, setores e consumo em tempo real</p>
+<p>Controle total de pedidos em tempo real</p>
 <button class="btn" onclick="ativar()">🚀 Ativar por R$29,90</button>
 </div>
 
@@ -229,7 +206,7 @@ line-height:1.6;
 <div class="box-title">📦 Módulo de Requisição</div>
 
 <label>Solicitante</label>
-<input value="DEMO" readonly>
+<input value="ANDRÉ" readonly>
 
 <label>Setor</label>
 <select id="setor">
@@ -264,17 +241,15 @@ ENVIAR ITEM
 
 <div class="panel-header">📊 Painel de Requisições</div>
 
-<!-- STATUS DENTRO -->
 <div class="status">
 <div class="card-status">PENDENTE <span class="badge" id="cP">0</span></div>
-<div class="card-status">CARRINHO <span class="badge">0</span></div>
-<div class="card-status">COMPRADO <span class="badge">0</span></div>
-<div class="card-status">NEGADO <span class="badge">0</span></div>
-<div class="card-status">ENTREGUE <span class="badge">0</span></div>
-<div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
+<div class="card-status">CARRINHO <span class="badge" id="cC">0</span></div>
+<div class="card-status">COMPRADO <span class="badge" id="cCO">0</span></div>
+<div class="card-status">NEGADO <span class="badge" id="cN">0</span></div>
+<div class="card-status">ENTREGUE <span class="badge" id="cE">0</span></div>
+<div class="card-status">SEM ESTOQUE <span class="badge" id="cS">0</span></div>
 </div>
 
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -288,23 +263,9 @@ ENVIAR ITEM
 </thead>
 <tbody id="tabela"></tbody>
 </table>
-</div>
 
 </div>
 
-</div>
-
-<!-- DESCRIÇÃO -->
-<div class="descricao">
-<h2>🚀 Controle total na palma da sua mão</h2>
-<p>
-Gerencie todas as requisições da sua empresa com agilidade, organização e controle total.
-Evite erros, reduza desperdícios e acompanhe tudo em tempo real.
-</p>
-
-<button class="btn" onclick="ativar()">
-🔥 Ativar agora por R$29,90
-</button>
 </div>
 
 <script>
@@ -362,15 +323,31 @@ qtd.value=""
 obs.value=""
 }
 
+function atualizarStatus(index,novo){
+let lista=carregar()
+lista[index].status=novo
+salvar(lista)
+render()
+}
+
 function render(){
 
 let lista=carregar()
-let pend=0
+
+let count={
+PENDENTE:0,
+CARRINHO:0,
+COMPRADO:0,
+NEGADO:0,
+ENTREGUE:0,
+"SEM ESTOQUE":0
+}
 
 tabela.innerHTML=""
 
-lista.forEach(i=>{
-if(i.status==="PENDENTE") pend++
+lista.forEach((i,idx)=>{
+
+count[i.status]++
 
 tabela.innerHTML+=`
 <tr>
@@ -379,11 +356,26 @@ tabela.innerHTML+=`
 <td>${i.qtd}</td>
 <td>${i.unidade}</td>
 <td>${i.setor}</td>
-<td>${i.status}</td>
+<td>
+<select class="status-select" onchange="atualizarStatus(${idx},this.value)">
+<option ${i.status=="PENDENTE"?"selected":""}>PENDENTE</option>
+<option ${i.status=="CARRINHO"?"selected":""}>CARRINHO</option>
+<option ${i.status=="COMPRADO"?"selected":""}>COMPRADO</option>
+<option ${i.status=="NEGADO"?"selected":""}>NEGADO</option>
+<option ${i.status=="ENTREGUE"?"selected":""}>ENTREGUE</option>
+<option ${i.status=="SEM ESTOQUE"?"selected":""}>SEM ESTOQUE</option>
+</select>
+</td>
 </tr>`
 })
 
-document.getElementById("cP").innerText=pend
+document.getElementById("cP").innerText=count["PENDENTE"]
+document.getElementById("cC").innerText=count["CARRINHO"]
+document.getElementById("cCO").innerText=count["COMPRADO"]
+document.getElementById("cN").innerText=count["NEGADO"]
+document.getElementById("cE").innerText=count["ENTREGUE"]
+document.getElementById("cS").innerText=count["SEM ESTOQUE"]
+
 }
 
 function ativar(){
@@ -392,9 +384,7 @@ const msg=`
 Quero ativar o sistema de requisições
 
 💰 Plano: R$29,90/mês
-📦 Inclui:
-- Módulo de requisição
-- Painel completo
+📦 Sistema completo com controle de status
 
 Quero ativar agora.
 `;
