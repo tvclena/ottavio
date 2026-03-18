@@ -281,8 +281,19 @@ Você vende mais, erra menos e ganha escala.
 </div>
 
 <div class="hero-cta">
-<button class="btn btn-primary">Ver como funciona</button>
-<button class="btn btn-secondary">Explorar recursos</button>
+
+<button class="btn btn-primary">
+Ver como funciona
+</button>
+
+<button class="btn btn-secondary">
+Explorar recursos
+</button>
+
+<button class="btn btn-secondary" onclick="scrollToLogin()">
+Login
+</button>
+
 </div>
 
 </div>
@@ -451,7 +462,11 @@ redirectTo: window.location.origin + "/reset.html"
 alert("Email enviado");
 
 }
-
+function scrollToLogin(){
+  document.querySelector('.login').scrollIntoView({
+    behavior: 'smooth'
+  });
+}
 </script>
 
 </body>
