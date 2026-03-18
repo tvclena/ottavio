@@ -1013,17 +1013,20 @@ area.querySelectorAll("script").forEach(oldScript => {
 
 const newScript = document.createElement("script")
 
+// 🔥 REMOVE SCRIPT ANTIGO (IMPORTANTE)
+oldScript.remove()
+
 if(oldScript.src){
 newScript.src = oldScript.src
+newScript.async = false // 🔥 garante ordem
 }else{
 newScript.textContent = oldScript.textContent
 }
 
-// ✅ AGORA FUNCIONA COM HTML DINÂMICO
-area.appendChild(newScript)
+// 🔥 EXECUTA NO CONTEXTO GLOBAL
+document.body.appendChild(newScript)
 
 })
-
 })
 
 }
