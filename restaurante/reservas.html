@@ -1358,8 +1358,10 @@ font-size:.9rem;
 
 const SUPABASE_URL = "https://xysjlpsxgjwmhedkdgpd.supabase.co"
 const SUPABASE_KEY = "sb_publishable_sjYPsNM9PBGvsvJTQEnz_w_k6SdvNHN"
-
-
+const supabaseClient = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+)
     /* ==============================
        Helpers
     ============================== */
