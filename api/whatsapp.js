@@ -400,10 +400,33 @@ return res.status(200).end()
 
 /* IGNORA EVENTOS DE STATUS */
 
-if(!change.messages){
-console.log("Evento sem mensagem (status)")
-return res.status(200).end()
+/* ================= STATUS (✓✓) ================= */
+
+const statusObj = change?.statuses?.[0]
+
+if(statusObj){
+
+  const messageId = statusObj.id
+  const status = statusObj.status
+  const timestamp = statusObj.timestamp
+
+  const dataHora = new Date(timestamp * 1000).toISOString()
+
+  console.log("STATUS RECEBIDO:", status, messageId)
+
+  await supabase
+    .from("conversas_whatsapp")
+    .update({
+      status: status,
+      status_data: dataHora
+    })
+    .eq("message_id", messageId)
+
+  return res.status(200).end()
 }
+
+
+  
 
 const mensagensRecebidas = change.messages || []
 
@@ -2188,9 +2211,11 @@ console.log("Erro ao processar reserva:",e)
 await supabase
 .from("conversas_whatsapp")
 .insert({
-telefone:cliente,
-mensagem:resposta,
-role:"assistant"
+  telefone:cliente,
+  mensagem:resposta,
+  role:"assistant",
+  message_id: messageId,
+  status: "sent"
 })
 /* ================= TEMPO NATURAL ================= */
 
@@ -2203,21 +2228,21 @@ await new Promise(resolve => setTimeout(resolve, tempoDigitando))
 
 /* ================= ENVIAR WHATSAPP ================= */
 
-await fetch(url,{
-method:"POST",
-headers:{
-Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-messaging_product:"whatsapp",
-to:cliente,
-type:"text",
-text:{
-body:resposta
-}
-})
-})
+const send = await fetch(url,{
+  method:"POST",
+  headers:{
+    Authorization:`Bearer ${process.env.WHATSAPP_TOKEN}`,
+    "Content-Type":"application/json"
+  },
+  body:JSON.stringify({
+    messaging_product:"whatsapp",
+    to:cliente,
+    type:"text",
+    text:{ body:resposta }
+  })
+}).then(r => r.json())
+
+const messageId = send?.messages?.[0]?.id
 
 }catch(error){
 
