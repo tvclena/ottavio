@@ -156,7 +156,18 @@ align-items:center;
 justify-content:center;
 cursor:pointer;
 }
+.time{
+font-size:11px;
+opacity:.7;
+text-align:right;
+display:flex;
+justify-content:flex-end;
+gap:4px;
+align-items:center;
+}
 
+
+  
 </style>
 
 </head>
@@ -271,8 +282,20 @@ if(m.mensagem){
 html+=`<div>${m.mensagem}</div>`
 }
 
-html += `<div class="time">${hora(m.created_at)}</div>`
+function statusIcon(status){
 
+if(status === "sent") return "✓"
+if(status === "delivered") return "✓✓"
+if(status === "read") return "<span style='color:#34b7f1'>✓✓</span>"
+
+return ""
+}
+
+html += `
+<div class="time">
+  ${hora(m.created_at)} ${statusIcon(m.status)}
+</div>
+`
 div.innerHTML = html
 
 top ? msgs.prepend(div) : msgs.appendChild(div)
