@@ -520,6 +520,83 @@ display:flex;
 flex-direction:column;
 gap:12px;
 }
+
+
+
+
+/* HEADER DO CONTATO */
+
+.menuHeader{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:10px;
+padding-bottom:10px;
+border-bottom:1px solid #e5e7eb;
+}
+
+.menuAvatar{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#e5e7eb;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+}
+
+.menuNome{
+font-weight:700;
+font-size:15px;
+color:#111827;
+}
+
+.menuNumero{
+font-size:12px;
+color:#6b7280;
+}
+
+/* BOTÕES */
+
+.menuAction{
+background:#f3f4f6;
+border:none;
+padding:12px;
+border-radius:10px;
+font-weight:600;
+cursor:pointer;
+text-align:left;
+transition:.2s;
+}
+
+.menuAction:hover{
+background:#e5e7eb;
+}
+
+.menuAtivar{
+background:#22c55e;
+color:white;
+}
+
+.menuDesativar{
+background:#ef4444;
+color:white;
+}
+
+.menuCancel{
+background:#e5e7eb;
+border:none;
+padding:12px;
+border-radius:10px;
+font-weight:600;
+cursor:pointer;
+margin-top:6px;
+}
+
+
+
+  
 </style>
 </head>
 
@@ -840,22 +917,37 @@ const box = document.getElementById("menuBox")
 
 overlay.style.display = "flex"
 
-/* 🔥 PEGA STATUS */
+/* 🔥 DADOS DO CONTATO */
+const nome = nomes[telefone] || "Sem nome"
+const numero = telefone
+
 verificarPausa(telefone).then(pausado=>{
 
 box.innerHTML = `
-<button class="menuGhost" onclick="editarContato('${telefone}')">
+
+<!-- HEADER CONTATO -->
+<div class="menuHeader">
+  <div class="menuAvatar">${telefone.slice(-2)}</div>
+  <div>
+    <div class="menuNome">${nome}</div>
+    <div class="menuNumero">${numero}</div>
+  </div>
+</div>
+
+<!-- AÇÕES -->
+<button class="menuAction" onclick="editarContato('${telefone}')">
 ✏️ Editar contato
 </button>
 
-<button class="${pausado ? 'menuPrimary' : 'menuDanger'}"
+<button class="menuAction ${pausado ? 'menuAtivar' : 'menuDesativar'}"
 onclick="toggleBot('${telefone}'); fecharMenu()">
 ${pausado ? "▶️ Ativar BOT" : "⛔ Desativar BOT"}
 </button>
 
-<button class="menuGhost" onclick="fecharMenu()">
+<button class="menuCancel" onclick="fecharMenu()">
 Cancelar
 </button>
+
 `
 
 })
