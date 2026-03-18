@@ -52,7 +52,9 @@ font-weight:700;
 flex:1;
 overflow:auto;
 padding:20px;
-margin-top:0; /* garante que sobe tudo */
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
 /* DATA */
@@ -172,6 +174,8 @@ align-items:center;
 
 <body>
 
+<div class="header">Mercatto • WhatsApp</div>
+
 <div id="msgs" class="messages"></div>
 
 <div id="scrollBtn" class="scrollBtn" onclick="scrollBottom()">↓</div>
@@ -195,15 +199,6 @@ const db = supabase.createClient(
 
 /* ===== VARS ===== */
 let telefone = new URLSearchParams(location.search).get("telefone")
-const msgs = document.getElementById("msgs")
-const scrollBtn = document.getElementById("scrollBtn")
-const preview = document.getElementById("preview")
-const fileInput = document.getElementById("fileInput")
-const msg = document.getElementById("msg")
-
-
-
-  
 let mensagensIds = new Set()
 let oldestDate = null
 let loading = false
