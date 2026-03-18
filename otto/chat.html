@@ -208,11 +208,15 @@ let ultimaDataRender = null
 
 /* ===== TIME ===== */
 function hora(d){
+
+const data = new Date(d.replace(" ", "T"))
+
 return new Intl.DateTimeFormat("pt-BR",{
 hour:"2-digit",
 minute:"2-digit",
 timeZone:"America/Bahia"
-}).format(new Date(d))
+}).format(data)
+
 }
   
 function dataLabel(d){
