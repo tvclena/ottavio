@@ -36,21 +36,20 @@ background:#fff;
 border-bottom:1px solid var(--border);
 }
 
-.hero h1{
-margin:0;
-font-size:28px;
+.hero h1{margin:0;font-size:28px;}
+.hero p{color:var(--muted);margin-top:10px;}
+
+.btn{
+background:var(--verde);
+color:#fff;
+border:none;
+padding:10px 14px;
+border-radius:8px;
+font-weight:700;
+cursor:pointer;
 }
 
-.hero p{
-color:var(--muted);
-margin-top:10px;
-}
-
-.hero button{
-margin-top:15px;
-}
-
-/* HEADER DEMO */
+/* HEADER */
 header{
 display:flex;
 justify-content:space-between;
@@ -61,16 +60,6 @@ border-bottom:1px solid var(--border);
 position:sticky;
 top:0;
 z-index:10;
-}
-
-.btn{
-background:var(--verde);
-color:#fff;
-border:none;
-padding:10px 14px;
-border-radius:8px;
-font-weight:700;
-cursor:pointer;
 }
 
 /* STATUS */
@@ -100,17 +89,10 @@ padding:3px 8px;
 border-radius:6px;
 }
 
-/* TITULOS */
-.section-title{
-padding:20px;
-font-size:22px;
-font-weight:800;
-}
-
 /* GRID */
 .grid{
 display:grid;
-grid-template-columns:400px 1fr;
+grid-template-columns:380px 1fr;
 gap:20px;
 padding:20px;
 }
@@ -120,8 +102,28 @@ padding:20px;
 background:#fff;
 padding:20px;
 border-radius:12px;
+box-shadow:0 6px 18px rgba(0,0,0,.05);
 }
 
+/* PAINEL */
+.painel{
+background:#fff;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 6px 18px rgba(0,0,0,.05);
+}
+
+/* TITULO INTERNO */
+.box-title{
+font-weight:800;
+font-size:18px;
+margin-bottom:15px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+/* INPUTS */
 input,select,textarea{
 width:100%;
 padding:10px;
@@ -130,6 +132,9 @@ border-radius:8px;
 border:1px solid #ccc;
 }
 
+textarea{resize:none}
+
+/* UNIDADES */
 .unidades{
 display:flex;
 gap:8px;
@@ -143,6 +148,7 @@ border-radius:20px;
 border:2px solid var(--azul);
 background:#fff;
 cursor:pointer;
+font-weight:600;
 }
 
 .unidades button.active{
@@ -151,12 +157,6 @@ color:#fff;
 }
 
 /* TABELA */
-.painel{
-background:#fff;
-border-radius:12px;
-overflow:hidden;
-}
-
 thead{
 background:var(--azul);
 color:#fff;
@@ -169,7 +169,7 @@ font-size:13px;
 }
 
 td,th{
-padding:8px;
+padding:10px;
 border:1px solid #ddd;
 text-align:center;
 }
@@ -232,13 +232,12 @@ padding:14px 20px;
 <div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
 </div>
 
-<!-- TITULO -->
-<div class="section-title">📦 Módulo de Requisição</div>
-
 <div class="grid">
 
 <!-- FORM -->
 <div class="form">
+
+<div class="box-title">📦 Módulo de Requisição</div>
 
 <label>Solicitante</label>
 <input value="DEMO" readonly>
@@ -265,7 +264,7 @@ padding:14px 20px;
 <label>Observações</label>
 <textarea id="obs"></textarea>
 
-<button class="btn" style="width:100%;margin-top:10px" onclick="enviar()">
+<button class="btn" style="width:100%;margin-top:12px" onclick="enviar()">
 ENVIAR ITEM
 </button>
 
@@ -273,6 +272,11 @@ ENVIAR ITEM
 
 <!-- PAINEL -->
 <div class="painel">
+
+<div style="padding:15px;font-weight:800;">
+📊 Painel de Requisições
+</div>
+
 <table>
 <thead>
 <tr>
@@ -286,35 +290,28 @@ ENVIAR ITEM
 </thead>
 <tbody id="tabela"></tbody>
 </table>
-</div>
 
 </div>
 
-<!-- DESCRIÇÃO FINAL -->
+</div>
+
+<!-- DESCRIÇÃO -->
 <div class="descricao">
-
-<h2>🚀 Controle seu negócio com eficiência total</h2>
-
+<h2>🚀 Controle total na palma da sua mão</h2>
 <p>
-Elimine erros, reduza desperdícios e tenha controle completo sobre todas as requisições da sua empresa.
-Com nosso sistema, você acompanha em tempo real tudo que está sendo solicitado, comprado e entregue.
-</p>
-
-<p>
-Ideal para restaurantes, bares, cozinhas industriais e empresas que precisam de organização e agilidade.
+Gerencie todas as requisições da sua empresa com agilidade, organização e controle total.
+Evite erros, reduza desperdícios e acompanhe tudo em tempo real.
 </p>
 
 <button class="btn" onclick="ativar()">
-🔥 Quero ativar por apenas R$29,90
+🔥 Ativar agora por R$29,90
 </button>
-
 </div>
 
 <script>
 
 let unidade="CX"
 
-/* STORAGE */
 function salvar(lista){
 localStorage.setItem("demo_req",JSON.stringify({
 time:Date.now(),
@@ -334,14 +331,12 @@ return []
 return data.dados
 }
 
-/* UNIDADE */
 function setU(btn,u){
 unidade=u
 document.querySelectorAll(".unidades button").forEach(b=>b.classList.remove("active"))
 btn.classList.add("active")
 }
 
-/* ENVIAR */
 function enviar(){
 
 if(!produto.value || !qtd.value){
@@ -368,11 +363,9 @@ qtd.value=""
 obs.value=""
 }
 
-/* RENDER */
 function render(){
 
 let lista=carregar()
-
 let pend=0
 
 tabela.innerHTML=""
@@ -394,7 +387,6 @@ tabela.innerHTML+=`
 document.getElementById("cP").innerText=pend
 }
 
-/* WHATS */
 function ativar(){
 
 const msg=`
@@ -402,8 +394,8 @@ Quero ativar o sistema de requisições
 
 💰 Plano: R$29,90/mês
 📦 Inclui:
-- Controle de requisições
-- Painel de gestão em tempo real
+- Módulo de requisição
+- Painel completo
 
 Quero ativar agora.
 `;
@@ -411,7 +403,6 @@ Quero ativar agora.
 window.open("https://wa.me/5577999999999?text="+encodeURIComponent(msg))
 }
 
-/* INIT */
 render()
 
 </script>
