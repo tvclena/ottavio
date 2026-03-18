@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Mercatto • Sistema de Requisições</title>
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1,
+maximum-scale=1,
+minimum-scale=1,
+user-scalable=no,
+viewport-fit=cover">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+/* ===== BASE ===== */
+:root{
+--bg:#f4f6fb;
+--card:#ffffff;
+--text:#0f172a;
+--muted:#64748b;
+--primary:#2563eb;
+--primary-dark:#1e40af;
+--success:#16a34a;
+--border:#e5e7eb;
+
+--radius:20px;
+--shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Inter;
+background:var(--bg);
+color:var(--text);
+}
+
+/* ===== HEADER ===== */
+.header{
+padding:20px;
+background:#fff;
+border-bottom:1px solid var(--border);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+font-weight:900;
+font-size:20px;
+}
+
+.btn-whats{
+background:var(--success);
+color:#fff;
+padding:10px 16px;
+border-radius:12px;
+text-decoration:none;
+font-weight:700;
+}
+
+/* ===== HERO ===== */
+.hero{
+display:grid;
+grid-template-columns:1.5fr 1fr;
+gap:20px;
+padding:20px;
+}
+
+.hero-box{
+background:linear-gradient(135deg,#2563eb,#1e40af);
+color:#fff;
+padding:30px;
+border-radius:var(--radius);
+box-shadow:var(--shadow);
+}
+
+.hero-box h1{
+margin:0;
+font-size:28px;
+}
+
+.hero-box p{
+margin-top:10px;
+opacity:.9;
+}
+
+.banner{
+background:#000;
+border-radius:var(--radius);
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:800;
+font-size:18px;
+}
+
+/* ===== CARDS ===== */
+.grid{
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:20px;
+}
+
+.card{
+background:var(--card);
+border-radius:var(--radius);
+padding:20px;
+box-shadow:var(--shadow);
+transition:.2s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.icon{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.card h2{
+margin:0;
+font-size:18px;
+}
+
+.card p{
+color:var(--muted);
+font-size:14px;
+margin:10px 0;
+}
+
+/* ===== BUTTONS ===== */
+.actions{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.btn{
+flex:1;
+padding:12px;
+border-radius:10px;
+text-align:center;
+font-weight:700;
+cursor:pointer;
+text-decoration:none;
+}
+
+.btn-primary{
+background:var(--primary);
+color:#fff;
+}
+
+.btn-outline{
+border:2px solid var(--primary);
+color:var(--primary);
+background:#fff;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+padding:20px;
+text-align:center;
+color:var(--muted);
+font-size:13px;
+}
+
+/* ===== RESPONSIVO ===== */
+@media(max-width:900px){
+.hero{
+grid-template-columns:1fr;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<div class="logo">🚀 Mercatto Sistemas</div>
+<a class="btn-whats" id="btnTopo">📲 Adquirir</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+
+<div class="hero-box">
+<h1>Sistema de Requisições Inteligente</h1>
+<p>
+Controle total de pedidos, compras e estoque em tempo real.
+Mais organização, menos erro e muito mais produtividade.
+</p>
+</div>
+
+<div class="banner">
+🔥 CONTROLE TOTAL DO ESTOQUE
+</div>
+
+</div>
+
+<!-- CARDS -->
+<div class="grid">
+
+<!-- CARD 1 -->
+<div class="card">
+<div class="icon">📦</div>
+<h2>Requisição de Mercadorias</h2>
+<p>
+Sistema para lançamento de pedidos pelos setores com login,
+histórico e controle automático.
+</p>
+
+<div class="actions">
+<a href="requisicoesdemercadorias.html" class="btn btn-primary">Abrir</a>
+<button class="btn btn-outline" onclick="comprar('Requisição de Mercadorias')">
+Adquirir
+</button>
+</div>
+</div>
+
+<!-- CARD 2 -->
+<div class="card">
+<div class="icon">📊</div>
+<h2>Painel de Requisições</h2>
+<p>
+Gestão completa com filtros, status, relatórios e controle em tempo real.
+</p>
+
+<div class="actions">
+<a href="requisicoesrecebidas.html" class="btn btn-primary">Abrir</a>
+<button class="btn btn-outline" onclick="comprar('Painel de Requisições')">
+Adquirir
+</button>
+</div>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+© Mercatto Delícia • Sistema Profissional
+</div>
+
+<script>
+
+/* ===== WHATSAPP ===== */
+
+const numero = "5577999999999"; // 🔥 ALTERA AQUI
+
+function comprar(produto){
+
+const mensagem = `
+Olá! Quero adquirir o sistema:
+
+🧾 Produto: ${produto}
+
+Funcionalidades:
+- Controle de requisições
+- Gestão de pedidos
+- Painel com relatórios
+- Controle de estoque
+
+Pode me passar mais informações?
+`;
+
+const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+window.open(url, "_blank");
+}
+
+/* BOTÃO TOPO */
+document.getElementById("btnTopo").onclick=()=>{
+comprar("Sistema Completo de Requisições");
+}
+
+</script>
+
+</body>
+</html>
