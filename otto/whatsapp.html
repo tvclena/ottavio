@@ -571,14 +571,14 @@ for (const c of clientes){
       </div>
     </div>
 
-<div class="menuDots" onclick="abrirMenu(event,'${c.telefone}')">⋮</div>
-    <div class="menu" id="menu-${c.telefone}">
-      <button onclick="editarContato('${c.telefone}')">
-        Editar contato
+<div class="menuDots" onclick="event.stopPropagation(); abrirMenu(event,'${c.telefone}')">⋮</div>
+<div class="menu" id="menu-${c.telefone}">
+<button onclick="event.stopPropagation(); editarContato('${c.telefone}')">
+Editar contato
       </button>
 
-      <button onclick="toggleBot('${c.telefone}')" style="
-        background:${pausado?'#22c55e':'#ef4444'};
+<button onclick="event.stopPropagation(); toggleBot('${c.telefone}')">
+background:${pausado?'#22c55e':'#ef4444'};
         color:white;
         padding:6px 10px;
         border-radius:6px;
