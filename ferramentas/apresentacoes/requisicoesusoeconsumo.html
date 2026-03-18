@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Demo • Sistema de Requisições</title>
+<title>Sistema de Requisições • Demo</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -28,7 +28,29 @@ background:var(--bg);
 color:var(--text);
 }
 
-/* HEADER */
+/* HERO */
+.hero{
+padding:40px 20px;
+text-align:center;
+background:#fff;
+border-bottom:1px solid var(--border);
+}
+
+.hero h1{
+margin:0;
+font-size:28px;
+}
+
+.hero p{
+color:var(--muted);
+margin-top:10px;
+}
+
+.hero button{
+margin-top:15px;
+}
+
+/* HEADER DEMO */
 header{
 display:flex;
 justify-content:space-between;
@@ -39,13 +61,6 @@ border-bottom:1px solid var(--border);
 position:sticky;
 top:0;
 z-index:10;
-}
-
-.logo{
-display:flex;
-align-items:center;
-gap:10px;
-font-weight:800;
 }
 
 .btn{
@@ -85,6 +100,13 @@ padding:3px 8px;
 border-radius:6px;
 }
 
+/* TITULOS */
+.section-title{
+padding:20px;
+font-size:22px;
+font-weight:800;
+}
+
 /* GRID */
 .grid{
 display:grid;
@@ -100,11 +122,6 @@ padding:20px;
 border-radius:12px;
 }
 
-.form h2{
-text-align:center;
-margin-top:0;
-}
-
 input,select,textarea{
 width:100%;
 padding:10px;
@@ -112,8 +129,6 @@ margin-top:8px;
 border-radius:8px;
 border:1px solid #ccc;
 }
-
-textarea{resize:none}
 
 .unidades{
 display:flex;
@@ -128,7 +143,6 @@ border-radius:20px;
 border:2px solid var(--azul);
 background:#fff;
 cursor:pointer;
-font-weight:700;
 }
 
 .unidades button.active{
@@ -160,11 +174,35 @@ border:1px solid #ddd;
 text-align:center;
 }
 
+/* DESCRIÇÃO FINAL */
+.descricao{
+background:#fff;
+padding:40px 20px;
+margin-top:30px;
+text-align:center;
+}
+
+.descricao h2{
+font-size:26px;
+margin-bottom:10px;
+}
+
+.descricao p{
+color:var(--muted);
+max-width:700px;
+margin:auto;
+line-height:1.6;
+}
+
+.descricao .btn{
+margin-top:20px;
+font-size:16px;
+padding:14px 20px;
+}
+
 /* RESPONSIVO */
 @media(max-width:900px){
-.grid{
-grid-template-columns:1fr;
-}
+.grid{grid-template-columns:1fr}
 }
 
 </style>
@@ -172,32 +210,35 @@ grid-template-columns:1fr;
 
 <body>
 
-<header>
-<div class="logo">
-🏢 <span>REQUISIÇÕES DE USO E CONSUMO</span>
+<!-- HERO -->
+<div class="hero">
+<h1>Sistema de Requisições Inteligente</h1>
+<p>Controle total de pedidos, setores e consumo em tempo real</p>
+<button class="btn" onclick="ativar()">🚀 Ativar por R$29,90</button>
 </div>
 
-<button class="btn" onclick="ativar()">
-🚀 Ativar R$29,90
-</button>
+<header>
+<b>DEMO DO SISTEMA</b>
+<button class="btn" onclick="ativar()">Ativar Agora</button>
 </header>
 
 <!-- STATUS -->
 <div class="status">
 <div class="card-status">PENDENTE <span class="badge" id="cP">0</span></div>
-<div class="card-status">CARRINHO <span class="badge" id="cC">0</span></div>
-<div class="card-status">COMPRADO <span class="badge" id="cCO">0</span></div>
-<div class="card-status">NEGADO <span class="badge" id="cN">0</span></div>
-<div class="card-status">ENTREGUE <span class="badge" id="cE">0</span></div>
-<div class="card-status">SEM ESTOQUE <span class="badge" id="cS">0</span></div>
+<div class="card-status">CARRINHO <span class="badge">0</span></div>
+<div class="card-status">COMPRADO <span class="badge">0</span></div>
+<div class="card-status">NEGADO <span class="badge">0</span></div>
+<div class="card-status">ENTREGUE <span class="badge">0</span></div>
+<div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
 </div>
+
+<!-- TITULO -->
+<div class="section-title">📦 Módulo de Requisição</div>
 
 <div class="grid">
 
 <!-- FORM -->
 <div class="form">
-
-<h2>Requisição de produtos</h2>
 
 <label>Solicitante</label>
 <input value="DEMO" readonly>
@@ -209,7 +250,7 @@ grid-template-columns:1fr;
 </select>
 
 <label>Produto</label>
-<input id="produto" placeholder="Digite o produto">
+<input id="produto">
 
 <label>Quantidade</label>
 <input id="qtd" type="number">
@@ -249,11 +290,31 @@ ENVIAR ITEM
 
 </div>
 
+<!-- DESCRIÇÃO FINAL -->
+<div class="descricao">
+
+<h2>🚀 Controle seu negócio com eficiência total</h2>
+
+<p>
+Elimine erros, reduza desperdícios e tenha controle completo sobre todas as requisições da sua empresa.
+Com nosso sistema, você acompanha em tempo real tudo que está sendo solicitado, comprado e entregue.
+</p>
+
+<p>
+Ideal para restaurantes, bares, cozinhas industriais e empresas que precisam de organização e agilidade.
+</p>
+
+<button class="btn" onclick="ativar()">
+🔥 Quero ativar por apenas R$29,90
+</button>
+
+</div>
+
 <script>
 
 let unidade="CX"
 
-/* STORAGE COM EXPIRAÇÃO 20H */
+/* STORAGE */
 function salvar(lista){
 localStorage.setItem("demo_req",JSON.stringify({
 time:Date.now(),
@@ -330,14 +391,7 @@ tabela.innerHTML+=`
 </tr>`
 })
 
-/* STATUS */
 document.getElementById("cP").innerText=pend
-document.getElementById("cC").innerText=0
-document.getElementById("cCO").innerText=0
-document.getElementById("cN").innerText=0
-document.getElementById("cE").innerText=0
-document.getElementById("cS").innerText=0
-
 }
 
 /* WHATS */
@@ -348,8 +402,8 @@ Quero ativar o sistema de requisições
 
 💰 Plano: R$29,90/mês
 📦 Inclui:
-- Requisição de produtos
-- Painel de gestão
+- Controle de requisições
+- Painel de gestão em tempo real
 
 Quero ativar agora.
 `;
