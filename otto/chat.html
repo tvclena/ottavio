@@ -358,7 +358,7 @@ if(canal) db.removeChannel(canal)
 
 canal = db.channel("chat-"+telefone)
 .on("postgres_changes",{
-event:"INSERT",
+event:"*",
 schema:"public",
 table:"conversas_whatsapp",
 filter:`telefone=eq.${telefone}`
