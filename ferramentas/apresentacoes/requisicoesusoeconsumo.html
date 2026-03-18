@@ -9,62 +9,75 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
+
 :root{
 --azul:#1677ff;
 --verde:#22c55e;
 --bg:#f1f5f9;
---card:#fff;
+--card:#ffffff;
 --border:#e2e8f0;
+--text:#0f172a;
+--muted:#64748b;
 }
 
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter;background:var(--bg)}
+body{margin:0;font-family:Inter;background:var(--bg);color:var(--text)}
 
 /* HEADER */
 header{
 display:flex;
 justify-content:space-between;
+align-items:center;
 padding:12px 20px;
 background:#fff;
 border-bottom:1px solid var(--border);
+}
+
+.logo{
+display:flex;
+gap:10px;
+align-items:center;
+font-weight:800;
 }
 
 .btn{
 background:var(--verde);
 color:#fff;
 border:none;
-padding:8px 14px;
+padding:10px 14px;
 border-radius:8px;
-cursor:pointer;
 font-weight:700;
+cursor:pointer;
 }
 
-/* LOGIN */
-.login{
+/* STATUS */
+.status{
 display:flex;
-height:100vh;
-align-items:center;
+gap:10px;
+flex-wrap:wrap;
 justify-content:center;
-}
-
-.box{
-background:#fff;
-padding:25px;
-border-radius:12px;
-width:300px;
-}
-
-input{
-width:100%;
 padding:10px;
-margin-top:8px;
-border-radius:8px;
-border:1px solid #ccc;
+background:#fff;
+border-bottom:1px solid var(--border);
 }
 
-/* APP */
-.app{display:none}
+.card-status{
+background:#f9fafb;
+padding:10px 14px;
+border-radius:8px;
+font-weight:700;
+display:flex;
+gap:8px;
+}
 
+.badge{
+background:#000;
+color:#fff;
+padding:3px 8px;
+border-radius:6px;
+}
+
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:400px 1fr;
@@ -80,6 +93,14 @@ border-radius:12px;
 }
 
 .form h2{text-align:center}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+border-radius:8px;
+border:1px solid #ccc;
+}
 
 .unidades{
 display:flex;
@@ -116,6 +137,7 @@ color:#fff;
 table{
 width:100%;
 border-collapse:collapse;
+font-size:13px;
 }
 
 td,th{
@@ -128,47 +150,68 @@ text-align:center;
 @media(max-width:900px){
 .grid{grid-template-columns:1fr}
 }
+
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div class="login" id="login">
-<div class="box">
-<h3>Login Demo</h3>
-<input id="user" placeholder="Usuário">
-<input id="pass" placeholder="Senha" type="password">
-<button class="btn" onclick="entrar()">Entrar</button>
-</div>
-</div>
-
-<!-- APP -->
-<div class="app" id="app">
-
 <header>
-<div><b>CB SYSTEMS</b> • Requisições</div>
-<button class="btn" onclick="ativar()">🚀 Ativar R$29,90</button>
+<div class="logo">
+🏢 <span>REQUISIÇÕES DE USO E CONSUMO</span>
+</div>
+
+<button class="btn" onclick="ativar()">
+🚀 Ativar R$29,90
+</button>
 </header>
+
+<!-- STATUS -->
+<div class="status">
+<div class="card-status">PENDENTE <span class="badge" id="c1">0</span></div>
+<div class="card-status">CARRINHO <span class="badge">0</span></div>
+<div class="card-status">COMPRADO <span class="badge">0</span></div>
+<div class="card-status">NEGADO <span class="badge">0</span></div>
+<div class="card-status">ENTREGUE <span class="badge">0</span></div>
+<div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
+</div>
 
 <div class="grid">
 
 <!-- FORM -->
 <div class="form">
-<h2>Requisição</h2>
 
-<input id="produto" placeholder="Produto">
-<input id="qtd" placeholder="Quantidade">
+<h2>Requisição de produtos</h2>
 
+<label>Solicitante</label>
+<input id="solicitante" value="DEMO" readonly>
+
+<label>Setor</label>
+<select id="setor">
+<option>BAR</option>
+<option>COZINHA</option>
+</select>
+
+<label>Produto</label>
+<input id="produto">
+
+<label>Quantidade</label>
+<input id="qtd" type="number">
+
+<label>Unidade</label>
 <div class="unidades">
 <button onclick="setU(this,'UN')">UN</button>
 <button onclick="setU(this,'KG')">KG</button>
 <button onclick="setU(this,'CX')" class="active">CX</button>
 </div>
 
-<button class="btn" style="margin-top:10px;width:100%" onclick="enviar()">
-ENVIAR
+<label>Observações</label>
+<textarea id="obs"></textarea>
+
+<button class="btn" style="width:100%;margin-top:10px" onclick="enviar()">
+ENVIAR ITEM
 </button>
+
 </div>
 
 <!-- PAINEL -->
@@ -176,8 +219,11 @@ ENVIAR
 <table>
 <thead>
 <tr>
+<th>Data</th>
 <th>Item</th>
 <th>Qtd</th>
+<th>Unid</th>
+<th>Setor</th>
 <th>Status</th>
 </tr>
 </thead>
@@ -187,41 +233,28 @@ ENVIAR
 
 </div>
 
-</div>
-
 <script>
 
 let unidade="CX"
 
-/* LOGIN */
-function entrar(){
-if(pass.value==="1234"){
-login.style.display="none"
-app.style.display="block"
-carregar()
-}else{
-alert("Senha: 1234")
-}
-}
-
-/* STORAGE COM EXPIRAÇÃO */
-function salvar(dados){
+/* STORAGE */
+function salvar(lista){
 localStorage.setItem("demo",JSON.stringify({
-data:Date.now(),
-dados
+time:Date.now(),
+lista
 }))
 }
 
 function carregar(){
-const data=JSON.parse(localStorage.getItem("demo"))
-if(!data)return
+const d=JSON.parse(localStorage.getItem("demo"))
+if(!d)return []
 
-if(Date.now()-data.data>72000000){ // 20h
+if(Date.now()-d.time>72000000){
 localStorage.removeItem("demo")
-return
+return []
 }
 
-render(data.dados)
+return d.lista
 }
 
 /* UNIDADE */
@@ -234,38 +267,49 @@ btn.classList.add("active")
 /* ENVIAR */
 function enviar(){
 
-const item={
-produto:produto.value,
-qtd:qtd.value,
-status:"PENDENTE"
+if(!produto.value || !qtd.value){
+alert("Preencha os campos")
+return
 }
 
-let lista=[]
+let lista=carregar()
 
-const data=JSON.parse(localStorage.getItem("demo"))
-if(data) lista=data.dados
-
-lista.unshift(item)
+lista.unshift({
+data:new Date().toLocaleString(),
+produto:produto.value,
+qtd:qtd.value,
+unidade,
+setor:setor.value,
+status:"PENDENTE"
+})
 
 salvar(lista)
-render(lista)
+render()
 
 produto.value=""
 qtd.value=""
+obs.value=""
 }
 
 /* RENDER */
-function render(lista){
+function render(){
+
+let lista=carregar()
 tabela.innerHTML=""
 
 lista.forEach(i=>{
 tabela.innerHTML+=`
 <tr>
+<td>${i.data}</td>
 <td>${i.produto}</td>
 <td>${i.qtd}</td>
+<td>${i.unidade}</td>
+<td>${i.setor}</td>
 <td>${i.status}</td>
 </tr>`
 })
+
+document.getElementById("c1").innerText=lista.length
 }
 
 /* WHATS */
@@ -279,6 +323,9 @@ Plano: R$29,90/mês
 
 window.open("https://wa.me/5577999999999?text="+encodeURIComponent(msg))
 }
+
+/* INIT */
+render()
 
 </script>
 
