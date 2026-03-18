@@ -432,7 +432,21 @@ background:#d1d5db;
 border-radius:10px;
 }
   
+.client{
+position:relative; /* 🔥 ESSENCIAL */
+}
 
+.menu{
+position:absolute;
+
+top:55px; /* abaixo do botão */
+right:10px;
+
+display:none;
+flex-direction:column;
+
+z-index:9999;
+}
   
 
   
@@ -580,8 +594,7 @@ for (const c of clientes){
       </div>
     </div>
 
-    <div class="menuDots" onclick="abrirMenu(event,'${c.telefone}')">⋮</div>
-
+<div class="menuDots" onclick="abrirMenu(event,'${c.telefone}')">⋮</div>
     <div class="menu" id="menu-${c.telefone}">
       <button onclick="editarContato('${c.telefone}')">
         Editar contato
@@ -735,19 +748,16 @@ function abrirMenu(e,telefone){
 
 e.stopPropagation()
 
+// fecha todos
 document.querySelectorAll(".menu").forEach(m=>{
 m.style.display="none"
 })
 
 const menu=document.getElementById("menu-"+telefone)
 
+// 🔥 só mostra (sem calcular posição)
 menu.style.display="flex"
-
-menu.style.top = e.pageY + "px"
-menu.style.left = e.pageX + "px"
-
 }
-
 /* FECHAR MENU */
 
 document.addEventListener("click",()=>{
