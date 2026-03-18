@@ -131,18 +131,17 @@ margin-left:260px;
 display:flex;
 flex-direction:column;
 height:100vh;
-
-/* 🔥 CORREÇÃO AQUI */
 overflow-y:auto;
-overflow-x:visible;
 
 width:calc(100% - 260px);
 
+/* 🔥 RESPIRO */
 padding:20px 24px;
 gap:16px;
 
 background:var(--bg);
 }
+
  
 .header{
 display:flex;
@@ -203,10 +202,6 @@ border:1px solid var(--line);
 border-radius:12px;
 padding:22px;
 box-shadow:0 4px 14px rgba(0,0,0,0.25);
-position:relative;
-overflow:visible;
-
- 
 }
 
 .card h3{
@@ -362,9 +357,9 @@ padding:22px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 border-radius:14px;
 
+ 
 position:relative;
 z-index:1;
-overflow:visible; /* 🔥 ADICIONA ISSO */
 }
 .logo{
 color:#ffffff;
@@ -393,34 +388,7 @@ width:1px;
 height:100%;
 background:rgba(255,255,255,0.15);
 }
-.menuOpcoes{
-position:absolute; /* 🔥 VOLTA PRA ABSOLUTE */
 
-right:10px;
-top:35px;
-
-display:none;
-
-z-index:999;
-
-background:#fff;
-border:1px solid #e5e7eb;
-border-radius:10px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-
-min-width:160px;
-padding:6px 0;
-}
-
-.menuOpcoes div{
-padding:10px 14px;
-cursor:pointer;
-font-size:14px;
-}
-
-.menuOpcoes div:hover{
-background:#f1f5f9;
-}
 
  
 </style>
@@ -1045,20 +1013,16 @@ area.querySelectorAll("script").forEach(oldScript => {
 
 const newScript = document.createElement("script")
 
-// 🔥 REMOVE SCRIPT ANTIGO (IMPORTANTE)
-oldScript.remove()
-
 if(oldScript.src){
 newScript.src = oldScript.src
-newScript.async = false // 🔥 garante ordem
 }else{
 newScript.textContent = oldScript.textContent
 }
 
-// 🔥 EXECUTA NO CONTEXTO GLOBAL
 document.body.appendChild(newScript)
 
 })
+
 })
 
 }
