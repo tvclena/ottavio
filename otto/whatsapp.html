@@ -1190,18 +1190,13 @@ function abrirChatIframe(telefone){
 
   clienteSelecionado = telefone
 
-  const nome = nomes[telefone] || ""
-
   document.getElementById("clienteAtual").innerText =
-    nome || telefone
+    nomes[telefone] || telefone
 
   const frame = document.getElementById("frameChat")
 
-  frame.src = "./chat.html?telefone=" + telefone + "&nome=" + encodeURIComponent(nome)
+  frame.src = "./chat.html?telefone=" + telefone
 
-}
-
-  
   const sendBox = document.getElementById("sendBox")
   sendBox.style.display = "flex"
 
