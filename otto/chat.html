@@ -198,14 +198,6 @@ const db = supabase.createClient(
 
 /* ===== VARS ===== */
 let telefone = new URLSearchParams(location.search).get("telefone")
-const msgs = document.getElementById("msgs")
-const scrollBtn = document.getElementById("scrollBtn")
-const preview = document.getElementById("preview")
-const fileInput = document.getElementById("fileInput")
-const msg = document.getElementById("msg")
-
-
-  
 let mensagensIds = new Set()
 let oldestDate = null
 let loading = false
@@ -344,8 +336,8 @@ return html
 /* ===== RENDER ===== */
 function render(m,top=false){
 
-if(mensagensIds.has(m.id)) return
-mensagensIds.add(m.id)
+const existente = document.getElementById(m.id)
+
 if(existente){
   existente.innerHTML = gerarHTML(m)
   return
@@ -464,18 +456,14 @@ if(canal) db.removeChannel(canal)
 
 canal = db.channel("chat-"+telefone)
 .on("postgres_changes",{
-event:"INSERT",
+event:"*",
 schema:"public",
 table:"conversas_whatsapp",
 filter:`telefone=eq.${telefone}`
 },payload=>{
 
-// 🔥 evita duplicar
-if(mensagensIds.has(payload.new.id)) return
-
 render(payload.new)
 
-// auto scroll inteligente
 if(msgs.scrollTop > msgs.scrollHeight - msgs.clientHeight - 200){
 scrollBottom()
 }
