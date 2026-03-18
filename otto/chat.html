@@ -221,6 +221,8 @@ timeZone:"America/Bahia"
   
 function dataLabel(d){
 
+const data = new Date(d.replace(" ", "T"))
+
 const formatter = new Intl.DateTimeFormat("en-CA",{
 timeZone:"America/Bahia",
 year:"numeric",
@@ -229,7 +231,7 @@ day:"2-digit"
 })
 
 const hoje = formatter.format(new Date())
-const dataMsg = formatter.format(new Date(d))
+const dataMsg = formatter.format(data)
 
 if(dataMsg === hoje) return "HOJE"
 
@@ -244,7 +246,7 @@ if(dataMsg === ontem) return "ONTEM"
 /* padrão */
 return new Intl.DateTimeFormat("pt-BR",{
 timeZone:"America/Bahia"
-}).format(new Date(d))
+}).format(data)
 
 }
 
