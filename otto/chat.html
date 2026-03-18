@@ -242,6 +242,57 @@ carregarMais()
 }
 })
 
+function gerarHTML(m){
+
+let html=""
+
+/* MIDIA */
+if(m.tipo==="imagem"){
+html+=`<img src="${m.media_url}" onclick="window.open('${m.media_url}')">`
+}
+if(m.tipo==="video"){
+html+=`<video controls src="${m.media_url}"></video>`
+}
+if(m.tipo==="audio"){
+html+=`<audio controls src="${m.media_url}"></audio>`
+}
+if(m.tipo==="documento"){
+html+=`<div class="fileBox" onclick="window.open('${m.media_url}')">📄 ${m.nome_arquivo}</div>`
+}
+
+/* TEXTO */
+if(m.mensagem){
+html+=`<div>${m.mensagem}</div>`
+}
+
+/* STATUS */
+function statusIcon(status){
+if(status === "sent") return "✓"
+if(status === "delivered") return "✓✓"
+if(status === "read") return "<span style='color:#34b7f1'>✓✓</span>"
+return ""
+}
+
+html += `
+<div class="time">
+${hora(m.created_at)} ${statusIcon(m.status)}
+</div>
+`
+
+return html
+}
+
+
+
+
+
+
+
+
+
+
+
+  
 /* ===== RENDER ===== */
 function render(m,top=false){
 
@@ -264,7 +315,9 @@ ultimaDataRender = label
 }
 
 const div = document.createElement("div")
-div.className="msg "+(m.role==="assistant"?"assistant":"user")
+div.id = m.id || m.message_id
+  
+  div.className="msg "+(m.role==="assistant"?"assistant":"user")
 
 let html=""
 
@@ -420,7 +473,7 @@ id:"temp-"+Date.now(),
 mensagem:texto,
 created_at:new Date().toISOString(),
 role:"assistant",
-status:"sent"  
+status:"sent"
 }
 
 render(temp)
