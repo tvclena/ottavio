@@ -193,6 +193,8 @@ opacity:1;
 
 .menu{
 position:absolute;
+top:60px;
+right:10px;
 background:white;
 border:1px solid var(--border);
 border-radius:10px;
@@ -431,7 +433,9 @@ background:#d1d5db;
 border-radius:10px;
 }
   
-
+.client{
+  position: relative; /* 🔥 ESSENCIAL */
+}
   
 
   
@@ -742,21 +746,17 @@ document.getElementById("frameRepertorio").src=url
 
 /* MENU */
 
-function abrirMenu(e,telefone){
+function abrirMenu(e, telefone){
 
-e.stopPropagation()
+  e.stopPropagation()
 
-document.querySelectorAll(".menu").forEach(m=>{
-m.style.display="none"
-})
+  document.querySelectorAll(".menu").forEach(m=>{
+    m.style.display="none"
+  })
 
-const menu=document.getElementById("menu-"+telefone)
+  const menu = document.getElementById("menu-" + telefone)
 
-menu.style.display="flex"
-
-menu.style.top = e.pageY + "px"
-menu.style.left = e.pageX + "px"
-
+  menu.style.display = "flex"
 }
 
 /* FECHAR MENU */
