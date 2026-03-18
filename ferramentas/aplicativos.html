@@ -8,7 +8,6 @@
 content="width=device-width,
 initial-scale=1,
 maximum-scale=1,
-minimum-scale=1,
 user-scalable=no,
 viewport-fit=cover">
 
@@ -31,13 +30,17 @@ viewport-fit=cover">
 --shadow-hover:0 18px 40px rgba(0,0,0,.12);
 }
 
+/* RESET */
+
 *{
 box-sizing:border-box;
--webkit-font-smoothing:antialiased;
+margin:0;
+padding:0;
 }
 
+/* BODY */
+
 body{
-margin:0;
 font-family:Inter,sans-serif;
 background:linear-gradient(180deg,#ffffff,#f1f5f9);
 color:var(--text);
@@ -46,15 +49,13 @@ color:var(--text);
 /* ================= HEADER ================= */
 
 .header{
-
-padding:20px;
-
+padding:18px;
 position:sticky;
 top:0;
 z-index:50;
 
 background:rgba(255,255,255,.85);
-backdrop-filter:blur(12px);
+backdrop-filter:blur(14px);
 
 border-bottom:1px solid var(--border);
 
@@ -66,26 +67,18 @@ gap:12px;
 .title{
 font-size:22px;
 font-weight:900;
-letter-spacing:-.5px;
 }
 
 /* SEARCH */
 
 .search{
-
 height:44px;
-
 border-radius:14px;
 border:1px solid var(--border);
-
 padding:0 14px;
-
 font-size:14px;
 font-weight:600;
-
 background:#fff;
-
-box-shadow:0 2px 8px rgba(0,0,0,.04);
 }
 
 .search:focus{
@@ -94,32 +87,48 @@ border-color:var(--primary);
 box-shadow:0 0 0 3px rgba(37,99,235,.1);
 }
 
+/* FILTROS */
+
+.filters{
+display:flex;
+gap:8px;
+overflow:auto;
+padding-bottom:4px;
+}
+
+.filter{
+padding:8px 12px;
+border-radius:999px;
+border:1px solid var(--border);
+font-size:12px;
+font-weight:700;
+cursor:pointer;
+white-space:nowrap;
+background:#fff;
+}
+
+.filter.active{
+background:var(--primary);
+color:#fff;
+border-color:var(--primary);
+}
+
 /* ================= GRID ================= */
 
 .grid{
-
 display:grid;
-
-grid-template-columns:
-repeat(auto-fill,minmax(180px,1fr));
-
+grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
 gap:18px;
-
 padding:18px;
 }
 
 /* ================= CARD ================= */
 
 .card{
-
 background:var(--card);
-
 border-radius:22px;
-
 overflow:hidden;
-
 cursor:pointer;
-
 transition:.25s ease;
 
 display:flex;
@@ -139,12 +148,9 @@ box-shadow:var(--shadow-hover);
 /* IMAGE */
 
 .card-img{
-
 height:120px;
-
-position:relative;
-
 overflow:hidden;
+position:relative;
 }
 
 .card-img img{
@@ -153,13 +159,13 @@ height:100%;
 object-fit:cover;
 }
 
-/* overlay leve */
+/* overlay */
 
 .card-img::after{
 content:"";
 position:absolute;
 inset:0;
-background:linear-gradient(to top, rgba(0,0,0,.25), transparent);
+background:linear-gradient(to top, rgba(0,0,0,.3), transparent);
 }
 
 /* BODY */
@@ -175,42 +181,36 @@ gap:6px;
 font-size:14px;
 font-weight:800;
 line-height:1.2;
-
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
 }
 
 .card-desc{
 font-size:12px;
 color:var(--muted);
-
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
 }
 
 /* TAG */
 
 .tag{
 margin-top:6px;
-
 font-size:10px;
 font-weight:800;
-
 padding:5px 8px;
-
 border-radius:999px;
-
 background:#eef2ff;
 color:#3730a3;
-
 width:max-content;
 }
 
-/* ================= MOBILE ================= */
+/* LOADING */
+
+.loading{
+padding:40px;
+text-align:center;
+color:var(--muted);
+font-weight:600;
+}
+
+/* MOBILE */
 
 @media(max-width:520px){
 
@@ -221,10 +221,6 @@ gap:12px;
 
 .card-img{
 height:90px;
-}
-
-.card-title{
-font-size:12px;
 }
 
 .card-desc{
@@ -238,140 +234,107 @@ display:none;
 
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
 
 <div class="title">Aplicativos</div>
 
-<input
-id="search"
-class="search"
-type="text"
-placeholder="Buscar aplicativo..."
->
+<input id="search" class="search" placeholder="Buscar aplicativo...">
+
+<div id="filters" class="filters"></div>
 
 </div>
-
-<!-- GRID -->
 
 <div id="grid" class="grid"></div>
 
 <script>
 
-/* =========================
-   APLICATIVOS
-========================= */
+/* ================= DADOS ================= */
 
 const apps=[
 
-{
-nome:"PDV Garçom",
-descricao:"Pedidos e controle de mesas",
-tipo:"Operacional",
-imagem:"https://images.unsplash.com/photo-1556740738-b6a63e27c4df",
-link:"pdv-garcom.html"
-},
+{nome:"PDV Garçom",descricao:"Pedidos e mesas",tipo:"Operacional",imagem:"https://images.unsplash.com/photo-1556740738-b6a63e27c4df",link:"pdv-garcom.html"},
 
-{
-nome:"PDV Bebidas",
-descricao:"Venda rápida de bebidas",
-tipo:"Operacional",
-imagem:"https://images.unsplash.com/photo-1600891964599-f61ba0e24092",
-link:"pdv-bebidas.html"
-},
+{nome:"PDV Bebidas",descricao:"Venda rápida",tipo:"Operacional",imagem:"https://images.unsplash.com/photo-1600891964599-f61ba0e24092",link:"pdv-bebidas.html"},
 
-{
-nome:"CMV Dashboard",
-descricao:"Controle de custos e lucro",
-tipo:"Financeiro",
-imagem:"https://images.unsplash.com/photo-1554224155-6726b3ff858f",
-link:"cmv.html"
-},
+{nome:"CMV Dashboard",descricao:"Custos e lucro",tipo:"Financeiro",imagem:"https://images.unsplash.com/photo-1554224155-6726b3ff858f",link:"cmv.html"},
 
-{
-nome:"Buffet Controle",
-descricao:"Gestão de reposição",
-tipo:"Operacional",
-imagem:"https://images.unsplash.com/photo-1504674900247-0877df9cc836",
-link:"buffet.html"
-},
+{nome:"Buffet Controle",descricao:"Reposição buffet",tipo:"Operacional",imagem:"https://images.unsplash.com/photo-1504674900247-0877df9cc836",link:"buffet.html"},
 
-{
-nome:"Financeiro",
-descricao:"Relatórios financeiros",
-tipo:"Financeiro",
-imagem:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e",
-link:"financeiro.html"
-},
+{nome:"Financeiro",descricao:"Relatórios",tipo:"Financeiro",imagem:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e",link:"financeiro.html"},
 
-{
-nome:"Auditoria",
-descricao:"Histórico do sistema",
-tipo:"Auditoria",
-imagem:"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40",
-link:"auditoria.html"
-}
+{nome:"Auditoria",descricao:"Histórico sistema",tipo:"Auditoria",imagem:"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40",link:"auditoria.html"}
 
 ];
 
-/* =========================
-   RENDER
-========================= */
+/* ================= ESTADO ================= */
 
-function render(){
+let filtroAtual="Todos";
+
+/* ================= FILTROS ================= */
+
+const tipos=["Todos",...new Set(apps.map(a=>a.tipo))];
+
+const filtersEl=document.getElementById("filters");
+
+filtersEl.innerHTML=tipos.map(t=>
+`<div class="filter ${t==="Todos"?"active":""}" onclick="setFiltro('${t}',this)">
+${t}
+</div>`
+).join("");
+
+function setFiltro(tipo,el){
+filtroAtual=tipo;
+
+document.querySelectorAll(".filter").forEach(f=>f.classList.remove("active"));
+el.classList.add("active");
+
+render();
+}
+
+/* ================= RENDER ================= */
 
 const grid=document.getElementById("grid");
 
-const busca=document
-.getElementById("search")
-.value
-.toLowerCase();
+function render(){
 
-grid.innerHTML="";
+const busca=search.value.toLowerCase();
 
-apps
-.filter(a=>
-!busca ||
-a.nome.toLowerCase().includes(busca)
-)
-.forEach(a=>{
+const filtrados=apps.filter(a=>
+(!busca || a.nome.toLowerCase().includes(busca)) &&
+(filtroAtual==="Todos" || a.tipo===filtroAtual)
+);
 
-const card=document.createElement("a");
-
-card.href=a.link;
-
-card.className="card";
-
-card.innerHTML=`
+grid.innerHTML=filtrados.map(a=>`
+<a href="${a.link}" class="card">
 
 <div class="card-img">
-<img src="${a.imagem}">
+<img src="${a.imagem}" loading="lazy">
 </div>
 
 <div class="card-body">
 
 <div class="card-title">${a.nome}</div>
-
 <div class="card-desc">${a.descricao}</div>
-
 <div class="tag">${a.tipo}</div>
 
 </div>
 
-`;
-
-grid.appendChild(card);
-
-});
+</a>
+`).join("");
 
 }
 
-/* =========================
-   EVENTOS
-========================= */
+/* ================= PERFORMANCE ================= */
 
-search.addEventListener("input",render);
+/* debounce busca */
+
+let timer;
+search.addEventListener("input",()=>{
+clearTimeout(timer);
+timer=setTimeout(render,200);
+});
+
+/* INIT */
 
 render();
 
