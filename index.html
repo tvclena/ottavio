@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<title>OTTAVIO SYSTEM • Controle Total da Sua Empresa</title>
+<title>OTTAVIO SYSTEM • Controle Total</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -23,8 +23,6 @@
 
 --primary:#2563eb;
 --primary-dark:#1e40af;
---success:#16a34a;
---danger:#dc2626;
 
 --radius:18px;
 }
@@ -35,6 +33,7 @@ body{
 font-family:Inter;
 background:var(--bg);
 color:var(--text);
+scroll-behavior:smooth;
 }
 
 /* ===== HEADER ===== */
@@ -43,7 +42,7 @@ position:sticky;
 top:0;
 background:#fff;
 border-bottom:1px solid var(--border);
-padding:16px 40px;
+padding:14px 20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -52,23 +51,34 @@ z-index:10;
 
 .logo{
 font-weight:900;
-font-size:20px;
+font-size:18px;
+}
+
+.nav{
+display:flex;
+gap:15px;
+font-size:13px;
+color:var(--muted);
+}
+
+.nav span{
+cursor:pointer;
 }
 
 .cta-top{
 background:var(--primary);
 color:#fff;
-padding:10px 16px;
+padding:8px 14px;
 border-radius:10px;
-font-weight:600;
+font-size:13px;
 cursor:pointer;
 }
 
 /* ===== HERO ===== */
 .hero{
 display:flex;
-gap:40px;
-padding:70px 40px;
+gap:30px;
+padding:50px 20px;
 align-items:center;
 }
 
@@ -77,9 +87,9 @@ flex:1;
 }
 
 .hero-title{
-font-size:48px;
+font-size:34px;
 font-weight:900;
-line-height:1.1;
+line-height:1.2;
 }
 
 .hero-title span{
@@ -87,24 +97,25 @@ color:var(--primary);
 }
 
 .hero-desc{
-margin-top:20px;
+margin-top:15px;
 color:var(--muted);
-max-width:520px;
-font-size:16px;
+font-size:14px;
 }
 
-.hero-cta{
-margin-top:30px;
+.hero-buttons{
+margin-top:20px;
 display:flex;
 gap:10px;
+flex-wrap:wrap;
 }
 
 .btn{
-padding:14px 20px;
-border-radius:12px;
+padding:12px;
+border-radius:10px;
 border:none;
 cursor:pointer;
 font-weight:600;
+font-size:14px;
 }
 
 .btn-primary{
@@ -117,18 +128,15 @@ background:#fff;
 border:1px solid var(--border);
 }
 
-/* ===== LOGIN ===== */
+/* LOGIN */
 .login{
-width:380px;
+width:100%;
+max-width:360px;
 background:#fff;
 border:1px solid var(--border);
 border-radius:18px;
-padding:25px;
-box-shadow:0 20px 60px rgba(0,0,0,.08);
-}
-
-.login h2{
-margin-bottom:15px;
+padding:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.05);
 }
 
 input{
@@ -137,6 +145,7 @@ padding:12px;
 margin-bottom:10px;
 border-radius:10px;
 border:1px solid var(--border);
+font-size:14px;
 }
 
 button{
@@ -151,107 +160,93 @@ cursor:pointer;
 }
 
 .error{
-color:var(--danger);
-font-size:13px;
-margin-top:10px;
+color:#dc2626;
+font-size:12px;
+margin-top:8px;
 }
 
 /* ===== SECTIONS ===== */
 .section{
-padding:70px 40px;
+padding:50px 20px;
 }
 
 .section h3{
-font-size:30px;
-margin-bottom:30px;
+font-size:22px;
+margin-bottom:20px;
 }
 
-/* ===== GRID ===== */
+/* GRID */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:20px;
+grid-template-columns:1fr;
+gap:15px;
 }
 
-/* ===== CARD ===== */
 .card{
 background:#fff;
 border:1px solid var(--border);
-border-radius:16px;
-padding:24px;
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-8px);
-box-shadow:0 20px 60px rgba(0,0,0,.08);
+border-radius:14px;
+padding:16px;
 }
 
 .card b{
+font-size:15px;
 display:block;
-font-size:18px;
-margin-bottom:10px;
+margin-bottom:6px;
 }
 
 .card span{
-font-size:14px;
+font-size:13px;
 color:var(--muted);
-line-height:1.5;
 }
 
-/* ===== BENEFITS ===== */
+/* BENEFITS */
 .benefits{
 display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:20px;
+grid-template-columns:1fr;
+gap:12px;
 }
 
 .benefit{
 background:#fff;
 border:1px solid var(--border);
-padding:24px;
+padding:15px;
+border-radius:12px;
+font-size:13px;
+}
+
+/* CTA */
+.cta{
+background:linear-gradient(135deg,#2563eb,#1e40af);
+color:#fff;
+padding:30px;
 border-radius:16px;
 text-align:center;
 }
 
-/* ===== CTA FINAL ===== */
-.cta{
-background:linear-gradient(135deg,#2563eb,#1e40af);
-color:#fff;
-padding:60px;
-border-radius:20px;
-text-align:center;
-}
+/* ===== RESPONSIVO ===== */
+@media(min-width:900px){
 
-.cta h3{
-font-size:32px;
-margin-bottom:15px;
-}
-
-.cta p{
-opacity:.9;
-margin-bottom:20px;
-}
-
-/* ===== FOOTER ===== */
-.footer{
-padding:40px;
-text-align:center;
-font-size:13px;
-color:var(--muted);
-}
-
-/* MOBILE */
-@media(max-width:900px){
 .hero{
-flex-direction:column;
+padding:70px;
 }
-.login{
-width:100%;
+
+.hero-title{
+font-size:46px;
 }
+
+.section{
+padding:70px;
+}
+
+.grid{
+grid-template-columns:repeat(3,1fr);
+}
+
 .benefits{
-grid-template-columns:1fr;
+grid-template-columns:repeat(3,1fr);
 }
+
 }
 
 </style>
@@ -262,7 +257,13 @@ grid-template-columns:1fr;
 <!-- HEADER -->
 <div class="header">
 <div class="logo">OTTAVIO SYSTEM</div>
-<div class="cta-top">Começar agora</div>
+
+<div class="nav">
+<span onclick="scrollToId('produtos')">Produtos</span>
+<span onclick="scrollToId('beneficios')">Benefícios</span>
+</div>
+
+<div class="cta-top" onclick="abrirWhats()">Falar agora</div>
 </div>
 
 <!-- HERO -->
@@ -271,18 +272,17 @@ grid-template-columns:1fr;
 <div class="hero-left">
 
 <div class="hero-title">
-Pare de perder dinheiro na sua operação.<br>
-<span>Tenha controle total.</span>
+Pare de perder dinheiro.<br>
+<span>Controle tudo.</span>
 </div>
 
 <div class="hero-desc">
-O OTTAVIO SYSTEM integra atendimento, pedidos, delivery e automação em um único sistema.  
-Você vende mais, erra menos e ganha escala.
+Sistema completo para atendimento, pedidos e automação da sua empresa.
 </div>
 
-<div class="hero-cta">
-<button class="btn btn-primary">Ver como funciona</button>
-<button class="btn btn-secondary">Explorar recursos</button>
+<div class="hero-buttons">
+<button class="btn btn-primary" onclick="abrirWhats()">Quero implementar</button>
+<button class="btn btn-secondary" onclick="scrollToId('produtos')">Ver recursos</button>
 </div>
 
 </div>
@@ -290,14 +290,14 @@ Você vende mais, erra menos e ganha escala.
 <!-- LOGIN -->
 <div class="login">
 
-<h2>Acessar sistema</h2>
+<h3 style="margin-bottom:10px">Entrar</h3>
 
 <input id="email" placeholder="Email">
 <input id="senha" type="password" placeholder="Senha">
 
 <button onclick="login()">Entrar</button>
 
-<div onclick="recuperar()" style="margin-top:10px;font-size:13px;color:#64748b;cursor:pointer">
+<div onclick="recuperar()" style="margin-top:8px;font-size:12px;color:#64748b;cursor:pointer">
 Esqueci minha senha
 </div>
 
@@ -308,40 +308,25 @@ Esqueci minha senha
 </div>
 
 <!-- PRODUTOS -->
-<div class="section">
+<div class="section" id="produtos">
 
-<h3>Uma plataforma, todos os sistemas que você precisa</h3>
+<h3>Soluções completas</h3>
 
 <div class="grid">
 
 <div class="card">
-<b>🤖 Atendimento Inteligente</b>
-<span>Responda clientes automaticamente no WhatsApp e aumente suas vendas sem precisar de mais funcionários.</span>
+<b>🤖 Atendimento automático</b>
+<span>Responda clientes sozinho no WhatsApp.</span>
 </div>
 
 <div class="card">
-<b>🛵 Delivery Completo</b>
-<span>Receba pedidos, acompanhe status e organize sua operação de delivery sem erros.</span>
+<b>🛵 Delivery</b>
+<span>Controle pedidos sem erro.</span>
 </div>
 
 <div class="card">
-<b>📊 Dashboard em Tempo Real</b>
-<span>Veja exatamente o que está acontecendo na sua empresa agora.</span>
-</div>
-
-<div class="card">
-<b>🛒 Gestão de Pedidos</b>
-<span>Controle todos os pedidos do início ao fim com organização total.</span>
-</div>
-
-<div class="card">
-<b>📲 Integração com WhatsApp</b>
-<span>Centralize toda comunicação com seus clientes.</span>
-</div>
-
-<div class="card">
-<b>⚙️ Automação Total</b>
-<span>Reduza trabalho manual e elimine erros operacionais.</span>
+<b>📊 Dashboard</b>
+<span>Veja tudo em tempo real.</span>
 </div>
 
 </div>
@@ -349,50 +334,54 @@ Esqueci minha senha
 </div>
 
 <!-- BENEFÍCIOS -->
-<div class="section">
+<div class="section" id="beneficios">
 
-<h3>Por que empresas estão migrando para o OTTAVIO SYSTEM?</h3>
+<h3>Por que usar?</h3>
 
 <div class="benefits">
 
-<div class="benefit">📈 Aumenta vendas automaticamente</div>
-<div class="benefit">⏱ Economiza tempo operacional</div>
-<div class="benefit">💰 Reduz erros e prejuízos</div>
-<div class="benefit">📊 Controle total da operação</div>
-<div class="benefit">🤖 Automação inteligente</div>
-<div class="benefit">🚀 Escala seu negócio</div>
+<div class="benefit">📈 Aumenta vendas</div>
+<div class="benefit">⏱ Economiza tempo</div>
+<div class="benefit">💰 Reduz prejuízo</div>
 
 </div>
 
 </div>
 
-<!-- CTA FINAL -->
+<!-- CTA -->
 <div class="section">
 <div class="cta">
 
-<h3>Pronto para transformar sua empresa?</h3>
+<h3>Comece agora</h3>
+<p>Fale conosco e implemente hoje</p>
 
-<p>Entre agora e tenha controle total da sua operação.</p>
-
-<button class="btn btn-primary">Começar agora</button>
+<button class="btn btn-primary" onclick="abrirWhats()">Falar no WhatsApp</button>
 
 </div>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-© OTTAVIO SYSTEM • Plataforma Inteligente
 </div>
 
 <script>
 
-/* CONFIG */
+/* ===== CONFIG ===== */
 const supabase = supabase.createClient(
   "SUA_URL_MASTER",
   "SUA_ANON_KEY_MASTER"
 );
 
-/* LOGIN */
+const WHATS = "5599999999999";
+
+/* ===== WHATS ===== */
+function abrirWhats(){
+const msg = encodeURIComponent("Olá, tenho interesse no sistema OTTAVIO SYSTEM.");
+window.open(`https://wa.me/${WHATS}?text=${msg}`,"_blank");
+}
+
+/* ===== SCROLL ===== */
+function scrollToId(id){
+document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+/* ===== LOGIN ===== */
 async function login(){
 
 const email = document.getElementById('email').value;
@@ -407,7 +396,7 @@ password: senha
 });
 
 if(error){
-erro.innerText = "Email ou senha inválidos";
+erro.innerText = "Login inválido";
 return;
 }
 
@@ -417,12 +406,7 @@ const { data: empresa } = await supabase
 .eq('email', email)
 .single();
 
-if(!empresa){
-erro.innerText = "Empresa não encontrada";
-return;
-}
-
-if(empresa.status !== 'ativo'){
+if(!empresa || empresa.status !== 'ativo'){
 erro.innerText = "Acesso bloqueado";
 return;
 }
