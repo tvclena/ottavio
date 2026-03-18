@@ -21,7 +21,12 @@
 }
 
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter;background:var(--bg);color:var(--text)}
+body{
+margin:0;
+font-family:Inter;
+background:var(--bg);
+color:var(--text);
+}
 
 /* HEADER */
 header{
@@ -31,12 +36,15 @@ align-items:center;
 padding:12px 20px;
 background:#fff;
 border-bottom:1px solid var(--border);
+position:sticky;
+top:0;
+z-index:10;
 }
 
 .logo{
 display:flex;
-gap:10px;
 align-items:center;
+gap:10px;
 font-weight:800;
 }
 
@@ -92,7 +100,10 @@ padding:20px;
 border-radius:12px;
 }
 
-.form h2{text-align:center}
+.form h2{
+text-align:center;
+margin-top:0;
+}
 
 input,select,textarea{
 width:100%;
@@ -101,6 +112,8 @@ margin-top:8px;
 border-radius:8px;
 border:1px solid #ccc;
 }
+
+textarea{resize:none}
 
 .unidades{
 display:flex;
@@ -115,9 +128,10 @@ border-radius:20px;
 border:2px solid var(--azul);
 background:#fff;
 cursor:pointer;
+font-weight:700;
 }
 
-.active{
+.unidades button.active{
 background:var(--azul);
 color:#fff;
 }
@@ -148,7 +162,9 @@ text-align:center;
 
 /* RESPONSIVO */
 @media(max-width:900px){
-.grid{grid-template-columns:1fr}
+.grid{
+grid-template-columns:1fr;
+}
 }
 
 </style>
@@ -168,12 +184,12 @@ text-align:center;
 
 <!-- STATUS -->
 <div class="status">
-<div class="card-status">PENDENTE <span class="badge" id="c1">0</span></div>
-<div class="card-status">CARRINHO <span class="badge">0</span></div>
-<div class="card-status">COMPRADO <span class="badge">0</span></div>
-<div class="card-status">NEGADO <span class="badge">0</span></div>
-<div class="card-status">ENTREGUE <span class="badge">0</span></div>
-<div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
+<div class="card-status">PENDENTE <span class="badge" id="cP">0</span></div>
+<div class="card-status">CARRINHO <span class="badge" id="cC">0</span></div>
+<div class="card-status">COMPRADO <span class="badge" id="cCO">0</span></div>
+<div class="card-status">NEGADO <span class="badge" id="cN">0</span></div>
+<div class="card-status">ENTREGUE <span class="badge" id="cE">0</span></div>
+<div class="card-status">SEM ESTOQUE <span class="badge" id="cS">0</span></div>
 </div>
 
 <div class="grid">
@@ -184,7 +200,7 @@ text-align:center;
 <h2>Requisição de produtos</h2>
 
 <label>Solicitante</label>
-<input id="solicitante" value="DEMO" readonly>
+<input value="DEMO" readonly>
 
 <label>Setor</label>
 <select id="setor">
@@ -193,7 +209,7 @@ text-align:center;
 </select>
 
 <label>Produto</label>
-<input id="produto">
+<input id="produto" placeholder="Digite o produto">
 
 <label>Quantidade</label>
 <input id="qtd" type="number">
@@ -237,24 +253,24 @@ ENVIAR ITEM
 
 let unidade="CX"
 
-/* STORAGE */
+/* STORAGE COM EXPIRAÇÃO 20H */
 function salvar(lista){
-localStorage.setItem("demo",JSON.stringify({
+localStorage.setItem("demo_req",JSON.stringify({
 time:Date.now(),
-lista
+dados:lista
 }))
 }
 
 function carregar(){
-const d=JSON.parse(localStorage.getItem("demo"))
-if(!d)return []
+const data=JSON.parse(localStorage.getItem("demo_req"))
+if(!data)return []
 
-if(Date.now()-d.time>72000000){
-localStorage.removeItem("demo")
+if(Date.now()-data.time>72000000){
+localStorage.removeItem("demo_req")
 return []
 }
 
-return d.lista
+return data.dados
 }
 
 /* UNIDADE */
@@ -295,9 +311,14 @@ obs.value=""
 function render(){
 
 let lista=carregar()
+
+let pend=0
+
 tabela.innerHTML=""
 
 lista.forEach(i=>{
+if(i.status==="PENDENTE") pend++
+
 tabela.innerHTML+=`
 <tr>
 <td>${i.data}</td>
@@ -309,7 +330,14 @@ tabela.innerHTML+=`
 </tr>`
 })
 
-document.getElementById("c1").innerText=lista.length
+/* STATUS */
+document.getElementById("cP").innerText=pend
+document.getElementById("cC").innerText=0
+document.getElementById("cCO").innerText=0
+document.getElementById("cN").innerText=0
+document.getElementById("cE").innerText=0
+document.getElementById("cS").innerText=0
+
 }
 
 /* WHATS */
@@ -318,7 +346,12 @@ function ativar(){
 const msg=`
 Quero ativar o sistema de requisições
 
-Plano: R$29,90/mês
+💰 Plano: R$29,90/mês
+📦 Inclui:
+- Requisição de produtos
+- Painel de gestão
+
+Quero ativar agora.
 `;
 
 window.open("https://wa.me/5577999999999?text="+encodeURIComponent(msg))
