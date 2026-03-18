@@ -99,30 +99,25 @@ padding-bottom:10px;
 /* CARD CLIENTE (🔥 PRINCIPAL) */
 
 .client{
-position:relative;
-overflow:visible;
-}
-
-.menu{
-position:absolute;
-
-top:100%; /* 🔥 sempre abaixo do card */
-right:10px;
-
-margin-top:8px;
+display:flex;
+gap:14px;
+align-items:center;
 
 background:white;
-border:1px solid #e5e7eb;
-border-radius:10px;
 
-padding:6px;
+margin:10px 16px;
+padding:14px;
 
-display:none;
-flex-direction:column;
+border-radius:16px;
 
-z-index:9999;
+box-shadow:0 2px 6px rgba(0,0,0,0.05);
 
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
+cursor:pointer;
+transition:.2s;
+}
+
+.client:hover{
+transform:scale(1.01);
 }
 
 /* PAUSADO */
@@ -196,7 +191,17 @@ color:#111827;
 opacity:1;
 }
 
-
+.menu{
+position:absolute;
+background:white;
+border:1px solid var(--border);
+border-radius:10px;
+padding:6px;
+display:none;
+flex-direction:column;
+z-index:1000;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
 
 .menu button{
 background:none;
@@ -219,7 +224,6 @@ flex:1;
 display:flex;
 flex-direction:column;
 background:var(--chat);
-height:100vh;
 }
 
 /* HEADER CHAT */
@@ -426,7 +430,11 @@ width:6px;
 background:#d1d5db;
 border-radius:10px;
 }
+  
 
+  
+
+  
 </style>
 </head>
 
@@ -462,20 +470,29 @@ Controle
 </div>
 </div>
 
-<div id="chatIframeContainer" style="flex:1;display:flex;height:100%">
+<div id="chatIframeContainer" style="flex:1;display:flex">
 
-  
 <iframe id="frameChat" style="
 width:100%;
 height:100%;
 border:none;
-display:block;
 background:#020617;
 "></iframe>
 </div>
 
+<div class="sendBox" id="sendBox" style="display:none">
 
+<textarea id="msgManual" placeholder="Digite a mensagem"></textarea>
 
+<button onclick="enviarManual()">
+Enviar
+</button>
+
+<button onclick="falarComAgente()" style="background:#2563eb">
+Agente
+</button>
+
+</div>
 
 </div>
 
@@ -571,27 +588,23 @@ for (const c of clientes){
       </div>
     </div>
 
-<div class="menuDots" onclick="event.stopPropagation(); abrirMenu(event,'${c.telefone}')">⋮</div>
+    <div class="menuDots" onclick="abrirMenu(event,'${c.telefone}')">⋮</div>
 
-<div class="menu" id="menu-${c.telefone}">
+    <div class="menu" id="menu-${c.telefone}">
+      <button onclick="editarContato('${c.telefone}')">
+        Editar contato
+      </button>
 
-<button onclick="event.stopPropagation(); editarContato('${c.telefone}')">
-Editar contato
-</button>
-
-<button 
-onclick="event.stopPropagation(); toggleBot('${c.telefone}')"
-style="
-background:${pausado?'#22c55e':'#ef4444'};
-color:white;
-padding:6px 10px;
-border-radius:6px;
-font-size:12px;
-">
-${pausado ? "ATIVAR BOT" : "DESATIVAR BOT"}
-</button>
-
-</div>
+      <button onclick="toggleBot('${c.telefone}')" style="
+        background:${pausado?'#22c55e':'#ef4444'};
+        color:white;
+        padding:6px 10px;
+        border-radius:6px;
+        font-size:12px;
+      ">
+        ${pausado ? "ATIVAR BOT" : "DESATIVAR BOT"}
+      </button>
+    </div>
   `
 
   /* 🔥 CLICK CORRETO */
@@ -645,6 +658,9 @@ ativarScroll()
 /* 🔥 ISSO TEM QUE FICAR AQUI DENTRO */
 
 const pausado = await verificarPausa(telefone)
+const sendBox = document.getElementById("sendBox")
+
+sendBox.style.display = "flex"
 
 if(!pausado){
   sendBox.style.opacity = "0.5"
@@ -726,20 +742,30 @@ document.getElementById("frameRepertorio").src=url
 
 /* MENU */
 
-function abrirMenu(evento, telefone){
+function abrirMenu(e,telefone){
 
-evento.stopPropagation()
+e.stopPropagation()
 
-document.querySelectorAll(".menu").forEach(function(menu){
-  menu.style.display = "none"
+document.querySelectorAll(".menu").forEach(m=>{
+m.style.display="none"
 })
 
-const menu = document.getElementById("menu-" + telefone)
+const menu=document.getElementById("menu-"+telefone)
 
-menu.style.display = "flex"
+menu.style.display="flex"
+
+menu.style.top = e.pageY + "px"
+menu.style.left = e.pageX + "px"
+
 }
 
+/* FECHAR MENU */
 
+document.addEventListener("click",()=>{
+document.querySelectorAll(".menu").forEach(m=>{
+m.style.display="none"
+})
+})
 
 /* VERIFICAR PAUSA */
 
@@ -1007,16 +1033,13 @@ function abrirChatIframe(telefone){
 
   frame.src = "./chat.html?telefone=" + telefone
 
-
+  const sendBox = document.getElementById("sendBox")
+  sendBox.style.display = "flex"
 
 }
 
 
-  document.addEventListener("click", function(){
-  document.querySelectorAll(".menu").forEach(menu=>{
-    menu.style.display = "none"
-  })
-})
+  
 
 
 
