@@ -131,17 +131,18 @@ margin-left:260px;
 display:flex;
 flex-direction:column;
 height:100vh;
+
+/* 🔥 CORREÇÃO AQUI */
 overflow-y:auto;
+overflow-x:visible;
 
 width:calc(100% - 260px);
 
-/* 🔥 RESPIRO */
 padding:20px 24px;
 gap:16px;
 
 background:var(--bg);
 }
-
  
 .header{
 display:flex;
@@ -357,9 +358,9 @@ padding:22px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 border-radius:14px;
 
- 
 position:relative;
 z-index:1;
+overflow:visible; /* 🔥 ADICIONA ISSO */
 }
 .logo{
 color:#ffffff;
