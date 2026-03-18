@@ -625,7 +625,7 @@ async function carregarUsuarios(){
        <small>${u.setor}</small>
      </div>
      <div>
-       <button onclick="editarUsuario('${u.id}','${u.nome}','${u.setor}')" style="margin-right:5px;">✏️</button>
+      <button onclick="editarUsuario('${u.id}','${u.nome}','${u.setor}','${u.senha}')">✏️</button>
        <button onclick="excluirUsuario('${u.id}')">🗑️</button>
      </div>
    </div>
@@ -712,10 +712,10 @@ if(!senha){
  }
 }
 
-function editarUsuario(id,nome,setor){
+function editarUsuario(id,nome,setor,senha){
  document.getElementById("nomeUser").value = nome;
  document.getElementById("setorUser").value = setor;
- document.getElementById("senhaUser").value = ""; // 🔥 força digitar nova senha
+ document.getElementById("senhaUser").value = senha; // ✅ agora aparece
 
  userEditando = id;
 
@@ -723,7 +723,6 @@ function editarUsuario(id,nome,setor){
 
  mostrarAlerta("Modo edição ativado");
 }
-
 async function excluirUsuario(id){
  if(!confirm("Excluir usuário?")) return;
 
