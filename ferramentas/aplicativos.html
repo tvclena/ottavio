@@ -11,7 +11,10 @@ maximum-scale=1,
 user-scalable=no,
 viewport-fit=cover">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+<!-- ICONS (LEVE) -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
 <style>
 
@@ -24,13 +27,11 @@ viewport-fit=cover">
 --muted:#64748b;
 --border:#e2e8f0;
 
---radius:20px;
+--radius:18px;
 
---shadow:0 8px 25px rgba(0,0,0,.08);
---shadow-hover:0 18px 40px rgba(0,0,0,.12);
+--shadow:0 6px 18px rgba(0,0,0,.06);
+--shadow-hover:0 14px 30px rgba(0,0,0,.10);
 }
-
-/* RESET */
 
 *{
 box-sizing:border-box;
@@ -41,7 +42,7 @@ padding:0;
 /* BODY */
 
 body{
-font-family:Inter,sans-serif;
+font-family:Inter;
 background:linear-gradient(180deg,#ffffff,#f1f5f9);
 color:var(--text);
 }
@@ -55,13 +56,13 @@ top:0;
 z-index:50;
 
 background:rgba(255,255,255,.85);
-backdrop-filter:blur(14px);
+backdrop-filter:blur(12px);
 
 border-bottom:1px solid var(--border);
 
 display:flex;
 flex-direction:column;
-gap:12px;
+gap:10px;
 }
 
 .title{
@@ -72,19 +73,13 @@ font-weight:900;
 /* SEARCH */
 
 .search{
-height:44px;
-border-radius:14px;
+height:42px;
+border-radius:12px;
 border:1px solid var(--border);
-padding:0 14px;
-font-size:14px;
+padding:0 12px;
+font-size:13px;
 font-weight:600;
 background:#fff;
-}
-
-.search:focus{
-outline:none;
-border-color:var(--primary);
-box-shadow:0 0 0 3px rgba(37,99,235,.1);
 }
 
 /* FILTROS */
@@ -93,14 +88,13 @@ box-shadow:0 0 0 3px rgba(37,99,235,.1);
 display:flex;
 gap:8px;
 overflow:auto;
-padding-bottom:4px;
 }
 
 .filter{
-padding:8px 12px;
+padding:6px 10px;
 border-radius:999px;
 border:1px solid var(--border);
-font-size:12px;
+font-size:11px;
 font-weight:700;
 cursor:pointer;
 white-space:nowrap;
@@ -117,22 +111,24 @@ border-color:var(--primary);
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-gap:18px;
-padding:18px;
+grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+gap:14px;
+padding:16px;
 }
 
 /* ================= CARD ================= */
 
 .card{
 background:var(--card);
-border-radius:22px;
-overflow:hidden;
+border-radius:18px;
+padding:16px;
+
 cursor:pointer;
-transition:.25s ease;
+transition:.2s;
 
 display:flex;
 flex-direction:column;
+gap:12px;
 
 text-decoration:none;
 color:inherit;
@@ -141,46 +137,33 @@ border:1px solid var(--border);
 }
 
 .card:hover{
-transform:translateY(-6px);
+transform:translateY(-4px);
 box-shadow:var(--shadow-hover);
 }
 
-/* IMAGE */
+/* ICON */
 
-.card-img{
-height:120px;
-overflow:hidden;
-position:relative;
-}
+.icon-box{
+width:46px;
+height:46px;
 
-.card-img img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+border-radius:14px;
 
-/* overlay */
+display:flex;
+align-items:center;
+justify-content:center;
 
-.card-img::after{
-content:"";
-position:absolute;
-inset:0;
-background:linear-gradient(to top, rgba(0,0,0,.3), transparent);
+font-size:22px;
+
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:#fff;
 }
 
 /* BODY */
 
-.card-body{
-padding:14px;
-display:flex;
-flex-direction:column;
-gap:6px;
-}
-
 .card-title{
 font-size:14px;
 font-weight:800;
-line-height:1.2;
 }
 
 .card-desc{
@@ -191,23 +174,16 @@ color:var(--muted);
 /* TAG */
 
 .tag{
-margin-top:6px;
 font-size:10px;
 font-weight:800;
-padding:5px 8px;
+
+padding:4px 8px;
 border-radius:999px;
+
 background:#eef2ff;
 color:#3730a3;
+
 width:max-content;
-}
-
-/* LOADING */
-
-.loading{
-padding:40px;
-text-align:center;
-color:var(--muted);
-font-weight:600;
 }
 
 /* MOBILE */
@@ -216,11 +192,6 @@ font-weight:600;
 
 .grid{
 grid-template-columns:repeat(2,1fr);
-gap:12px;
-}
-
-.card-img{
-height:90px;
 }
 
 .card-desc{
@@ -238,7 +209,7 @@ display:none;
 
 <div class="title">Aplicativos</div>
 
-<input id="search" class="search" placeholder="Buscar aplicativo...">
+<input id="search" class="search" placeholder="Buscar...">
 
 <div id="filters" class="filters"></div>
 
@@ -252,31 +223,63 @@ display:none;
 
 const apps=[
 
-{nome:"PDV Garçom",descricao:"Pedidos e mesas",tipo:"Operacional",imagem:"https://images.unsplash.com/photo-1556740738-b6a63e27c4df",link:"pdv-garcom.html"},
+{
+nome:"PDV Garçom",
+descricao:"Pedidos e mesas",
+tipo:"Operacional",
+icon:"ri-restaurant-line",
+link:"pdv-garcom.html"
+},
 
-{nome:"PDV Bebidas",descricao:"Venda rápida",tipo:"Operacional",imagem:"https://images.unsplash.com/photo-1600891964599-f61ba0e24092",link:"pdv-bebidas.html"},
+{
+nome:"PDV Bebidas",
+descricao:"Venda rápida",
+tipo:"Operacional",
+icon:"ri-goblet-line",
+link:"pdv-bebidas.html"
+},
 
-{nome:"CMV Dashboard",descricao:"Custos e lucro",tipo:"Financeiro",imagem:"https://images.unsplash.com/photo-1554224155-6726b3ff858f",link:"cmv.html"},
+{
+nome:"CMV Dashboard",
+descricao:"Custos e lucro",
+tipo:"Financeiro",
+icon:"ri-bar-chart-line",
+link:"cmv.html"
+},
 
-{nome:"Buffet Controle",descricao:"Reposição buffet",tipo:"Operacional",imagem:"https://images.unsplash.com/photo-1504674900247-0877df9cc836",link:"buffet.html"},
+{
+nome:"Buffet Controle",
+descricao:"Reposição buffet",
+tipo:"Operacional",
+icon:"ri-cake-3-line",
+link:"buffet.html"
+},
 
-{nome:"Financeiro",descricao:"Relatórios",tipo:"Financeiro",imagem:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e",link:"financeiro.html"},
+{
+nome:"Financeiro",
+descricao:"Relatórios",
+tipo:"Financeiro",
+icon:"ri-money-dollar-circle-line",
+link:"financeiro.html"
+},
 
-{nome:"Auditoria",descricao:"Histórico sistema",tipo:"Auditoria",imagem:"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40",link:"auditoria.html"}
+{
+nome:"Auditoria",
+descricao:"Histórico sistema",
+tipo:"Auditoria",
+icon:"ri-shield-check-line",
+link:"auditoria.html"
+}
 
 ];
 
-/* ================= ESTADO ================= */
+/* ================= FILTROS ================= */
 
 let filtroAtual="Todos";
 
-/* ================= FILTROS ================= */
-
 const tipos=["Todos",...new Set(apps.map(a=>a.tipo))];
 
-const filtersEl=document.getElementById("filters");
-
-filtersEl.innerHTML=tipos.map(t=>
+filters.innerHTML=tipos.map(t=>
 `<div class="filter ${t==="Todos"?"active":""}" onclick="setFiltro('${t}',this)">
 ${t}
 </div>`
@@ -293,8 +296,6 @@ render();
 
 /* ================= RENDER ================= */
 
-const grid=document.getElementById("grid");
-
 function render(){
 
 const busca=search.value.toLowerCase();
@@ -307,17 +308,13 @@ const filtrados=apps.filter(a=>
 grid.innerHTML=filtrados.map(a=>`
 <a href="${a.link}" class="card">
 
-<div class="card-img">
-<img src="${a.imagem}" loading="lazy">
+<div class="icon-box">
+<i class="${a.icon}"></i>
 </div>
-
-<div class="card-body">
 
 <div class="card-title">${a.nome}</div>
 <div class="card-desc">${a.descricao}</div>
 <div class="tag">${a.tipo}</div>
-
-</div>
 
 </a>
 `).join("");
@@ -326,12 +323,10 @@ grid.innerHTML=filtrados.map(a=>`
 
 /* ================= PERFORMANCE ================= */
 
-/* debounce busca */
-
 let timer;
 search.addEventListener("input",()=>{
 clearTimeout(timer);
-timer=setTimeout(render,200);
+timer=setTimeout(render,150);
 });
 
 /* INIT */
