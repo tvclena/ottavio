@@ -5,28 +5,24 @@
 <title>Mercatto • Sistema de Requisições</title>
 
 <meta name="viewport"
-content="width=device-width,
-initial-scale=1,
-maximum-scale=1,
-user-scalable=no,
-viewport-fit=cover">
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 
 /* ===== BASE ===== */
 :root{
---bg:#f4f6fb;
+--azul:#1677ff;
+--verde:#22c55e;
+--amarelo:#facc15;
+--vermelho:#ef4444;
+--roxo:#8b5cf6;
+--bg:#f1f5f9;
 --card:#ffffff;
 --text:#0f172a;
 --muted:#64748b;
---primary:#2563eb;
---primary-dark:#1e40af;
---success:#16a34a;
---border:#e5e7eb;
---radius:22px;
---shadow:0 15px 40px rgba(0,0,0,.08);
+--border:#e2e8f0;
 }
 
 *{box-sizing:border-box}
@@ -40,48 +36,91 @@ color:var(--text);
 
 /* ===== HEADER ===== */
 .header{
-padding:18px 25px;
-background:#fff;
-border-bottom:1px solid var(--border);
 display:flex;
 justify-content:space-between;
 align-items:center;
-position:sticky;
-top:0;
-z-index:10;
+padding:12px 20px;
+background:#fff;
+border-bottom:1px solid var(--border);
+}
+
+.header-left{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:800;
 }
 
 .logo{
-font-weight:900;
-font-size:18px;
+background:var(--azul);
+color:#fff;
+padding:8px 10px;
+border-radius:6px;
 }
 
 .btn-top{
-background:var(--success);
+background:var(--verde);
 color:#fff;
-padding:10px 18px;
-border-radius:12px;
+border:none;
+padding:10px 14px;
+border-radius:8px;
 font-weight:700;
 cursor:pointer;
 }
 
+/* ===== STATUS CARDS ===== */
+.status{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+padding:15px;
+justify-content:center;
+}
+
+.card-status{
+background:#fff;
+padding:10px 16px;
+border-radius:10px;
+display:flex;
+align-items:center;
+gap:8px;
+font-weight:700;
+box-shadow:0 4px 10px rgba(0,0,0,.05);
+}
+
+.badge{
+background:#000;
+color:#fff;
+padding:4px 8px;
+border-radius:6px;
+}
+
 /* ===== HERO ===== */
 .hero{
-padding:40px 20px;
 text-align:center;
+padding:30px 20px 10px;
 }
 
 .hero h1{
-font-size:32px;
 margin:0;
+font-size:28px;
 }
 
 .hero p{
-margin-top:10px;
 color:var(--muted);
+margin-top:8px;
 }
 
-/* ===== MOCKUP ===== */
+/* ===== PREÇO ===== */
+.price{
+text-align:center;
+margin-top:15px;
+font-size:34px;
+font-weight:900;
+color:var(--azul);
+}
+
+/* ===== MOCKUPS ===== */
 .mockups{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -91,65 +130,51 @@ padding:20px;
 
 .mockups img{
 width:100%;
-border-radius:16px;
-box-shadow:var(--shadow);
+border-radius:10px;
+border:1px solid var(--border);
 }
 
-/* ===== CARDS ===== */
-.cards{
+/* ===== FEATURES ===== */
+.features{
 padding:20px;
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:20px;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
 }
 
-.card{
-background:var(--card);
-padding:25px;
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-transition:.2s;
+.feature{
+background:#fff;
+padding:15px;
+border-radius:10px;
+border:1px solid var(--border);
 }
 
-.card:hover{
-transform:translateY(-5px);
-}
-
-.card h2{
+.feature h3{
 margin:0;
-font-size:18px;
+font-size:15px;
 }
 
-.card p{
-font-size:14px;
+.feature p{
+font-size:13px;
 color:var(--muted);
-margin-top:10px;
+margin-top:5px;
 }
 
 /* ===== CTA ===== */
 .cta{
-padding:30px 20px;
+padding:30px;
 text-align:center;
 }
 
 .btn-main{
-background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+background:var(--azul);
 color:#fff;
-padding:16px 28px;
+padding:14px 24px;
 border:none;
-border-radius:14px;
-font-size:16px;
+border-radius:10px;
 font-weight:800;
+font-size:16px;
 cursor:pointer;
-box-shadow:var(--shadow);
-}
-
-/* ===== FOOTER ===== */
-.footer{
-padding:20px;
-text-align:center;
-font-size:13px;
-color:var(--muted);
 }
 
 /* ===== RESPONSIVO ===== */
@@ -158,7 +183,7 @@ color:var(--muted);
 grid-template-columns:1fr;
 }
 .hero h1{
-font-size:24px;
+font-size:22px;
 }
 }
 
@@ -169,16 +194,31 @@ font-size:24px;
 
 <!-- HEADER -->
 <div class="header">
-<div class="logo">📦 Mercatto Systems</div>
-<div class="btn-top" onclick="ativarProduto()">Ativar Produto</div>
+<div class="header-left">
+<div class="logo">CB</div>
+<span>REQUISIÇÕES DE USO E CONSUMO</span>
+</div>
+
+<button class="btn-top" onclick="ativar()">
+🚀 Ativar Sistema
+</button>
+</div>
+
+<!-- STATUS (VISUAL IGUAL AO SISTEMA) -->
+<div class="status">
+<div class="card-status">🕓 PENDENTE <span class="badge">5</span></div>
+<div class="card-status" style="background:#dbeafe">🛒 CARRINHO <span class="badge">0</span></div>
+<div class="card-status" style="background:#fef3c7">💰 COMPRADO <span class="badge">0</span></div>
+<div class="card-status" style="background:#fee2e2">❌ NEGADO <span class="badge">0</span></div>
+<div class="card-status" style="background:#dcfce7">✅ ENTREGUE <span class="badge">0</span></div>
+<div class="card-status" style="background:#ede9fe">🚫 SEM ESTOQUE <span class="badge">0</span></div>
 </div>
 
 <!-- HERO -->
 <div class="hero">
 <h1>Sistema Completo de Requisições</h1>
-<p>
-Controle total de pedidos internos, compras e estoque em tempo real.
-</p>
+<p>Controle total de pedidos, compras e estoque em tempo real</p>
+<div class="price">R$ 29,90 / mês</div>
 </div>
 
 <!-- MOCKUPS -->
@@ -187,81 +227,65 @@ Controle total de pedidos internos, compras e estoque em tempo real.
 <img src="https://i.imgur.com/Nz7b2F5.png">
 </div>
 
-<!-- BENEFÍCIOS -->
-<div class="cards">
+<!-- FEATURES -->
+<div class="features">
 
-<div class="card">
-<h2>📦 Lançamento de Pedidos</h2>
-<p>
-Funcionários solicitam produtos de forma simples,
-com histórico automático e controle por setor.
-</p>
+<div class="feature">
+<h3>📦 Requisição Simples</h3>
+<p>Funcionários fazem pedidos rapidamente com histórico automático</p>
 </div>
 
-<div class="card">
-<h2>📊 Gestão Inteligente</h2>
-<p>
-Controle completo com status, filtros, relatórios
-e organização por setor ou solicitante.
-</p>
+<div class="feature">
+<h3>📊 Painel Completo</h3>
+<p>Controle total com filtros, status e relatórios</p>
 </div>
 
-<div class="card">
-<h2>⚡ Tempo Real</h2>
-<p>
-Atualização instantânea entre equipe e compras,
-evitando erros e atrasos.
-</p>
+<div class="feature">
+<h3>⚡ Tempo Real</h3>
+<p>Atualização instantânea entre setores</p>
 </div>
 
-<div class="card">
-<h2>📱 Fácil e Rápido</h2>
-<p>
-Sistema leve, mobile-first e pronto para uso
-em qualquer dispositivo.
-</p>
+<div class="feature">
+<h3>📱 Mobile Perfeito</h3>
+<p>Funciona 100% no celular</p>
 </div>
 
 </div>
 
 <!-- CTA -->
 <div class="cta">
-<button class="btn-main" onclick="ativarProduto()">
-🚀 Ativar Sistema Agora
+<button class="btn-main" onclick="ativar()">
+🚀 Ativar por R$ 29,90
 </button>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-© Mercatto Delícia • Sistema Profissional
 </div>
 
 <script>
 
-/* ===== CONFIG ===== */
-const numero = "5577999999999"; // 🔥 ALTERA AQUI
+/* CONFIG */
+const numero = "5577999999999"; // 🔥 COLOCA SEU WHATS
 
-function ativarProduto(){
+function ativar(){
 
-const mensagem = `
-Olá! Quero ativar o Sistema de Requisições do Mercatto.
+const msg = `
+Olá! Quero ativar o Sistema de Requisições.
 
-📦 Módulos inclusos:
-• Requisição de Produtos
-• Painel de Gestão de Requisições
+💰 Plano: R$ 29,90/mês
 
-📊 Funcionalidades:
+📦 Inclui:
+• Requisição de produtos
+• Painel de gestão
+
+📊 Recursos:
 • Controle por setor
-• Status (Pendente, Comprado, Entregue)
-• Histórico de pedidos
+• Status de pedidos
 • Relatórios completos
-• Atualização em tempo real
+• Tempo real
 
-Quero mais informações para ativação.
+Quero ativar agora.
 `;
 
-const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
-window.open(url, "_blank");
+window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, "_blank");
+
 }
 
 </script>
