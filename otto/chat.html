@@ -207,6 +207,15 @@ let arquivo = null
 let ultimaDataRender = null
 
 /* ===== TIME ===== */
+function hora(d){
+return new Intl.DateTimeFormat("pt-BR",{
+hour:"2-digit",
+minute:"2-digit",
+timeZone:"America/Bahia"
+}).format(new Date(d))
+}
+
+  
 function dataLabel(d){
 
 const formatter = new Intl.DateTimeFormat("en-CA",{
