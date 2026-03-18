@@ -11,9 +11,9 @@
 <style>
 
 :root{
---azul:#1677ff;
+--azul:#2b6fe8;
 --verde:#22c55e;
---bg:#f1f5f9;
+--bg:#eef2f7;
 --card:#ffffff;
 --border:#e2e8f0;
 --text:#0f172a;
@@ -62,33 +62,6 @@ top:0;
 z-index:10;
 }
 
-/* STATUS */
-.status{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-justify-content:center;
-padding:10px;
-background:#fff;
-border-bottom:1px solid var(--border);
-}
-
-.card-status{
-background:#f9fafb;
-padding:10px 14px;
-border-radius:8px;
-font-weight:700;
-display:flex;
-gap:8px;
-}
-
-.badge{
-background:#000;
-color:#fff;
-padding:3px 8px;
-border-radius:6px;
-}
-
 /* GRID */
 .grid{
 display:grid;
@@ -97,30 +70,22 @@ gap:20px;
 padding:20px;
 }
 
+/* CARDS */
+.card{
+background:#fff;
+border-radius:14px;
+box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+
 /* FORM */
 .form{
-background:#fff;
 padding:20px;
-border-radius:12px;
-box-shadow:0 6px 18px rgba(0,0,0,.05);
 }
 
-/* PAINEL */
-.painel{
-background:#fff;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 6px 18px rgba(0,0,0,.05);
-}
-
-/* TITULO INTERNO */
 .box-title{
 font-weight:800;
 font-size:18px;
 margin-bottom:15px;
-display:flex;
-align-items:center;
-gap:8px;
 }
 
 /* INPUTS */
@@ -156,7 +121,47 @@ background:var(--azul);
 color:#fff;
 }
 
+/* PAINEL HEADER */
+.panel-header{
+padding:15px 20px;
+font-weight:800;
+border-bottom:1px solid var(--border);
+}
+
+/* STATUS DENTRO DO PAINEL */
+.status{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+padding:12px 20px;
+border-bottom:1px solid var(--border);
+background:#f8fafc;
+}
+
+.card-status{
+background:#fff;
+padding:8px 12px;
+border-radius:10px;
+font-weight:700;
+display:flex;
+gap:6px;
+align-items:center;
+border:1px solid var(--border);
+}
+
+.badge{
+background:#000;
+color:#fff;
+padding:2px 7px;
+border-radius:6px;
+font-size:12px;
+}
+
 /* TABELA */
+.table-container{
+padding:0 0 10px 0;
+}
+
 thead{
 background:var(--azul);
 color:#fff;
@@ -174,7 +179,7 @@ border:1px solid #ddd;
 text-align:center;
 }
 
-/* DESCRIÇÃO FINAL */
+/* DESCRIÇÃO */
 .descricao{
 background:#fff;
 padding:40px 20px;
@@ -192,12 +197,6 @@ color:var(--muted);
 max-width:700px;
 margin:auto;
 line-height:1.6;
-}
-
-.descricao .btn{
-margin-top:20px;
-font-size:16px;
-padding:14px 20px;
 }
 
 /* RESPONSIVO */
@@ -222,20 +221,10 @@ padding:14px 20px;
 <button class="btn" onclick="ativar()">Ativar Agora</button>
 </header>
 
-<!-- STATUS -->
-<div class="status">
-<div class="card-status">PENDENTE <span class="badge" id="cP">0</span></div>
-<div class="card-status">CARRINHO <span class="badge">0</span></div>
-<div class="card-status">COMPRADO <span class="badge">0</span></div>
-<div class="card-status">NEGADO <span class="badge">0</span></div>
-<div class="card-status">ENTREGUE <span class="badge">0</span></div>
-<div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
-</div>
-
 <div class="grid">
 
 <!-- FORM -->
-<div class="form">
+<div class="card form">
 
 <div class="box-title">📦 Módulo de Requisição</div>
 
@@ -271,12 +260,21 @@ ENVIAR ITEM
 </div>
 
 <!-- PAINEL -->
-<div class="painel">
+<div class="card">
 
-<div style="padding:15px;font-weight:800;">
-📊 Painel de Requisições
+<div class="panel-header">📊 Painel de Requisições</div>
+
+<!-- STATUS DENTRO -->
+<div class="status">
+<div class="card-status">PENDENTE <span class="badge" id="cP">0</span></div>
+<div class="card-status">CARRINHO <span class="badge">0</span></div>
+<div class="card-status">COMPRADO <span class="badge">0</span></div>
+<div class="card-status">NEGADO <span class="badge">0</span></div>
+<div class="card-status">ENTREGUE <span class="badge">0</span></div>
+<div class="card-status">SEM ESTOQUE <span class="badge">0</span></div>
 </div>
 
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -290,6 +288,7 @@ ENVIAR ITEM
 </thead>
 <tbody id="tabela"></tbody>
 </table>
+</div>
 
 </div>
 
