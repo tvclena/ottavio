@@ -5,11 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Perfil • Sistema</title>
+<title>Perfil </title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
@@ -18,20 +18,17 @@
 body{
 margin:0;
 font-family:Inter;
-background:#f1f5f9;
+background:#f8fafc;
+height:100vh;
+overflow:hidden;
 }
 
-/* LOADING */
+/* LAYOUT PRINCIPAL */
 
-.loading{
+.app{
 height:100vh;
 display:flex;
 flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:10px;
-color:#64748b;
-font-weight:600;
 }
 
 /* HEADER */
@@ -40,7 +37,7 @@ font-weight:600;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:16px;
+padding:16px 22px;
 background:#fff;
 border-bottom:1px solid #e5e7eb;
 }
@@ -48,16 +45,17 @@ border-bottom:1px solid #e5e7eb;
 .profile{
 display:flex;
 align-items:center;
-gap:12px;
+gap:14px;
 cursor:pointer;
 }
 
 .avatar{
-width:48px;
-height:48px;
-border-radius:14px;
+width:52px;
+height:52px;
+border-radius:16px;
 overflow:hidden;
 background:#e2e8f0;
+box-shadow:0 6px 18px rgba(0,0,0,.15);
 }
 
 .avatar img{
@@ -66,8 +64,15 @@ height:100%;
 object-fit:cover;
 }
 
+.info{
+display:flex;
+flex-direction:column;
+}
+
 .name{
+font-size:16px;
 font-weight:800;
+color:#0f172a;
 }
 
 .plan{
@@ -79,14 +84,14 @@ color:#64748b;
 
 .menu{
 position:absolute;
-right:16px;
-top:70px;
+right:20px;
+top:80px;
 background:#fff;
 border-radius:14px;
 box-shadow:0 20px 50px rgba(0,0,0,.2);
 display:none;
-min-width:220px;
 padding:10px;
+min-width:220px;
 z-index:999;
 }
 
@@ -104,32 +109,37 @@ background:#f1f5f9;
 /* ALERTA */
 
 .alert{
-margin:10px 16px;
-background:#fff7ed;
-border:1px solid #fed7aa;
-color:#9a3412;
+margin:10px 20px;
 padding:12px;
 border-radius:12px;
-display:none;
+background:#fff7ed;
+color:#9a3412;
+border:1px solid #fed7aa;
 font-weight:600;
+display:none;
 }
 
 /* GRID */
 
-.container{
-padding:16px;
+.content{
+flex:1;
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+grid-template-columns:repeat(4,1fr);
+grid-template-rows:repeat(3,1fr);
 gap:12px;
+padding:16px;
 }
 
 /* CARD */
 
 .card{
 background:#fff;
+border-radius:14px;
 padding:14px;
-border-radius:12px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
+display:flex;
+flex-direction:column;
+justify-content:center;
 }
 
 .label{
@@ -138,20 +148,24 @@ color:#64748b;
 }
 
 .value{
-font-weight:700;
+font-weight:800;
+font-size:14px;
 margin-top:2px;
+color:#0f172a;
 }
 
 /* BOTÕES */
 
 .actions{
-padding:16px;
 display:flex;
-flex-direction:column;
 gap:10px;
+padding:12px 16px;
+border-top:1px solid #e5e7eb;
+background:#fff;
 }
 
 .btn{
+flex:1;
 padding:14px;
 border:none;
 border-radius:12px;
@@ -162,6 +176,15 @@ cursor:pointer;
 .primary{background:#2563eb;color:#fff;}
 .danger{background:#ef4444;color:#fff;}
 
+.loading{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:600;
+color:#64748b;
+}
+
 </style>
 
 </head>
@@ -169,11 +192,12 @@ cursor:pointer;
 <body>
 
 <div id="loading" class="loading">
-🔄 Carregando perfil...
+Carregando perfil...
 </div>
 
-<div id="app" style="display:none">
+<div id="app" class="app" style="display:none">
 
+<!-- HEADER -->
 <div class="header">
 
 <div class="profile" onclick="toggleMenu()">
@@ -181,7 +205,7 @@ cursor:pointer;
 <img id="logo">
 </div>
 
-<div>
+<div class="info">
 <div class="name" id="nome"></div>
 <div class="plan" id="plano"></div>
 </div>
@@ -189,40 +213,41 @@ cursor:pointer;
 
 </div>
 
+<!-- DROPDOWN -->
 <div id="menu" class="menu">
-<div onclick="trocarEmpresa()">Trocar empresa</div>
 <div onclick="gerenciar()">Gerenciar assinatura</div>
 <div onclick="logout()">Sair</div>
 </div>
 
+<!-- ALERTA -->
 <div id="alerta" class="alert"></div>
 
-<div id="dados" class="container"></div>
+<!-- GRID -->
+<div id="dados" class="content"></div>
 
+<!-- AÇÕES -->
 <div class="actions">
-<button class="btn primary" onclick="gerenciar()">Gerenciar assinatura</button>
-<button class="btn danger" onclick="logout()">Sair do sistema</button>
+<button class="btn primary" onclick="gerenciar()">Gerenciar</button>
+<button class="btn danger" onclick="logout()">Sair</button>
 </div>
 
 </div>
 
 <script>
 
-/* 🔥 NÃO USA 'supabase' */
+/* CLIENT */
 const client = window.supabase.createClient(
 "https://fcehmjmtxqmrjkuqlkay.supabase.co",
 "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-/* PEGAR EMAIL GARANTIDO */
+/* EMAIL */
 async function getEmail(){
 
 let email = localStorage.getItem("USER_EMAIL")
-
 if(email) return email
 
 const { data } = await client.auth.getUser()
-
 if(data?.user?.email){
 localStorage.setItem("USER_EMAIL", data.user.email)
 return data.user.email
@@ -237,17 +262,17 @@ async function init(){
 const email = await getEmail()
 
 if(!email){
-document.getElementById("loading").innerText = "Sessão não encontrada"
+document.getElementById("loading").innerText="Sessão não encontrada"
 return
 }
 
-const { data, error } = await client
+const { data } = await client
 .from("empresas")
 .select("*")
 .eq("email", email)
 
-if(error || !data?.length){
-document.getElementById("loading").innerText = "Erro ao carregar perfil"
+if(!data?.length){
+document.getElementById("loading").innerText="Empresa não encontrada"
 return
 }
 
@@ -258,8 +283,7 @@ document.getElementById("nome").innerText = e.nome_fantasia
 document.getElementById("plano").innerText = "Plano " + e.plano
 
 document.getElementById("logo").src =
-e.logo_url ||
-"https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
+e.logo_url || "https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
 
 /* ALERTA */
 if(e.assinatura_expira){
@@ -269,35 +293,36 @@ const dias = Math.ceil((new Date(e.assinatura_expira)-new Date())/86400000)
 if(dias <= 5){
 const alerta = document.getElementById("alerta")
 alerta.style.display="block"
-alerta.innerText="⚠️ Sua assinatura vence em "+dias+" dias"
+alerta.innerText="⚠️ Vence em "+dias+" dias"
 }
 }
 
-/* DADOS COMPLETOS */
+/* GRID SUPER OTIMIZADO */
 document.getElementById("dados").innerHTML = `
 
 <div class="card"><div class="label">Empresa</div><div class="value">${e.nome}</div></div>
 <div class="card"><div class="label">CNPJ</div><div class="value">${e.cnpj}</div></div>
 <div class="card"><div class="label">Email</div><div class="value">${e.email}</div></div>
 <div class="card"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
+
 <div class="card"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
 <div class="card"><div class="label">Cidade</div><div class="value">${e.cidade}-${e.estado}</div></div>
 <div class="card"><div class="label">Plano</div><div class="value">${e.plano}</div></div>
+<div class="card"><div class="label">Status</div><div class="value">${e.status}</div></div>
+
 <div class="card"><div class="label">Valor</div><div class="value">R$ ${Number(e.valor_mensal).toFixed(2)}</div></div>
 <div class="card"><div class="label">Vencimento</div><div class="value">Dia ${e.dia_vencimento}</div></div>
 <div class="card"><div class="label">Expira</div><div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div></div>
 <div class="card"><div class="label">Usuários</div><div class="value">${e.usuarios_limite}</div></div>
-<div class="card"><div class="label">Filiais</div><div class="value">${e.filiais_limite}</div></div>
-<div class="card"><div class="label">Status</div><div class="value">${e.status}</div></div>
 
 `
 
 document.getElementById("loading").style.display="none"
-document.getElementById("app").style.display="block"
+document.getElementById("app").style.display="flex"
 
 }
 
-/* MENU */
+/* UI */
 function toggleMenu(){
 const m=document.getElementById("menu")
 m.style.display = m.style.display==="block"?"none":"block"
@@ -305,17 +330,13 @@ m.style.display = m.style.display==="block"?"none":"block"
 
 /* AÇÕES */
 function gerenciar(){
-window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinatura")
+window.open("https://wa.me/557798253249")
 }
 
 async function logout(){
 await client.auth.signOut()
 localStorage.clear()
 window.top.location.href="index.html"
-}
-
-function trocarEmpresa(){
-alert("Multi-empresa pronto no sistema principal")
 }
 
 /* START */
