@@ -609,6 +609,15 @@ async function iniciarSistema(){
   // 🔍 verifica sessão real
   const { data } = await supabaseAuth.auth.getSession()
 
+
+const { data: { user } } = await supabaseAuth.auth.getUser()
+
+if(user){
+  localStorage.setItem("USER_EMAIL", user.email)
+}
+
+
+ 
   if(!data.session){
     localStorage.clear()
     window.location.href = "index.html"
@@ -666,8 +675,8 @@ const {data:conversas}=await db.from("conversas_whatsapp").select("*")
 const {data:reservas}=await db.from("reservas_mercatto").select("*")
 const {data:controle}=await db.from("controle_bot").select("*")
 
-const conv=conversas.filter(c=>{
-const d=new Date(c.created_at)
+const conv=(conversas || []).filter(c=>{
+ const d=new Date(c.created_at)
 return d>=inicio && d<=fim
 })
 
@@ -679,11 +688,11 @@ const telefones=new Set()
 conv.forEach(c=>telefones.add(normalizar(c.telefone)))
 set("convUnicas",telefones.size)
 
-let pausadas=controle.filter(c=>c.pausado).length
-set("pausadas",pausadas)
+let pausadas=(controle || []).filter(c=>c.pausado).length
+ set("pausadas",pausadas)
 
-const res=reservas.filter(r=>{
-const d=new Date(r.datahora)
+const res=(reservas || []).filter(r=>{
+ const d=new Date(r.datahora)
 return d>=inicio && d<=fim
 })
 
@@ -1117,15 +1126,19 @@ function fecharPerfil(){
   document.getElementById("perfilModal").style.display = "none"
 }
 
-const perfilModal = document.getElementById("perfilModal")
+document.addEventListener("DOMContentLoaded", () => {
 
-perfilModal.addEventListener("click",(e)=>{
-  if(e.target === perfilModal){
-    fecharPerfil()
+  const perfilModal = document.getElementById("perfilModal")
+
+  if(perfilModal){
+    perfilModal.addEventListener("click",(e)=>{
+      if(e.target === perfilModal){
+        fecharPerfil()
+      }
+    })
   }
+
 })
-
-
 
 
  
