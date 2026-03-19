@@ -4,210 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Perfil da Empresa</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-
-/* ===== BASE ===== */
-*{box-sizing:border-box}
-
 body{
 margin:0;
 font-family:Inter;
 background:#f8fafc;
-color:#0f172a;
+padding:20px;
 }
-
-/* HEADER */
-
-.header{
-display:flex;
-align-items:center;
-gap:16px;
-padding:24px;
-background:#ffffff;
-border-bottom:1px solid #e5e7eb;
-}
-
-.logo{
-width:60px;
-height:60px;
-border-radius:16px;
-overflow:hidden;
-box-shadow:0 8px 20px rgba(0,0,0,.15);
-}
-
-.logo img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.title{
-display:flex;
-flex-direction:column;
-}
-
-.title h1{
-margin:0;
-font-size:20px;
-font-weight:800;
-}
-
-.title span{
-font-size:13px;
-color:#64748b;
-}
-
-/* STATUS BADGE */
-
-.badge{
-margin-left:auto;
-padding:8px 14px;
-border-radius:30px;
-font-size:12px;
-font-weight:700;
-}
-
-.ativo{
-background:#dcfce7;
-color:#166534;
-}
-
-.vencido{
-background:#fee2e2;
-color:#991b1b;
-}
-
-/* CONTAINER */
-
-.container{
-padding:24px;
-display:grid;
-gap:18px;
-}
-
-/* CARDS */
 
 .card{
-background:#ffffff;
-border-radius:16px;
-padding:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
-border:1px solid #e5e7eb;
+background:#fff;
+border-radius:12px;
+padding:16px;
+box-shadow:0 6px 18px rgba(0,0,0,.08);
+margin-bottom:12px;
 }
 
-.card h3{
-margin:0 0 10px 0;
-font-size:13px;
-color:#64748b;
+h2{
+margin-bottom:20px;
 }
 
-.card p{
-margin:0;
-font-size:16px;
-font-weight:600;
-}
-
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:16px;
-}
-
-/* LOGOUT */
-
-.logout{
-margin-top:20px;
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
 background:#ef4444;
 color:#fff;
-border:none;
-padding:14px;
-border-radius:12px;
 font-weight:700;
 cursor:pointer;
-transition:.2s;
 }
-
-.logout:hover{
-background:#dc2626;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="header">
+<h2>Perfil da Empresa</h2>
 
-<div class="logo">
-<img id="logoEmpresa">
-</div>
+<div id="dados"></div>
 
-<div class="title">
-<h1 id="nomeEmpresa">Carregando...</h1>
-<span id="emailEmpresa"></span>
-</div>
-
-<div id="statusBadge" class="badge">...</div>
-
-</div>
-
-<div class="container">
-
-<div class="grid">
-
-<div class="card">
-<h3>CNPJ</h3>
-<p id="cnpj"></p>
-</div>
-
-<div class="card">
-<h3>Telefone</h3>
-<p id="telefone"></p>
-</div>
-
-<div class="card">
-<h3>Cidade</h3>
-<p id="cidade"></p>
-</div>
-
-<div class="card">
-<h3>Plano</h3>
-<p id="plano"></p>
-</div>
-
-<div class="card">
-<h3>Vencimento</h3>
-<p id="vencimento"></p>
-</div>
-
-<div class="card">
-<h3>Valor Mensal</h3>
-<p id="valor"></p>
-</div>
-
-<div class="card">
-<h3>Usuários Permitidos</h3>
-<p id="usuarios"></p>
-</div>
-
-<div class="card">
-<h3>Filiais Permitidas</h3>
-<p id="filiais"></p>
-</div>
-
-</div>
-
-<button class="logout" onclick="logout()">Sair do sistema</button>
-
-</div>
+<button onclick="logout()">Sair</button>
 
 <script>
 
@@ -216,63 +54,37 @@ const supabasePerfil = window.supabase.createClient(
   "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-function money(v){
-return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})
-}
-
 async function carregar(){
 
 const email = localStorage.getItem("USER_EMAIL")
 
 if(!email){
-document.body.innerHTML = "Sessão não encontrada"
+document.getElementById("dados").innerHTML = "Sessão não encontrada"
 return
 }
 
-const { data: empresa } = await supabasePerfil
+const { data: empresa, error } = await supabasePerfil
 .from("empresas")
 .select("*")
 .eq("email", email)
 .single()
 
-if(!empresa){
-document.body.innerHTML = "Empresa não encontrada"
+if(error || !empresa){
+document.getElementById("dados").innerHTML = "Erro ao carregar perfil"
 return
 }
 
-/* ===== HEADER ===== */
+const box = document.getElementById("dados")
 
-document.getElementById("nomeEmpresa").innerText = empresa.nome_fantasia
-document.getElementById("emailEmpresa").innerText = empresa.email
-
-document.getElementById("logoEmpresa").src =
-empresa.logo_url ||
-"https://ui-avatars.com/api/?name="+encodeURIComponent(empresa.nome_fantasia)
-
-/* STATUS */
-
-const badge = document.getElementById("statusBadge")
-
-if(empresa.assinatura_ativa){
-badge.innerText = "ATIVO"
-badge.classList.add("ativo")
-}else{
-badge.innerText = "VENCIDO"
-badge.classList.add("vencido")
-}
-
-/* ===== DADOS ===== */
-
-document.getElementById("cnpj").innerText = empresa.cnpj
-document.getElementById("telefone").innerText = empresa.telefone
-document.getElementById("cidade").innerText = empresa.cidade
-document.getElementById("plano").innerText = empresa.plano
-document.getElementById("vencimento").innerText =
-new Date(empresa.assinatura_expira).toLocaleDateString()
-
-document.getElementById("valor").innerText = money(empresa.valor_mensal)
-document.getElementById("usuarios").innerText = empresa.usuarios_limite
-document.getElementById("filiais").innerText = empresa.filiais_limite
+box.innerHTML = `
+<div class="card"><b>Empresa:</b> ${empresa.nome_fantasia}</div>
+<div class="card"><b>CNPJ:</b> ${empresa.cnpj}</div>
+<div class="card"><b>Email:</b> ${empresa.email}</div>
+<div class="card"><b>Telefone:</b> ${empresa.telefone}</div>
+<div class="card"><b>Plano:</b> ${empresa.plano}</div>
+<div class="card"><b>Status:</b> ${empresa.status}</div>
+<div class="card"><b>Vencimento:</b> ${new Date(empresa.assinatura_expira).toLocaleDateString()}</div>
+`
 
 }
 
@@ -282,6 +94,7 @@ await supabasePerfil.auth.signOut()
 
 localStorage.clear()
 
+// 👉 redireciona o sistema inteiro (não só iframe)
 window.top.location.href = "index.html"
 
 }
