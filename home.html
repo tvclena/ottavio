@@ -570,10 +570,43 @@ Buffet
 
 <script>
 
-const db = supabase.createClient(
-"https://dxkszikemntfusfyrzos.supabase.co",
-"sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
-)
+let db = null
+
+async function iniciarSistema(){
+
+  const SUPABASE_URL = localStorage.getItem("SUPABASE_URL")
+  const SUPABASE_KEY = localStorage.getItem("SUPABASE_KEY")
+
+  // 🔒 valida se tem credenciais
+  if(!SUPABASE_URL || !SUPABASE_KEY){
+    window.location.href = "index.html"
+    return
+  }
+
+  // 🔐 cliente do AUTH (banco master)
+  const supabaseAuth = supabase.createClient(
+    "https://fcehmjmtxqmrjkuqlkay.supabase.co",
+    "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
+  )
+
+  // 🔍 verifica sessão real
+  const { data } = await supabaseAuth.auth.getSession()
+
+  if(!data.session){
+    localStorage.clear()
+    window.location.href = "index.html"
+    return
+  }
+
+  // ✅ cria conexão com banco da empresa
+  db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  // 🚀 inicia sistema
+  defaultDates()
+  carregar()
+}
+
+iniciarSistema()
 
 let charts={}
 
