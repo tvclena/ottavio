@@ -441,8 +441,30 @@ Relatórios
 
 <h2 id="tituloPagina">Analytics Operacional</h2>
 
+<div style="display:flex;align-items:center;gap:12px">
+
 <div class="filters">
 <input type="date" id="inicio">
+<input type="date" id="fim">
+<button onclick="carregar()">Atualizar</button>
+</div>
+
+<!-- PERFIL -->
+<div id="btnPerfil" onclick="abrirPerfil()" style="
+width:40px;
+height:40px;
+border-radius:50%;
+overflow:hidden;
+cursor:pointer;
+border:2px solid #e2e8f0;
+box-shadow:0 4px 12px rgba(0,0,0,.15);
+">
+<img id="perfilLogo" style="width:100%;height:100%;object-fit:cover">
+</div>
+
+</div>
+ 
+ <input type="date" id="inicio">
 <input type="date" id="fim">
 <button onclick="carregar()">Atualizar</button>
 </div>
@@ -604,6 +626,7 @@ async function iniciarSistema(){
   // 🚀 inicia sistema
   defaultDates()
   carregar()
+ carregarPerfilHeader()
 }
 
 iniciarSistema()
@@ -1058,8 +1081,93 @@ document.body.appendChild(newScript)
 })
 
 }
+ async function carregarPerfilHeader(){
+
+  const supabaseAuth = supabase.createClient(
+    "https://fcehmjmtxqmrjkuqlkay.supabase.co",
+    "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
+  )
+
+  const { data: { user } } = await supabaseAuth.auth.getUser()
+
+  if(!user) return
+
+  const { data: empresa } = await supabaseAuth
+    .from("empresas")
+    .select("logo_url, nome_fantasia")
+    .eq("email", user.email)
+    .single()
+
+  if(empresa){
+
+    const logo = document.getElementById("perfilLogo")
+
+    logo.src = empresa.logo_url || "https://via.placeholder.com/100"
+
+  }
+
+}
+
+
+
+
+
+function abrirPerfil(){
+  document.getElementById("perfilModal").style.display = "flex"
+}
+
+function fecharPerfil(){
+  document.getElementById("perfilModal").style.display = "none"
+}
+
+
+
+
+
+
  
 </script>
+<div id="perfilModal" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.75);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999999;
+">
 
+<div style="
+width:700px;
+max-width:95%;
+height:85%;
+background:#fff;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 30px 80px rgba(0,0,0,.4);
+position:relative;
+">
+
+<!-- BOTÃO FECHAR -->
+<div onclick="fecharPerfil()" style="
+position:absolute;
+top:12px;
+right:16px;
+font-size:22px;
+cursor:pointer;
+z-index:10;
+color:#64748b;
+">
+✕
+</div>
+
+<iframe src="perfil.html"></iframe>
+
+</div>
+
+</div>
 </body>
 </html>
