@@ -1097,8 +1097,10 @@ document.body.appendChild(newScript)
 
     const logo = document.getElementById("perfilLogo")
 
-    logo.src = empresa.logo_url || "https://via.placeholder.com/100"
-
+logo.src = empresa.logo_url 
+  ? empresa.logo_url 
+  : "https://ui-avatars.com/api/?name=" + encodeURIComponent(empresa.nome_fantasia) + "&background=2563eb&color=fff"
+   
   }
 
 }
@@ -1115,7 +1117,13 @@ function fecharPerfil(){
   document.getElementById("perfilModal").style.display = "none"
 }
 
+const perfilModal = document.getElementById("perfilModal")
 
+perfilModal.addEventListener("click",(e)=>{
+  if(e.target === perfilModal){
+    fecharPerfil()
+  }
+})
 
 
 
