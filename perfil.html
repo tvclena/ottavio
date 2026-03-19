@@ -21,27 +21,33 @@ font-family:Inter;
 background:#f1f5f9;
 }
 
+/* LOADING */
+
+.loading{
+height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:10px;
+color:#64748b;
+font-weight:600;
+}
+
 /* HEADER */
 
 .header{
 display:flex;
-justify-content:space-between;
 align-items:center;
-padding:16px 20px;
+gap:12px;
+padding:16px;
 background:#fff;
 border-bottom:1px solid #e5e7eb;
 }
 
-.profileTop{
-display:flex;
-align-items:center;
-gap:12px;
-cursor:pointer;
-}
-
 .avatar{
-width:46px;
-height:46px;
+width:50px;
+height:50px;
 border-radius:12px;
 overflow:hidden;
 background:#e2e8f0;
@@ -62,64 +68,19 @@ font-size:12px;
 color:#64748b;
 }
 
-/* DROPDOWN */
-
-.menu{
-position:absolute;
-right:20px;
-top:70px;
-background:#fff;
-border-radius:12px;
-box-shadow:0 20px 50px rgba(0,0,0,.2);
-display:none;
-min-width:200px;
-padding:10px;
-z-index:999;
-}
-
-.menu div{
-padding:10px;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-}
-
-.menu div:hover{
-background:#f1f5f9;
-}
-
-/* ALERTA */
-
-.alert{
-background:#fff7ed;
-color:#9a3412;
-padding:12px;
-border-radius:10px;
-margin:12px 0;
-display:none;
-font-weight:600;
-}
-
 /* CONTAINER */
 
 .container{
 padding:20px;
 }
 
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:12px;
-}
-
 /* CARD */
 
 .card{
 background:#fff;
-border-radius:14px;
-padding:14px;
+padding:16px;
+border-radius:12px;
+margin-bottom:10px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
@@ -144,15 +105,8 @@ cursor:pointer;
 margin-top:10px;
 }
 
-.primary{
-background:#2563eb;
-color:#fff;
-}
-
-.danger{
-background:#ef4444;
-color:#fff;
-}
+.primary{background:#2563eb;color:#fff;}
+.danger{background:#ef4444;color:#fff;}
 
 </style>
 
@@ -160,9 +114,14 @@ color:#fff;
 
 <body>
 
-<div class="header">
+<div id="loading" class="loading">
+<div>🔄 Carregando perfil...</div>
+<div id="debug"></div>
+</div>
 
-<div class="profileTop" onclick="toggleMenu()">
+<div id="app" style="display:none">
+
+<div class="header">
 <div class="avatar">
 <img id="logo">
 </div>
@@ -173,27 +132,19 @@ color:#fff;
 </div>
 </div>
 
-</div>
-
-<div id="menu" class="menu">
-<div onclick="abrirEmpresas()">Trocar empresa</div>
-<div onclick="gerenciar()">Gerenciar assinatura</div>
-<div onclick="logout()">Sair</div>
-</div>
-
 <div class="container">
 
-<div id="alerta" class="alert"></div>
-
-<div class="grid" id="dados"></div>
+<div id="dados"></div>
 
 <button class="btn primary" onclick="gerenciar()">
 Gerenciar assinatura
 </button>
 
 <button class="btn danger" onclick="logout()">
-Sair do sistema
+Sair
 </button>
+
+</div>
 
 </div>
 
@@ -204,23 +155,51 @@ const supabase = window.supabase.createClient(
 "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-/* 🔥 PEGA EMAIL COM RETRY */
-async function getEmail(){
+/* DEBUG VISUAL */
+function log(msg){
+document.getElementById("debug").innerText = msg
+console.log(msg)
+}
 
-for(let i=0;i<10;i++){
+/* 🔥 PEGAR EMAIL CERTO */
+async function pegarEmail(){
 
+log("Buscando email...")
+
+// 1️⃣ localStorage
 let email = localStorage.getItem("USER_EMAIL")
 
-if(email) return email
+if(email){
+log("Email via localStorage")
+return email
+}
 
+// 2️⃣ sessionStorage (backup)
+email = sessionStorage.getItem("USER_EMAIL")
+
+if(email){
+log("Email via sessionStorage")
+return email
+}
+
+// 3️⃣ auth (supabase)
 const { data } = await supabase.auth.getUser()
 
 if(data?.user?.email){
+log("Email via auth")
 localStorage.setItem("USER_EMAIL", data.user.email)
 return data.user.email
 }
 
+// 4️⃣ retry
+for(let i=0;i<5;i++){
 await new Promise(r=>setTimeout(r,300))
+
+email = localStorage.getItem("USER_EMAIL")
+if(email){
+log("Email após retry")
+return email
+}
 }
 
 return null
@@ -229,33 +208,48 @@ return null
 /* 🚀 INIT */
 async function init(){
 
-const email = await getEmail()
+const email = await pegarEmail()
 
 if(!email){
-document.body.innerHTML = "Erro de sessão"
+log("❌ EMAIL NÃO ENCONTRADO")
+document.getElementById("loading").innerHTML = "Sessão não encontrada"
 return
 }
 
-const { data: empresas } = await supabase
+log("Email: " + email)
+
+/* 🔥 BUSCA EMPRESA */
+const { data, error } = await supabase
 .from("empresas")
 .select("*")
 .eq("email", email)
 
-if(!empresas || !empresas.length){
-document.body.innerHTML = "Empresa não encontrada"
+if(error){
+log("Erro banco: " + error.message)
+document.getElementById("loading").innerHTML = "Erro ao carregar dados"
 return
 }
 
-render(empresas[0])
-window.listaEmpresas = empresas
+if(!data || !data.length){
+log("❌ Empresa não encontrada")
+document.getElementById("loading").innerHTML = "Empresa não encontrada"
+return
+}
+
+const e = data[0]
+
+log("Empresa carregada")
+
+render(e)
+
+document.getElementById("loading").style.display = "none"
+document.getElementById("app").style.display = "block"
 
 }
 
 /* RENDER */
 
 function render(e){
-
-document.documentElement.style.setProperty("--accent", e.cor_primaria || "#2563eb")
 
 document.getElementById("nome").innerText = e.nome_fantasia
 document.getElementById("plano").innerText = "Plano " + e.plano
@@ -264,71 +258,40 @@ document.getElementById("logo").src =
 e.logo_url ||
 "https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
 
-/* ALERTA */
-
-if(e.assinatura_expira){
-
-const dias = Math.ceil((new Date(e.assinatura_expira) - new Date()) / 86400000)
-
-if(dias <= 5){
-const alerta = document.getElementById("alerta")
-alerta.style.display = "block"
-alerta.innerText = "⚠️ Sua assinatura vence em " + dias + " dias"
-}
-
-}
-
-/* GRID COMPLETO */
+/* DADOS COMPLETOS */
 
 document.getElementById("dados").innerHTML = `
 
+<div class="card"><div class="label">Empresa</div><div class="value">${e.nome}</div></div>
+
 <div class="card"><div class="label">CNPJ</div><div class="value">${e.cnpj}</div></div>
-<div class="card"><div class="label">Email</div><div class="value">${e.email}</div></div>
-<div class="card"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
+
 <div class="card"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
+
+<div class="card"><div class="label">CPF</div><div class="value">${e.responsavel_cpf}</div></div>
+
+<div class="card"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
+
+<div class="card"><div class="label">Endereço</div><div class="value">${e.endereco}, ${e.numero} - ${e.bairro}</div></div>
+
 <div class="card"><div class="label">Cidade</div><div class="value">${e.cidade} - ${e.estado}</div></div>
+
 <div class="card"><div class="label">Plano</div><div class="value">${e.plano}</div></div>
+
 <div class="card"><div class="label">Valor</div><div class="value">R$ ${Number(e.valor_mensal).toFixed(2)}</div></div>
+
 <div class="card"><div class="label">Vencimento</div><div class="value">Dia ${e.dia_vencimento}</div></div>
+
 <div class="card"><div class="label">Expira em</div><div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div></div>
+
 <div class="card"><div class="label">Usuários</div><div class="value">${e.usuarios_limite}</div></div>
+
 <div class="card"><div class="label">Filiais</div><div class="value">${e.filiais_limite}</div></div>
+
 <div class="card"><div class="label">Status</div><div class="value">${e.status}</div></div>
 
 `
 
-}
-
-/* MULTI EMPRESA */
-
-function abrirEmpresas(){
-
-let lista = window.listaEmpresas || []
-
-let html = lista.map(e=>`
-<div class="card" onclick="trocar('${e.supabase_url}','${e.supabase_anon_key}')">
-${e.nome_fantasia}
-</div>
-`).join("")
-
-document.getElementById("dados").innerHTML = html
-
-}
-
-function trocar(url,key){
-
-localStorage.setItem("SUPABASE_URL", url)
-localStorage.setItem("SUPABASE_KEY", key)
-
-window.top.location.reload()
-
-}
-
-/* UI */
-
-function toggleMenu(){
-const m = document.getElementById("menu")
-m.style.display = m.style.display === "block" ? "none" : "block"
 }
 
 /* AÇÕES */
@@ -338,14 +301,10 @@ window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinat
 }
 
 async function logout(){
-
-try{
 await supabase.auth.signOut()
-}catch(e){}
-
 localStorage.clear()
+sessionStorage.clear()
 window.top.location.href = "index.html"
-
 }
 
 /* START */
