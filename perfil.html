@@ -21,6 +21,17 @@ font-family:Inter;
 background:#f1f5f9;
 }
 
+/* LOADING */
+
+.loading{
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+font-weight:600;
+color:#64748b;
+}
+
 /* HEADER */
 
 .header{
@@ -30,20 +41,18 @@ align-items:center;
 padding:16px 20px;
 background:#fff;
 border-bottom:1px solid #e5e7eb;
-position:sticky;
-top:0;
-z-index:10;
 }
 
 .profileTop{
 display:flex;
 align-items:center;
-gap:14px;
+gap:12px;
+cursor:pointer;
 }
 
 .avatar{
-width:48px;
-height:48px;
+width:46px;
+height:46px;
 border-radius:14px;
 overflow:hidden;
 background:#e2e8f0;
@@ -55,14 +64,8 @@ height:100%;
 object-fit:cover;
 }
 
-.nameBox{
-display:flex;
-flex-direction:column;
-}
-
 .name{
 font-weight:800;
-color:#0f172a;
 }
 
 .plan{
@@ -72,44 +75,27 @@ color:#64748b;
 
 /* DROPDOWN */
 
-.dropdown{
-position:relative;
-}
-
 .menu{
 position:absolute;
-right:0;
-top:60px;
+right:20px;
+top:70px;
 background:#fff;
-border-radius:14px;
+border-radius:12px;
 box-shadow:0 20px 50px rgba(0,0,0,.2);
-padding:10px;
 display:none;
-min-width:220px;
+min-width:200px;
+padding:10px;
 }
 
 .menu div{
-padding:12px;
-border-radius:10px;
+padding:10px;
+border-radius:8px;
 cursor:pointer;
 font-weight:600;
 }
 
 .menu div:hover{
 background:#f1f5f9;
-}
-
-/* ALERTA */
-
-.alert{
-background:#fff7ed;
-color:#9a3412;
-padding:14px;
-margin:20px;
-border-radius:12px;
-font-weight:600;
-border:1px solid #fed7aa;
-display:none;
 }
 
 /* CONTAINER */
@@ -122,10 +108,10 @@ padding:20px;
 
 .card{
 background:#fff;
-border-radius:16px;
-padding:18px;
+border-radius:14px;
+padding:16px;
+margin-bottom:12px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
-margin-bottom:14px;
 }
 
 .label{
@@ -135,58 +121,39 @@ color:#64748b;
 
 .value{
 font-weight:700;
-color:#0f172a;
+}
+
+/* ALERTA */
+
+.alert{
+background:#fff7ed;
+color:#9a3412;
+padding:12px;
+border-radius:10px;
+margin:10px 0;
+display:none;
 }
 
 /* BOTÕES */
 
 .btn{
 width:100%;
-padding:16px;
+padding:14px;
 border:none;
-border-radius:14px;
+border-radius:12px;
 font-weight:800;
 cursor:pointer;
 margin-top:10px;
 }
 
-.btn.primary{
+.primary{
 background:#2563eb;
 color:#fff;
 }
 
-.btn.primary:hover{
-background:#1e40af;
-}
-
-.btn.danger{
+.danger{
 background:#ef4444;
 color:#fff;
-}
-
-.btn.danger:hover{
-background:#dc2626;
-}
-
-/* EMPRESAS */
-
-.empresas{
-display:flex;
-flex-direction:column;
-gap:10px;
-margin-top:10px;
-}
-
-.empresaItem{
-padding:12px;
-border-radius:12px;
-border:1px solid #e5e7eb;
-cursor:pointer;
-font-weight:600;
-}
-
-.empresaItem:hover{
-background:#f1f5f9;
 }
 
 </style>
@@ -195,49 +162,48 @@ background:#f1f5f9;
 
 <body>
 
+<div id="loading" class="loading">
+Carregando perfil...
+</div>
+
+<div id="app" style="display:none">
+
 <div class="header">
 
 <div class="profileTop" onclick="toggleMenu()">
 <div class="avatar">
-<img id="logoEmpresa">
+<img id="logo">
 </div>
 
-<div class="nameBox">
-<div class="name" id="nomeEmpresa">Carregando...</div>
-<div class="plan" id="planoEmpresa"></div>
+<div>
+<div class="name" id="nome"></div>
+<div class="plan" id="plano"></div>
 </div>
 </div>
 
-<div class="dropdown">
-<div class="menu" id="menu">
+</div>
 
+<div id="menu" class="menu">
 <div onclick="abrirEmpresas()">Trocar empresa</div>
 <div onclick="gerenciar()">Gerenciar assinatura</div>
 <div onclick="logout()">Sair</div>
-
 </div>
-</div>
-
-</div>
-
-<div id="alerta" class="alert"></div>
 
 <div class="container">
 
-<div id="dados"></div>
+<div id="alerta" class="alert"></div>
 
-<div id="areaEmpresas" style="display:none">
-<h3>Trocar empresa</h3>
-<div class="empresas" id="listaEmpresas"></div>
-</div>
+<div id="dados"></div>
 
 <button class="btn primary" onclick="gerenciar()">
 Gerenciar assinatura
 </button>
 
 <button class="btn danger" onclick="logout()">
-Sair do sistema
+Sair
 </button>
+
+</div>
 
 </div>
 
@@ -248,19 +214,40 @@ const supabase = window.supabase.createClient(
 "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-let empresaAtual = null
+/* 🔥 FUNÇÃO ESPERA EMAIL */
+async function getEmailSeguro(){
 
-function toggleMenu(){
-const menu = document.getElementById("menu")
-menu.style.display = menu.style.display === "block" ? "none" : "block"
+let tentativas = 0
+
+while(tentativas < 10){
+
+let email = localStorage.getItem("USER_EMAIL")
+
+if(email) return email
+
+/* fallback auth */
+const { data } = await supabase.auth.getUser()
+
+if(data?.user?.email){
+localStorage.setItem("USER_EMAIL", data.user.email)
+return data.user.email
 }
 
-async function carregar(){
+await new Promise(r=>setTimeout(r,300))
 
-const email = localStorage.getItem("USER_EMAIL")
+tentativas++
+}
+
+return null
+}
+
+/* 🚀 INIT */
+async function iniciar(){
+
+const email = await getEmailSeguro()
 
 if(!email){
-document.body.innerHTML = "Sessão não encontrada"
+document.getElementById("loading").innerText = "Erro ao carregar sessão"
 return
 }
 
@@ -270,42 +257,38 @@ const { data: empresas } = await supabase
 .eq("email", email)
 
 if(!empresas || !empresas.length){
-document.body.innerHTML = "Nenhuma empresa encontrada"
+document.getElementById("loading").innerText = "Empresa não encontrada"
 return
 }
 
-empresaAtual = empresas[0]
+render(empresas[0])
 
-renderEmpresa(empresaAtual)
-
-renderEmpresas(empresas)
+document.getElementById("loading").style.display = "none"
+document.getElementById("app").style.display = "block"
 
 }
 
-function renderEmpresa(e){
+/* RENDER */
 
-document.getElementById("nomeEmpresa").innerText = e.nome_fantasia
-document.getElementById("planoEmpresa").innerText = "Plano " + (e.plano || "-")
+function render(e){
 
-document.getElementById("logoEmpresa").src =
+document.getElementById("nome").innerText = e.nome_fantasia
+document.getElementById("plano").innerText = "Plano " + e.plano
+
+document.getElementById("logo").src =
 e.logo_url ||
 "https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
 
-const vencimento = e.assinatura_expira
-? new Date(e.assinatura_expira)
-: null
+/* ALERTA */
 
-/* ALERTA AUTOMÁTICO */
+if(e.assinatura_expira){
 
-if(vencimento){
+const dias = Math.ceil((new Date(e.assinatura_expira) - new Date()) / 86400000)
 
-const hoje = new Date()
-const diff = Math.ceil((vencimento - hoje)/(1000*60*60*24))
-
-if(diff <= 5){
+if(dias <= 5){
 const alerta = document.getElementById("alerta")
 alerta.style.display = "block"
-alerta.innerText = "⚠️ Sua assinatura vence em " + diff + " dias"
+alerta.innerText = "⚠️ Sua assinatura vence em " + dias + " dias"
 }
 
 }
@@ -336,69 +319,39 @@ document.getElementById("dados").innerHTML = `
 
 <div class="card">
 <div class="label">Vencimento</div>
-<div class="value">${vencimento ? vencimento.toLocaleDateString() : "-"}</div>
+<div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div>
 </div>
 
 `
 
 }
 
-/* MULTI EMPRESA */
+/* UI */
 
-function renderEmpresas(lista){
-
-const box = document.getElementById("listaEmpresas")
-
-box.innerHTML = ""
-
-lista.forEach(e=>{
-
-const div = document.createElement("div")
-div.className = "empresaItem"
-div.innerText = e.nome_fantasia
-
-div.onclick = ()=>{
-
-/* 🔥 troca credenciais */
-localStorage.setItem("SUPABASE_URL", e.supabase_url)
-localStorage.setItem("SUPABASE_KEY", e.supabase_key)
-
-/* recarrega sistema */
-window.top.location.reload()
-
+function toggleMenu(){
+const m = document.getElementById("menu")
+m.style.display = m.style.display === "block" ? "none" : "block"
 }
 
-box.appendChild(div)
-
-})
-
-}
+/* AÇÕES */
 
 function abrirEmpresas(){
-document.getElementById("areaEmpresas").style.display = "block"
+alert("Multi-empresa ativado no sistema principal")
 }
-
-/* GERENCIAR */
 
 function gerenciar(){
-window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinatura","_blank")
+window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinatura")
 }
-
-/* LOGOUT */
 
 async function logout(){
-
-try{
 await supabase.auth.signOut()
-}catch(e){}
-
 localStorage.clear()
-
 window.top.location.href = "index.html"
-
 }
 
-carregar()
+/* START */
+
+iniciar()
 
 </script>
 
