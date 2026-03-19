@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Perfil • Mercatto</title>
+<title>Perfil • Sistema</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -38,17 +38,24 @@ font-weight:600;
 
 .header{
 display:flex;
+justify-content:space-between;
 align-items:center;
-gap:12px;
 padding:16px;
 background:#fff;
 border-bottom:1px solid #e5e7eb;
 }
 
+.profile{
+display:flex;
+align-items:center;
+gap:12px;
+cursor:pointer;
+}
+
 .avatar{
-width:50px;
-height:50px;
-border-radius:12px;
+width:48px;
+height:48px;
+border-radius:14px;
 overflow:hidden;
 background:#e2e8f0;
 }
@@ -68,41 +75,88 @@ font-size:12px;
 color:#64748b;
 }
 
-/* CONTAINER */
+/* DROPDOWN */
+
+.menu{
+position:absolute;
+right:16px;
+top:70px;
+background:#fff;
+border-radius:14px;
+box-shadow:0 20px 50px rgba(0,0,0,.2);
+display:none;
+min-width:220px;
+padding:10px;
+z-index:999;
+}
+
+.menu div{
+padding:12px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+}
+
+.menu div:hover{
+background:#f1f5f9;
+}
+
+/* ALERTA */
+
+.alert{
+margin:10px 16px;
+background:#fff7ed;
+border:1px solid #fed7aa;
+color:#9a3412;
+padding:12px;
+border-radius:12px;
+display:none;
+font-weight:600;
+}
+
+/* GRID */
 
 .container{
-padding:20px;
+padding:16px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
 }
 
 /* CARD */
 
 .card{
 background:#fff;
-padding:16px;
+padding:14px;
 border-radius:12px;
-margin-bottom:10px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
 .label{
-font-size:12px;
+font-size:11px;
 color:#64748b;
 }
 
 .value{
 font-weight:700;
+margin-top:2px;
 }
 
 /* BOTÕES */
 
+.actions{
+padding:16px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
 .btn{
-width:100%;
 padding:14px;
 border:none;
 border-radius:12px;
 font-weight:800;
 cursor:pointer;
-margin-top:10px;
 }
 
 .primary{background:#2563eb;color:#fff;}
@@ -115,13 +169,14 @@ margin-top:10px;
 <body>
 
 <div id="loading" class="loading">
-<div>🔄 Carregando perfil...</div>
-<div id="debug"></div>
+🔄 Carregando perfil...
 </div>
 
 <div id="app" style="display:none">
 
 <div class="header">
+
+<div class="profile" onclick="toggleMenu()">
 <div class="avatar">
 <img id="logo">
 </div>
@@ -132,125 +187,73 @@ margin-top:10px;
 </div>
 </div>
 
-<div class="container">
+</div>
 
-<div id="dados"></div>
+<div id="menu" class="menu">
+<div onclick="trocarEmpresa()">Trocar empresa</div>
+<div onclick="gerenciar()">Gerenciar assinatura</div>
+<div onclick="logout()">Sair</div>
+</div>
 
-<button class="btn primary" onclick="gerenciar()">
-Gerenciar assinatura
-</button>
+<div id="alerta" class="alert"></div>
 
-<button class="btn danger" onclick="logout()">
-Sair
-</button>
+<div id="dados" class="container"></div>
 
+<div class="actions">
+<button class="btn primary" onclick="gerenciar()">Gerenciar assinatura</button>
+<button class="btn danger" onclick="logout()">Sair do sistema</button>
 </div>
 
 </div>
 
 <script>
 
-const supabase = window.supabase.createClient(
+/* 🔥 NÃO USA 'supabase' */
+const client = window.supabase.createClient(
 "https://fcehmjmtxqmrjkuqlkay.supabase.co",
 "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-/* DEBUG VISUAL */
-function log(msg){
-document.getElementById("debug").innerText = msg
-console.log(msg)
-}
+/* PEGAR EMAIL GARANTIDO */
+async function getEmail(){
 
-/* 🔥 PEGAR EMAIL CERTO */
-async function pegarEmail(){
-
-log("Buscando email...")
-
-// 1️⃣ localStorage
 let email = localStorage.getItem("USER_EMAIL")
 
-if(email){
-log("Email via localStorage")
-return email
-}
+if(email) return email
 
-// 2️⃣ sessionStorage (backup)
-email = sessionStorage.getItem("USER_EMAIL")
-
-if(email){
-log("Email via sessionStorage")
-return email
-}
-
-// 3️⃣ auth (supabase)
-const { data } = await supabase.auth.getUser()
+const { data } = await client.auth.getUser()
 
 if(data?.user?.email){
-log("Email via auth")
 localStorage.setItem("USER_EMAIL", data.user.email)
 return data.user.email
-}
-
-// 4️⃣ retry
-for(let i=0;i<5;i++){
-await new Promise(r=>setTimeout(r,300))
-
-email = localStorage.getItem("USER_EMAIL")
-if(email){
-log("Email após retry")
-return email
-}
 }
 
 return null
 }
 
-/* 🚀 INIT */
+/* INIT */
 async function init(){
 
-const email = await pegarEmail()
+const email = await getEmail()
 
 if(!email){
-log("❌ EMAIL NÃO ENCONTRADO")
-document.getElementById("loading").innerHTML = "Sessão não encontrada"
+document.getElementById("loading").innerText = "Sessão não encontrada"
 return
 }
 
-log("Email: " + email)
-
-/* 🔥 BUSCA EMPRESA */
-const { data, error } = await supabase
+const { data, error } = await client
 .from("empresas")
 .select("*")
 .eq("email", email)
 
-if(error){
-log("Erro banco: " + error.message)
-document.getElementById("loading").innerHTML = "Erro ao carregar dados"
-return
-}
-
-if(!data || !data.length){
-log("❌ Empresa não encontrada")
-document.getElementById("loading").innerHTML = "Empresa não encontrada"
+if(error || !data?.length){
+document.getElementById("loading").innerText = "Erro ao carregar perfil"
 return
 }
 
 const e = data[0]
 
-log("Empresa carregada")
-
-render(e)
-
-document.getElementById("loading").style.display = "none"
-document.getElementById("app").style.display = "block"
-
-}
-
-/* RENDER */
-
-function render(e){
-
+/* HEADER */
 document.getElementById("nome").innerText = e.nome_fantasia
 document.getElementById("plano").innerText = "Plano " + e.plano
 
@@ -258,57 +261,64 @@ document.getElementById("logo").src =
 e.logo_url ||
 "https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
 
-/* DADOS COMPLETOS */
+/* ALERTA */
+if(e.assinatura_expira){
 
+const dias = Math.ceil((new Date(e.assinatura_expira)-new Date())/86400000)
+
+if(dias <= 5){
+const alerta = document.getElementById("alerta")
+alerta.style.display="block"
+alerta.innerText="⚠️ Sua assinatura vence em "+dias+" dias"
+}
+}
+
+/* DADOS COMPLETOS */
 document.getElementById("dados").innerHTML = `
 
 <div class="card"><div class="label">Empresa</div><div class="value">${e.nome}</div></div>
-
 <div class="card"><div class="label">CNPJ</div><div class="value">${e.cnpj}</div></div>
-
-<div class="card"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
-
-<div class="card"><div class="label">CPF</div><div class="value">${e.responsavel_cpf}</div></div>
-
+<div class="card"><div class="label">Email</div><div class="value">${e.email}</div></div>
 <div class="card"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
-
-<div class="card"><div class="label">Endereço</div><div class="value">${e.endereco}, ${e.numero} - ${e.bairro}</div></div>
-
-<div class="card"><div class="label">Cidade</div><div class="value">${e.cidade} - ${e.estado}</div></div>
-
+<div class="card"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
+<div class="card"><div class="label">Cidade</div><div class="value">${e.cidade}-${e.estado}</div></div>
 <div class="card"><div class="label">Plano</div><div class="value">${e.plano}</div></div>
-
 <div class="card"><div class="label">Valor</div><div class="value">R$ ${Number(e.valor_mensal).toFixed(2)}</div></div>
-
 <div class="card"><div class="label">Vencimento</div><div class="value">Dia ${e.dia_vencimento}</div></div>
-
-<div class="card"><div class="label">Expira em</div><div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div></div>
-
+<div class="card"><div class="label">Expira</div><div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div></div>
 <div class="card"><div class="label">Usuários</div><div class="value">${e.usuarios_limite}</div></div>
-
 <div class="card"><div class="label">Filiais</div><div class="value">${e.filiais_limite}</div></div>
-
 <div class="card"><div class="label">Status</div><div class="value">${e.status}</div></div>
 
 `
 
+document.getElementById("loading").style.display="none"
+document.getElementById("app").style.display="block"
+
+}
+
+/* MENU */
+function toggleMenu(){
+const m=document.getElementById("menu")
+m.style.display = m.style.display==="block"?"none":"block"
 }
 
 /* AÇÕES */
-
 function gerenciar(){
 window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinatura")
 }
 
 async function logout(){
-await supabase.auth.signOut()
+await client.auth.signOut()
 localStorage.clear()
-sessionStorage.clear()
-window.top.location.href = "index.html"
+window.top.location.href="index.html"
+}
+
+function trocarEmpresa(){
+alert("Multi-empresa pronto no sistema principal")
 }
 
 /* START */
-
 init()
 
 </script>
