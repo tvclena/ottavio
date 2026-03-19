@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Perfil </title>
+<title>Perfil • Mercatto</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -18,17 +18,18 @@
 body{
 margin:0;
 font-family:Inter;
-background:#f8fafc;
+background:#f6f8fb;
+color:#0f172a;
 height:100vh;
 overflow:hidden;
 }
 
-/* LAYOUT PRINCIPAL */
+/* LAYOUT */
 
 .app{
-height:100vh;
 display:flex;
 flex-direction:column;
+height:100vh;
 }
 
 /* HEADER */
@@ -37,25 +38,25 @@ flex-direction:column;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:16px 22px;
-background:#fff;
+padding:20px 28px;
+background:#ffffff;
 border-bottom:1px solid #e5e7eb;
 }
 
 .profile{
 display:flex;
 align-items:center;
-gap:14px;
+gap:16px;
 cursor:pointer;
 }
 
 .avatar{
-width:52px;
-height:52px;
-border-radius:16px;
+width:56px;
+height:56px;
+border-radius:18px;
 overflow:hidden;
 background:#e2e8f0;
-box-shadow:0 6px 18px rgba(0,0,0,.15);
+box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 .avatar img{
@@ -70,13 +71,12 @@ flex-direction:column;
 }
 
 .name{
-font-size:16px;
-font-weight:800;
-color:#0f172a;
+font-size:18px;
+font-weight:700;
 }
 
 .plan{
-font-size:12px;
+font-size:13px;
 color:#64748b;
 }
 
@@ -84,97 +84,140 @@ color:#64748b;
 
 .menu{
 position:absolute;
-right:20px;
-top:80px;
+right:30px;
+top:90px;
 background:#fff;
-border-radius:14px;
-box-shadow:0 20px 50px rgba(0,0,0,.2);
+border-radius:16px;
+box-shadow:0 25px 60px rgba(0,0,0,.15);
 display:none;
-padding:10px;
+padding:12px;
 min-width:220px;
 z-index:999;
 }
 
 .menu div{
 padding:12px;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
-font-weight:600;
+font-weight:500;
 }
 
 .menu div:hover{
 background:#f1f5f9;
 }
 
-/* ALERTA */
-
-.alert{
-margin:10px 20px;
-padding:12px;
-border-radius:12px;
-background:#fff7ed;
-color:#9a3412;
-border:1px solid #fed7aa;
-font-weight:600;
-display:none;
-}
-
-/* GRID */
+/* CONTENT */
 
 .content{
 flex:1;
+padding:24px 28px;
 display:grid;
-grid-template-columns:repeat(4,1fr);
-grid-template-rows:repeat(3,1fr);
-gap:12px;
-padding:16px;
+grid-template-columns: 1.4fr 1fr;
+gap:20px;
 }
 
-/* CARD */
+/* LEFT */
 
-.card{
+.mainCard{
 background:#fff;
-border-radius:14px;
-padding:14px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
+border-radius:18px;
+padding:22px;
+box-shadow:0 15px 40px rgba(0,0,0,.06);
 display:flex;
 flex-direction:column;
-justify-content:center;
+gap:18px;
+}
+
+/* GRID INTERNO */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+}
+
+.field{
+display:flex;
+flex-direction:column;
 }
 
 .label{
-font-size:11px;
+font-size:12px;
 color:#64748b;
 }
 
 .value{
-font-weight:800;
-font-size:14px;
-margin-top:2px;
-color:#0f172a;
+font-size:15px;
+font-weight:600;
 }
 
-/* BOTÕES */
+/* RIGHT */
+
+.side{
+display:flex;
+flex-direction:column;
+gap:16px;
+}
+
+/* STATUS */
+
+.statusCard{
+background:#fff;
+border-radius:18px;
+padding:20px;
+box-shadow:0 15px 40px rgba(0,0,0,.06);
+}
+
+.statusTitle{
+font-size:13px;
+color:#64748b;
+}
+
+.statusValue{
+font-size:20px;
+font-weight:700;
+margin-top:4px;
+}
+
+/* ALERT */
+
+.alert{
+background:#fff7ed;
+border:1px solid #fed7aa;
+color:#9a3412;
+padding:12px;
+border-radius:12px;
+font-weight:500;
+display:none;
+}
+
+/* ACTIONS */
 
 .actions{
 display:flex;
+flex-direction:column;
 gap:10px;
-padding:12px 16px;
-border-top:1px solid #e5e7eb;
-background:#fff;
 }
 
 .btn{
-flex:1;
 padding:14px;
 border:none;
-border-radius:12px;
-font-weight:800;
+border-radius:14px;
+font-weight:600;
 cursor:pointer;
 }
 
-.primary{background:#2563eb;color:#fff;}
-.danger{background:#ef4444;color:#fff;}
+.primary{
+background:#111827;
+color:#fff;
+}
+
+.danger{
+background:#ef4444;
+color:#fff;
+}
+
+/* LOADING */
 
 .loading{
 height:100vh;
@@ -213,41 +256,62 @@ Carregando perfil...
 
 </div>
 
-<!-- DROPDOWN -->
+<!-- MENU -->
 <div id="menu" class="menu">
 <div onclick="gerenciar()">Gerenciar assinatura</div>
 <div onclick="logout()">Sair</div>
 </div>
 
-<!-- ALERTA -->
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ESQUERDA -->
+<div class="mainCard">
+
+<div class="grid" id="dados"></div>
+
+</div>
+
+<!-- DIREITA -->
+<div class="side">
+
+<div class="statusCard">
+<div class="statusTitle">Plano atual</div>
+<div class="statusValue" id="planoBox"></div>
+</div>
+
+<div class="statusCard">
+<div class="statusTitle">Vencimento</div>
+<div class="statusValue" id="vencimento"></div>
+</div>
+
 <div id="alerta" class="alert"></div>
 
-<!-- GRID -->
-<div id="dados" class="content"></div>
-
-<!-- AÇÕES -->
 <div class="actions">
-<button class="btn primary" onclick="gerenciar()">Gerenciar</button>
+<button class="btn primary" onclick="gerenciar()">Gerenciar assinatura</button>
 <button class="btn danger" onclick="logout()">Sair</button>
+</div>
+
+</div>
+
 </div>
 
 </div>
 
 <script>
 
-/* CLIENT */
 const client = window.supabase.createClient(
 "https://fcehmjmtxqmrjkuqlkay.supabase.co",
 "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-/* EMAIL */
 async function getEmail(){
 
 let email = localStorage.getItem("USER_EMAIL")
 if(email) return email
 
 const { data } = await client.auth.getUser()
+
 if(data?.user?.email){
 localStorage.setItem("USER_EMAIL", data.user.email)
 return data.user.email
@@ -256,7 +320,6 @@ return data.user.email
 return null
 }
 
-/* INIT */
 async function init(){
 
 const email = await getEmail()
@@ -278,42 +341,38 @@ return
 
 const e = data[0]
 
-/* HEADER */
 document.getElementById("nome").innerText = e.nome_fantasia
 document.getElementById("plano").innerText = "Plano " + e.plano
 
 document.getElementById("logo").src =
 e.logo_url || "https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
 
-/* ALERTA */
-if(e.assinatura_expira){
+document.getElementById("planoBox").innerText = e.plano
+document.getElementById("vencimento").innerText = new Date(e.assinatura_expira).toLocaleDateString()
 
+/* ALERTA */
 const dias = Math.ceil((new Date(e.assinatura_expira)-new Date())/86400000)
 
 if(dias <= 5){
 const alerta = document.getElementById("alerta")
 alerta.style.display="block"
-alerta.innerText="⚠️ Vence em "+dias+" dias"
-}
+alerta.innerText="Sua assinatura vence em "+dias+" dias"
 }
 
-/* GRID SUPER OTIMIZADO */
+/* GRID */
 document.getElementById("dados").innerHTML = `
 
-<div class="card"><div class="label">Empresa</div><div class="value">${e.nome}</div></div>
-<div class="card"><div class="label">CNPJ</div><div class="value">${e.cnpj}</div></div>
-<div class="card"><div class="label">Email</div><div class="value">${e.email}</div></div>
-<div class="card"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
+<div class="field"><div class="label">Empresa</div><div class="value">${e.nome}</div></div>
+<div class="field"><div class="label">CNPJ</div><div class="value">${e.cnpj}</div></div>
 
-<div class="card"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
-<div class="card"><div class="label">Cidade</div><div class="value">${e.cidade}-${e.estado}</div></div>
-<div class="card"><div class="label">Plano</div><div class="value">${e.plano}</div></div>
-<div class="card"><div class="label">Status</div><div class="value">${e.status}</div></div>
+<div class="field"><div class="label">Email</div><div class="value">${e.email}</div></div>
+<div class="field"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
 
-<div class="card"><div class="label">Valor</div><div class="value">R$ ${Number(e.valor_mensal).toFixed(2)}</div></div>
-<div class="card"><div class="label">Vencimento</div><div class="value">Dia ${e.dia_vencimento}</div></div>
-<div class="card"><div class="label">Expira</div><div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div></div>
-<div class="card"><div class="label">Usuários</div><div class="value">${e.usuarios_limite}</div></div>
+<div class="field"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
+<div class="field"><div class="label">Cidade</div><div class="value">${e.cidade}-${e.estado}</div></div>
+
+<div class="field"><div class="label">Usuários</div><div class="value">${e.usuarios_limite}</div></div>
+<div class="field"><div class="label">Filiais</div><div class="value">${e.filiais_limite}</div></div>
 
 `
 
@@ -322,13 +381,11 @@ document.getElementById("app").style.display="flex"
 
 }
 
-/* UI */
 function toggleMenu(){
 const m=document.getElementById("menu")
 m.style.display = m.style.display==="block"?"none":"block"
 }
 
-/* AÇÕES */
 function gerenciar(){
 window.open("https://wa.me/557798253249")
 }
@@ -339,7 +396,6 @@ localStorage.clear()
 window.top.location.href="index.html"
 }
 
-/* START */
 init()
 
 </script>
