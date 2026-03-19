@@ -19,54 +19,118 @@ body{
 margin:0;
 font-family:Inter;
 background:#f1f5f9;
-padding:20px;
 }
 
 /* HEADER */
 
 .header{
 display:flex;
+justify-content:space-between;
+align-items:center;
+padding:16px 20px;
+background:#fff;
+border-bottom:1px solid #e5e7eb;
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.profileTop{
+display:flex;
 align-items:center;
 gap:14px;
-margin-bottom:20px;
 }
 
-.logo{
-width:50px;
-height:50px;
+.avatar{
+width:48px;
+height:48px;
 border-radius:14px;
-background:#e2e8f0;
 overflow:hidden;
+background:#e2e8f0;
 }
 
-.logo img{
+.avatar img{
 width:100%;
 height:100%;
 object-fit:cover;
 }
 
-.title{
-font-size:20px;
+.nameBox{
+display:flex;
+flex-direction:column;
+}
+
+.name{
 font-weight:800;
 color:#0f172a;
 }
 
-/* CARD */
+.plan{
+font-size:12px;
+color:#64748b;
+}
+
+/* DROPDOWN */
+
+.dropdown{
+position:relative;
+}
+
+.menu{
+position:absolute;
+right:0;
+top:60px;
+background:#fff;
+border-radius:14px;
+box-shadow:0 20px 50px rgba(0,0,0,.2);
+padding:10px;
+display:none;
+min-width:220px;
+}
+
+.menu div{
+padding:12px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+}
+
+.menu div:hover{
+background:#f1f5f9;
+}
+
+/* ALERTA */
+
+.alert{
+background:#fff7ed;
+color:#9a3412;
+padding:14px;
+margin:20px;
+border-radius:12px;
+font-weight:600;
+border:1px solid #fed7aa;
+display:none;
+}
+
+/* CONTAINER */
+
+.container{
+padding:20px;
+}
+
+/* CARDS */
 
 .card{
-background:#ffffff;
+background:#fff;
 border-radius:16px;
 padding:18px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
-margin-bottom:12px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+margin-bottom:14px;
 }
 
 .label{
+font-size:12px;
 color:#64748b;
-font-size:13px;
 }
 
 .value{
@@ -74,52 +138,55 @@ font-weight:700;
 color:#0f172a;
 }
 
-/* STATUS */
+/* BOTÕES */
 
-.status{
-padding:6px 12px;
-border-radius:20px;
-font-size:12px;
-font-weight:700;
-}
-
-.status.ativo{
-background:#dcfce7;
-color:#166534;
-}
-
-.status.inativo{
-background:#fee2e2;
-color:#991b1b;
-}
-
-/* BOTÃO */
-
-.logout{
-margin-top:20px;
+.btn{
 width:100%;
 padding:16px;
 border:none;
 border-radius:14px;
+font-weight:800;
+cursor:pointer;
+margin-top:10px;
+}
+
+.btn.primary{
+background:#2563eb;
+color:#fff;
+}
+
+.btn.primary:hover{
+background:#1e40af;
+}
+
+.btn.danger{
 background:#ef4444;
 color:#fff;
-font-weight:800;
-font-size:14px;
-cursor:pointer;
-transition:.2s;
 }
 
-.logout:hover{
+.btn.danger:hover{
 background:#dc2626;
-transform:translateY(-1px);
 }
 
-/* LOADING */
+/* EMPRESAS */
 
-.loading{
-text-align:center;
-margin-top:40px;
-color:#64748b;
+.empresas{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:10px;
+}
+
+.empresaItem{
+padding:12px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+cursor:pointer;
+font-weight:600;
+}
+
+.empresaItem:hover{
+background:#f1f5f9;
 }
 
 </style>
@@ -129,126 +196,208 @@ color:#64748b;
 <body>
 
 <div class="header">
-  <div class="logo">
-    <img id="logoEmpresa">
-  </div>
-  <div class="title" id="nomeEmpresa">Carregando...</div>
+
+<div class="profileTop" onclick="toggleMenu()">
+<div class="avatar">
+<img id="logoEmpresa">
 </div>
 
-<div id="dados">
-  <div class="loading">Carregando perfil...</div>
+<div class="nameBox">
+<div class="name" id="nomeEmpresa">Carregando...</div>
+<div class="plan" id="planoEmpresa"></div>
+</div>
 </div>
 
-<button class="logout" onclick="logout()">
+<div class="dropdown">
+<div class="menu" id="menu">
+
+<div onclick="abrirEmpresas()">Trocar empresa</div>
+<div onclick="gerenciar()">Gerenciar assinatura</div>
+<div onclick="logout()">Sair</div>
+
+</div>
+</div>
+
+</div>
+
+<div id="alerta" class="alert"></div>
+
+<div class="container">
+
+<div id="dados"></div>
+
+<div id="areaEmpresas" style="display:none">
+<h3>Trocar empresa</h3>
+<div class="empresas" id="listaEmpresas"></div>
+</div>
+
+<button class="btn primary" onclick="gerenciar()">
+Gerenciar assinatura
+</button>
+
+<button class="btn danger" onclick="logout()">
 Sair do sistema
 </button>
 
+</div>
+
 <script>
 
-/* 🔐 MASTER AUTH */
 const supabase = window.supabase.createClient(
-  "https://fcehmjmtxqmrjkuqlkay.supabase.co",
-  "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
+"https://fcehmjmtxqmrjkuqlkay.supabase.co",
+"sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
+
+let empresaAtual = null
+
+function toggleMenu(){
+const menu = document.getElementById("menu")
+menu.style.display = menu.style.display === "block" ? "none" : "block"
+}
 
 async function carregar(){
 
-  const email = localStorage.getItem("USER_EMAIL")
+const email = localStorage.getItem("USER_EMAIL")
 
-  if(!email){
-    document.getElementById("dados").innerHTML = "Sessão não encontrada"
-    return
-  }
-
-  const { data: empresa, error } = await supabase
-    .from("empresas")
-    .select("*")
-    .eq("email", email)
-    .single()
-
-  if(error || !empresa){
-    document.getElementById("dados").innerHTML = "Erro ao carregar perfil"
-    return
-  }
-
-  /* HEADER */
-  document.getElementById("nomeEmpresa").innerText = empresa.nome_fantasia
-
-  document.getElementById("logoEmpresa").src =
-    empresa.logo_url ||
-    "https://ui-avatars.com/api/?name=" + encodeURIComponent(empresa.nome_fantasia)
-
-  /* STATUS */
-  const statusClass = empresa.status === "ativo" ? "ativo" : "inativo"
-
-  /* DATA */
-  const vencimento = empresa.assinatura_expira
-    ? new Date(empresa.assinatura_expira).toLocaleDateString()
-    : "-"
-
-  /* HTML */
-  document.getElementById("dados").innerHTML = `
-  
-  <div class="card">
-    <div>
-      <div class="label">CNPJ</div>
-      <div class="value">${empresa.cnpj || "-"}</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div>
-      <div class="label">Email</div>
-      <div class="value">${empresa.email}</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div>
-      <div class="label">Telefone</div>
-      <div class="value">${empresa.telefone || "-"}</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div>
-      <div class="label">Plano</div>
-      <div class="value">${empresa.plano || "-"}</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div>
-      <div class="label">Status</div>
-      <div class="status ${statusClass}">
-        ${empresa.status || "-"}
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div>
-      <div class="label">Vencimento</div>
-      <div class="value">${vencimento}</div>
-    </div>
-  </div>
-
-  `
+if(!email){
+document.body.innerHTML = "Sessão não encontrada"
+return
 }
 
-/* 🚪 LOGOUT CORRETO */
+const { data: empresas } = await supabase
+.from("empresas")
+.select("*")
+.eq("email", email)
+
+if(!empresas || !empresas.length){
+document.body.innerHTML = "Nenhuma empresa encontrada"
+return
+}
+
+empresaAtual = empresas[0]
+
+renderEmpresa(empresaAtual)
+
+renderEmpresas(empresas)
+
+}
+
+function renderEmpresa(e){
+
+document.getElementById("nomeEmpresa").innerText = e.nome_fantasia
+document.getElementById("planoEmpresa").innerText = "Plano " + (e.plano || "-")
+
+document.getElementById("logoEmpresa").src =
+e.logo_url ||
+"https://ui-avatars.com/api/?name="+encodeURIComponent(e.nome_fantasia)
+
+const vencimento = e.assinatura_expira
+? new Date(e.assinatura_expira)
+: null
+
+/* ALERTA AUTOMÁTICO */
+
+if(vencimento){
+
+const hoje = new Date()
+const diff = Math.ceil((vencimento - hoje)/(1000*60*60*24))
+
+if(diff <= 5){
+const alerta = document.getElementById("alerta")
+alerta.style.display = "block"
+alerta.innerText = "⚠️ Sua assinatura vence em " + diff + " dias"
+}
+
+}
+
+/* DADOS */
+
+document.getElementById("dados").innerHTML = `
+
+<div class="card">
+<div class="label">CNPJ</div>
+<div class="value">${e.cnpj || "-"}</div>
+</div>
+
+<div class="card">
+<div class="label">Email</div>
+<div class="value">${e.email}</div>
+</div>
+
+<div class="card">
+<div class="label">Telefone</div>
+<div class="value">${e.telefone || "-"}</div>
+</div>
+
+<div class="card">
+<div class="label">Status</div>
+<div class="value">${e.status}</div>
+</div>
+
+<div class="card">
+<div class="label">Vencimento</div>
+<div class="value">${vencimento ? vencimento.toLocaleDateString() : "-"}</div>
+</div>
+
+`
+
+}
+
+/* MULTI EMPRESA */
+
+function renderEmpresas(lista){
+
+const box = document.getElementById("listaEmpresas")
+
+box.innerHTML = ""
+
+lista.forEach(e=>{
+
+const div = document.createElement("div")
+div.className = "empresaItem"
+div.innerText = e.nome_fantasia
+
+div.onclick = ()=>{
+
+/* 🔥 troca credenciais */
+localStorage.setItem("SUPABASE_URL", e.supabase_url)
+localStorage.setItem("SUPABASE_KEY", e.supabase_key)
+
+/* recarrega sistema */
+window.top.location.reload()
+
+}
+
+box.appendChild(div)
+
+})
+
+}
+
+function abrirEmpresas(){
+document.getElementById("areaEmpresas").style.display = "block"
+}
+
+/* GERENCIAR */
+
+function gerenciar(){
+window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinatura","_blank")
+}
+
+/* LOGOUT */
+
 async function logout(){
 
-  try{
-    await supabase.auth.signOut()
-  }catch(e){}
+try{
+await supabase.auth.signOut()
+}catch(e){}
 
-  localStorage.clear()
+localStorage.clear()
 
-  window.top.location.href = "index.html"
+window.top.location.href = "index.html"
+
 }
 
-/* 🚀 START */
 carregar()
 
 </script>
