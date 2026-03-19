@@ -21,17 +21,6 @@ font-family:Inter;
 background:#f1f5f9;
 }
 
-/* LOADING */
-
-.loading{
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
-font-weight:600;
-color:#64748b;
-}
-
 /* HEADER */
 
 .header{
@@ -53,7 +42,7 @@ cursor:pointer;
 .avatar{
 width:46px;
 height:46px;
-border-radius:14px;
+border-radius:12px;
 overflow:hidden;
 background:#e2e8f0;
 }
@@ -85,6 +74,7 @@ box-shadow:0 20px 50px rgba(0,0,0,.2);
 display:none;
 min-width:200px;
 padding:10px;
+z-index:999;
 }
 
 .menu div{
@@ -98,19 +88,38 @@ font-weight:600;
 background:#f1f5f9;
 }
 
+/* ALERTA */
+
+.alert{
+background:#fff7ed;
+color:#9a3412;
+padding:12px;
+border-radius:10px;
+margin:12px 0;
+display:none;
+font-weight:600;
+}
+
 /* CONTAINER */
 
 .container{
 padding:20px;
 }
 
-/* CARDS */
+/* GRID */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:12px;
+}
+
+/* CARD */
 
 .card{
 background:#fff;
 border-radius:14px;
-padding:16px;
-margin-bottom:12px;
+padding:14px;
 box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
@@ -121,17 +130,6 @@ color:#64748b;
 
 .value{
 font-weight:700;
-}
-
-/* ALERTA */
-
-.alert{
-background:#fff7ed;
-color:#9a3412;
-padding:12px;
-border-radius:10px;
-margin:10px 0;
-display:none;
 }
 
 /* BOTÕES */
@@ -162,12 +160,6 @@ color:#fff;
 
 <body>
 
-<div id="loading" class="loading">
-Carregando perfil...
-</div>
-
-<div id="app" style="display:none">
-
 <div class="header">
 
 <div class="profileTop" onclick="toggleMenu()">
@@ -193,17 +185,15 @@ Carregando perfil...
 
 <div id="alerta" class="alert"></div>
 
-<div id="dados"></div>
+<div class="grid" id="dados"></div>
 
 <button class="btn primary" onclick="gerenciar()">
 Gerenciar assinatura
 </button>
 
 <button class="btn danger" onclick="logout()">
-Sair
+Sair do sistema
 </button>
-
-</div>
 
 </div>
 
@@ -214,18 +204,15 @@ const supabase = window.supabase.createClient(
 "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
-/* 🔥 FUNÇÃO ESPERA EMAIL */
-async function getEmailSeguro(){
+/* 🔥 PEGA EMAIL COM RETRY */
+async function getEmail(){
 
-let tentativas = 0
-
-while(tentativas < 10){
+for(let i=0;i<10;i++){
 
 let email = localStorage.getItem("USER_EMAIL")
 
 if(email) return email
 
-/* fallback auth */
 const { data } = await supabase.auth.getUser()
 
 if(data?.user?.email){
@@ -234,20 +221,18 @@ return data.user.email
 }
 
 await new Promise(r=>setTimeout(r,300))
-
-tentativas++
 }
 
 return null
 }
 
 /* 🚀 INIT */
-async function iniciar(){
+async function init(){
 
-const email = await getEmailSeguro()
+const email = await getEmail()
 
 if(!email){
-document.getElementById("loading").innerText = "Erro ao carregar sessão"
+document.body.innerHTML = "Erro de sessão"
 return
 }
 
@@ -257,20 +242,20 @@ const { data: empresas } = await supabase
 .eq("email", email)
 
 if(!empresas || !empresas.length){
-document.getElementById("loading").innerText = "Empresa não encontrada"
+document.body.innerHTML = "Empresa não encontrada"
 return
 }
 
 render(empresas[0])
-
-document.getElementById("loading").style.display = "none"
-document.getElementById("app").style.display = "block"
+window.listaEmpresas = empresas
 
 }
 
 /* RENDER */
 
 function render(e){
+
+document.documentElement.style.setProperty("--accent", e.cor_primaria || "#2563eb")
 
 document.getElementById("nome").innerText = e.nome_fantasia
 document.getElementById("plano").innerText = "Plano " + e.plano
@@ -293,36 +278,49 @@ alerta.innerText = "⚠️ Sua assinatura vence em " + dias + " dias"
 
 }
 
-/* DADOS */
+/* GRID COMPLETO */
 
 document.getElementById("dados").innerHTML = `
 
-<div class="card">
-<div class="label">CNPJ</div>
-<div class="value">${e.cnpj || "-"}</div>
-</div>
-
-<div class="card">
-<div class="label">Email</div>
-<div class="value">${e.email}</div>
-</div>
-
-<div class="card">
-<div class="label">Telefone</div>
-<div class="value">${e.telefone || "-"}</div>
-</div>
-
-<div class="card">
-<div class="label">Status</div>
-<div class="value">${e.status}</div>
-</div>
-
-<div class="card">
-<div class="label">Vencimento</div>
-<div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div>
-</div>
+<div class="card"><div class="label">CNPJ</div><div class="value">${e.cnpj}</div></div>
+<div class="card"><div class="label">Email</div><div class="value">${e.email}</div></div>
+<div class="card"><div class="label">Telefone</div><div class="value">${e.telefone}</div></div>
+<div class="card"><div class="label">Responsável</div><div class="value">${e.responsavel_nome}</div></div>
+<div class="card"><div class="label">Cidade</div><div class="value">${e.cidade} - ${e.estado}</div></div>
+<div class="card"><div class="label">Plano</div><div class="value">${e.plano}</div></div>
+<div class="card"><div class="label">Valor</div><div class="value">R$ ${Number(e.valor_mensal).toFixed(2)}</div></div>
+<div class="card"><div class="label">Vencimento</div><div class="value">Dia ${e.dia_vencimento}</div></div>
+<div class="card"><div class="label">Expira em</div><div class="value">${new Date(e.assinatura_expira).toLocaleDateString()}</div></div>
+<div class="card"><div class="label">Usuários</div><div class="value">${e.usuarios_limite}</div></div>
+<div class="card"><div class="label">Filiais</div><div class="value">${e.filiais_limite}</div></div>
+<div class="card"><div class="label">Status</div><div class="value">${e.status}</div></div>
 
 `
+
+}
+
+/* MULTI EMPRESA */
+
+function abrirEmpresas(){
+
+let lista = window.listaEmpresas || []
+
+let html = lista.map(e=>`
+<div class="card" onclick="trocar('${e.supabase_url}','${e.supabase_anon_key}')">
+${e.nome_fantasia}
+</div>
+`).join("")
+
+document.getElementById("dados").innerHTML = html
+
+}
+
+function trocar(url,key){
+
+localStorage.setItem("SUPABASE_URL", url)
+localStorage.setItem("SUPABASE_KEY", key)
+
+window.top.location.reload()
 
 }
 
@@ -335,23 +333,24 @@ m.style.display = m.style.display === "block" ? "none" : "block"
 
 /* AÇÕES */
 
-function abrirEmpresas(){
-alert("Multi-empresa ativado no sistema principal")
-}
-
 function gerenciar(){
 window.open("https://wa.me/557798253249?text=Quero%20gerenciar%20minha%20assinatura")
 }
 
 async function logout(){
+
+try{
 await supabase.auth.signOut()
+}catch(e){}
+
 localStorage.clear()
 window.top.location.href = "index.html"
+
 }
 
 /* START */
 
-iniciar()
+init()
 
 </script>
 
