@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+margin:0;
+font-family:Inter;
+background:#f8fafc;
+padding:30px;
+}
+
+.card{
+background:#fff;
+border-radius:16px;
+padding:24px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+margin-bottom:16px;
+}
+
+h2{
+margin-bottom:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Perfil da Empresa</h2>
+
+<div id="dados"></div>
+
+<script>
+
+const supabase = window.supabase.createClient(
+  "https://fcehmjmtxqmrjkuqlkay.supabase.co",
+  "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
+)
+
+async function carregar(){
+
+const { data: { user } } = await supabase.auth.getUser()
+
+const { data: empresa } = await supabase
+.from("empresas")
+.select("*")
+.eq("email", user.email)
+.single()
+
+const box = document.getElementById("dados")
+
+box.innerHTML = `
+<div class="card"><b>Empresa:</b> ${empresa.nome_fantasia}</div>
+<div class="card"><b>CNPJ:</b> ${empresa.cnpj}</div>
+<div class="card"><b>Email:</b> ${empresa.email}</div>
+<div class="card"><b>Telefone:</b> ${empresa.telefone}</div>
+<div class="card"><b>Plano:</b> ${empresa.plano}</div>
+<div class="card"><b>Status:</b> ${empresa.status}</div>
+<div class="card"><b>Vencimento:</b> ${new Date(empresa.assinatura_expira).toLocaleDateString()}</div>
+`
+
+}
+
+carregar()
+
+</script>
+
+</body>
+</html>
