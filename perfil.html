@@ -1,104 +1,254 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<title>Perfil • Mercatto</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
+
+*{box-sizing:border-box}
+
 body{
 margin:0;
 font-family:Inter;
-background:#f8fafc;
+background:#f1f5f9;
 padding:20px;
 }
 
-.card{
-background:#fff;
-border-radius:12px;
-padding:16px;
-box-shadow:0 6px 18px rgba(0,0,0,.08);
-margin-bottom:12px;
-}
+/* HEADER */
 
-h2{
+.header{
+display:flex;
+align-items:center;
+gap:14px;
 margin-bottom:20px;
 }
 
-button{
+.logo{
+width:50px;
+height:50px;
+border-radius:14px;
+background:#e2e8f0;
+overflow:hidden;
+}
+
+.logo img{
 width:100%;
-padding:14px;
+height:100%;
+object-fit:cover;
+}
+
+.title{
+font-size:20px;
+font-weight:800;
+color:#0f172a;
+}
+
+/* CARD */
+
+.card{
+background:#ffffff;
+border-radius:16px;
+padding:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+margin-bottom:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.label{
+color:#64748b;
+font-size:13px;
+}
+
+.value{
+font-weight:700;
+color:#0f172a;
+}
+
+/* STATUS */
+
+.status{
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:700;
+}
+
+.status.ativo{
+background:#dcfce7;
+color:#166534;
+}
+
+.status.inativo{
+background:#fee2e2;
+color:#991b1b;
+}
+
+/* BOTÃO */
+
+.logout{
+margin-top:20px;
+width:100%;
+padding:16px;
 border:none;
-border-radius:10px;
+border-radius:14px;
 background:#ef4444;
 color:#fff;
-font-weight:700;
+font-weight:800;
+font-size:14px;
 cursor:pointer;
+transition:.2s;
 }
+
+.logout:hover{
+background:#dc2626;
+transform:translateY(-1px);
+}
+
+/* LOADING */
+
+.loading{
+text-align:center;
+margin-top:40px;
+color:#64748b;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h2>Perfil da Empresa</h2>
+<div class="header">
+  <div class="logo">
+    <img id="logoEmpresa">
+  </div>
+  <div class="title" id="nomeEmpresa">Carregando...</div>
+</div>
 
-<div id="dados"></div>
+<div id="dados">
+  <div class="loading">Carregando perfil...</div>
+</div>
 
-<button onclick="logout()">Sair</button>
+<button class="logout" onclick="logout()">
+Sair do sistema
+</button>
 
 <script>
 
-const supabasePerfil = window.supabase.createClient(
+/* 🔐 MASTER AUTH */
+const supabase = window.supabase.createClient(
   "https://fcehmjmtxqmrjkuqlkay.supabase.co",
   "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
 
 async function carregar(){
 
-const email = localStorage.getItem("USER_EMAIL")
+  const email = localStorage.getItem("USER_EMAIL")
 
-if(!email){
-document.getElementById("dados").innerHTML = "Sessão não encontrada"
-return
+  if(!email){
+    document.getElementById("dados").innerHTML = "Sessão não encontrada"
+    return
+  }
+
+  const { data: empresa, error } = await supabase
+    .from("empresas")
+    .select("*")
+    .eq("email", email)
+    .single()
+
+  if(error || !empresa){
+    document.getElementById("dados").innerHTML = "Erro ao carregar perfil"
+    return
+  }
+
+  /* HEADER */
+  document.getElementById("nomeEmpresa").innerText = empresa.nome_fantasia
+
+  document.getElementById("logoEmpresa").src =
+    empresa.logo_url ||
+    "https://ui-avatars.com/api/?name=" + encodeURIComponent(empresa.nome_fantasia)
+
+  /* STATUS */
+  const statusClass = empresa.status === "ativo" ? "ativo" : "inativo"
+
+  /* DATA */
+  const vencimento = empresa.assinatura_expira
+    ? new Date(empresa.assinatura_expira).toLocaleDateString()
+    : "-"
+
+  /* HTML */
+  document.getElementById("dados").innerHTML = `
+  
+  <div class="card">
+    <div>
+      <div class="label">CNPJ</div>
+      <div class="value">${empresa.cnpj || "-"}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div>
+      <div class="label">Email</div>
+      <div class="value">${empresa.email}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div>
+      <div class="label">Telefone</div>
+      <div class="value">${empresa.telefone || "-"}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div>
+      <div class="label">Plano</div>
+      <div class="value">${empresa.plano || "-"}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div>
+      <div class="label">Status</div>
+      <div class="status ${statusClass}">
+        ${empresa.status || "-"}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div>
+      <div class="label">Vencimento</div>
+      <div class="value">${vencimento}</div>
+    </div>
+  </div>
+
+  `
 }
 
-const { data: empresa, error } = await supabasePerfil
-.from("empresas")
-.select("*")
-.eq("email", email)
-.single()
-
-if(error || !empresa){
-document.getElementById("dados").innerHTML = "Erro ao carregar perfil"
-return
-}
-
-const box = document.getElementById("dados")
-
-box.innerHTML = `
-<div class="card"><b>Empresa:</b> ${empresa.nome_fantasia}</div>
-<div class="card"><b>CNPJ:</b> ${empresa.cnpj}</div>
-<div class="card"><b>Email:</b> ${empresa.email}</div>
-<div class="card"><b>Telefone:</b> ${empresa.telefone}</div>
-<div class="card"><b>Plano:</b> ${empresa.plano}</div>
-<div class="card"><b>Status:</b> ${empresa.status}</div>
-<div class="card"><b>Vencimento:</b> ${new Date(empresa.assinatura_expira).toLocaleDateString()}</div>
-`
-
-}
-
+/* 🚪 LOGOUT CORRETO */
 async function logout(){
 
-await supabasePerfil.auth.signOut()
+  try{
+    await supabase.auth.signOut()
+  }catch(e){}
 
-localStorage.clear()
+  localStorage.clear()
 
-// 👉 redireciona o sistema inteiro (não só iframe)
-window.top.location.href = "index.html"
-
+  window.top.location.href = "index.html"
 }
 
+/* 🚀 START */
 carregar()
 
 </script>
