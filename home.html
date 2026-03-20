@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Mercatto Delícia • Analytics</title>
+<title>SUA EMPRESA • Analytics</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -400,7 +400,7 @@ background:rgba(255,255,255,0.15);
 
 <div class="sidebar">
 
-<div class="logo">Mercatto Delícia</div>
+<div class="logo">SUA EMPRESA</div>
 
 <div class="menu">
 
@@ -672,7 +672,7 @@ const fim=new Date(document.getElementById("fim").value)
 fim.setHours(23,59,59,999)
 
 const {data:conversas}=await db.from("conversas_whatsapp").select("*")
-const {data:reservas}=await db.from("reservas_mercatto").select("*")
+const {data:reservas}=await db.from("reservas_novo_restaurante").select("*")
 const {data:controle}=await db.from("controle_bot").select("*")
 
 const conv=(conversas || []).filter(c=>{
