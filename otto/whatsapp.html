@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -626,84 +627,10 @@ background:#020617;
 
 <script>
 
-/* ================= MASTER ================= */
-
-const SUPABASE_MASTER = supabase.createClient(
-  "https://fcehmjmtxqmrjkuqlkay.supabase.co",
-  "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
+const db = supabase.createClient(
+"https://xysjlpsxgjwmhedkdgpd.supabase.co",
+"sb_publishable_sjYPsNM9PBGvsvJTQEnz_w_k6SdvNHN"
 )
-
-let db = null
-
-/* ================= FUNÇÃO PRINCIPAL ================= */
-
-async function initSistema(){
-
-  const { data } = await SUPABASE_MASTER.auth.getSession()
-
-  if(!data.session){
-    window.location.href = "index.html"
-    return
-  }
-
-  const user = data.session.user
-
-  let url = localStorage.getItem("SUPABASE_URL")
-  let key = localStorage.getItem("SUPABASE_KEY")
-
-  if(!url || !key){
-
-    const { data: empresa } = await SUPABASE_MASTER
-      .from("empresas")
-      .select("*")
-      .eq("user_id", user.id)
-      .single()
-
-    if(!empresa){
-      alert("Empresa não encontrada")
-      return
-    }
-
-    url = empresa.supabase_url
-    key = empresa.supabase_anon_key
-
-    localStorage.setItem("SUPABASE_URL", url)
-    localStorage.setItem("SUPABASE_KEY", key)
-  }
-
-  /* ✅ CRIA DB */
-  db = supabase.createClient(url, key)
-
-  /* ✅ AGORA SIM PODE USAR */
-  iniciarApp()
-
-}
-
-/* ================= APP ================= */
-
-function iniciarApp(){
-
-  console.log("🔥 APP INICIADO")
-
-  carregarClientes()
-
-  /* ✅ REALTIME SÓ AQUI */
-  db.channel("controle_bot_changes")
-    .on("postgres_changes",{
-      event:"*",
-      schema:"public",
-      table:"controle_bot"
-    },()=>{
-      carregarClientes()
-    })
-    .subscribe()
-
-}
-
-/* ================= START ================= */
-
-initSistema()
-  
 let pagina = 0
 const limite = 20
 let carregando = false
