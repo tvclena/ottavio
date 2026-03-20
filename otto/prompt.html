@@ -994,9 +994,7 @@ async function baixarPDF(){
 const { jsPDF } = window.jspdf
 const doc = new jsPDF("p","mm","a4")
 
-let y = 20
-
-/* ================= CAPA ================= */
+/* ================= CAPA PREMIUM ================= */
 
 doc.setFillColor(2,6,23)
 doc.rect(0,0,210,297,"F")
@@ -1004,50 +1002,51 @@ doc.rect(0,0,210,297,"F")
 doc.setTextColor(255,255,255)
 
 doc.setFont("helvetica","bold")
-doc.setFontSize(28)
-doc.text("PROMPTS MERCATTO",105,120,{align:"center"})
+doc.setFontSize(30)
+doc.text("MERCATTO",105,90,{align:"center"})
 
-doc.setFontSize(12)
-doc.setTextColor(180,180,180)
-doc.text("Relatório Gerado Automaticamente",105,135,{align:"center"})
+doc.setFontSize(18)
+doc.text("PROMPTS",105,105,{align:"center"})
+
+doc.setFontSize(11)
+doc.setTextColor(160)
+doc.text("Relatório Profissional",105,120,{align:"center"})
 
 doc.addPage()
 
 /* ================= CONTEÚDO ================= */
 
-let pagina = 1
+let y = 20
 
 dados
 .filter(p=>p.ativo)
-.forEach((p,i)=>{
+.forEach((p)=>{
 
-/* NOVA PÁGINA AUTOMÁTICA */
-if(y > 260){
+/* NOVA PÁGINA */
+if(y > 250){
 doc.addPage()
 y = 20
-pagina++
 }
+
+/* BOX */
+doc.setFillColor(248,250,252)
+doc.roundedRect(12,y-6,186,10,3,3,"F")
 
 /* TÍTULO */
 doc.setFont("helvetica","bold")
-doc.setFontSize(14)
+doc.setFontSize(13)
 doc.setTextColor(0,0,0)
 
-doc.text(p.nome.toUpperCase(),15,y)
+doc.text(p.nome,15,y)
 
-/* LINHA */
-y+=3
-doc.setDrawColor(200)
-doc.line(15,y,195,y)
-
-y+=6
+y+=8
 
 /* TEXTO */
 doc.setFont("courier","normal")
 doc.setFontSize(10)
-doc.setTextColor(40,40,40)
+doc.setTextColor(40)
 
-const linhas = doc.splitTextToSize(p.prompt,180)
+const linhas = doc.splitTextToSize(p.prompt,175)
 
 linhas.forEach(linha=>{
 
@@ -1061,23 +1060,27 @@ y+=5
 
 })
 
-/* ESPAÇO ENTRE PROMPTS */
-y+=10
+/* SEPARAÇÃO */
+y+=8
 
 })
 
-/* RODAPÉ */
-const totalPaginas = doc.getNumberOfPages()
+/* ================= RODAPÉ ================= */
 
-for(let i=1;i<=totalPaginas;i++){
+const total = doc.getNumberOfPages()
+
+for(let i=1;i<=total;i++){
 
 doc.setPage(i)
+
+doc.setDrawColor(220)
+doc.line(10,285,200,285)
 
 doc.setFontSize(9)
 doc.setTextColor(120)
 
 doc.text(
-`Mercatto Delícia • Página ${i}/${totalPaginas}`,
+`Mercatto Delícia • Página ${i}/${total}`,
 105,
 290,
 {align:"center"}
