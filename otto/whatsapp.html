@@ -626,6 +626,8 @@ background:#020617;
 
 <script>
 
+/* ================= MASTER ================= */
+
 const SUPABASE_MASTER = supabase.createClient(
   "https://fcehmjmtxqmrjkuqlkay.supabase.co",
   "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
@@ -633,9 +635,10 @@ const SUPABASE_MASTER = supabase.createClient(
 
 let db = null
 
+/* ================= FUNÇÃO PRINCIPAL ================= */
+
 async function initSistema(){
 
-  /* 🔒 1. VERIFICA LOGIN */
   const { data } = await SUPABASE_MASTER.auth.getSession()
 
   if(!data.session){
@@ -644,59 +647,62 @@ async function initSistema(){
   }
 
   const user = data.session.user
-  const email = user.email
 
-  /* 🔁 2. PEGA DO STORAGE */
   let url = localStorage.getItem("SUPABASE_URL")
   let key = localStorage.getItem("SUPABASE_KEY")
-  let empresaId = localStorage.getItem("EMPRESA_ID")
 
-  /* 🔍 3. SE NÃO TIVER, BUSCA */
-  if(!url || !key || !empresaId){
+  if(!url || !key){
 
-    const { data: empresa, error } = await SUPABASE_MASTER
+    const { data: empresa } = await SUPABASE_MASTER
       .from("empresas")
       .select("*")
-                    .eq("user_id", user.id)
+      .eq("user_id", user.id)
       .single()
 
-    if(error || !empresa){
+    if(!empresa){
       alert("Empresa não encontrada")
       return
     }
 
-    if(empresa.status !== "ativo"){
-      alert("Acesso bloqueado")
-      return
-    }
-
-    /* 💾 SALVA */
-    localStorage.setItem("SUPABASE_URL", empresa.supabase_url)
-    localStorage.setItem("SUPABASE_KEY", empresa.supabase_anon_key)
-    localStorage.setItem("EMPRESA_ID", empresa.id)
-
     url = empresa.supabase_url
     key = empresa.supabase_anon_key
+
+    localStorage.setItem("SUPABASE_URL", url)
+    localStorage.setItem("SUPABASE_KEY", key)
   }
 
-  /* 🚨 4. PROTEÇÃO ANTI-HACK */
-  if(!url.includes("supabase.co")){
-    alert("Credenciais inválidas")
-    localStorage.clear()
-    window.location.href = "index.html"
-    return
-  }
-
-  /* 🔗 5. CRIA DB DINÂMICO */
+  /* ✅ CRIA DB */
   db = supabase.createClient(url, key)
 
-  /* 🚀 6. INICIA APP */
+  /* ✅ AGORA SIM PODE USAR */
   iniciarApp()
+
 }
 
-/* START */
-initSistema()
+/* ================= APP ================= */
 
+function iniciarApp(){
+
+  console.log("🔥 APP INICIADO")
+
+  carregarClientes()
+
+  /* ✅ REALTIME SÓ AQUI */
+  db.channel("controle_bot_changes")
+    .on("postgres_changes",{
+      event:"*",
+      schema:"public",
+      table:"controle_bot"
+    },()=>{
+      carregarClientes()
+    })
+    .subscribe()
+
+}
+
+/* ================= START ================= */
+
+initSistema()
   
 let pagina = 0
 const limite = 20
