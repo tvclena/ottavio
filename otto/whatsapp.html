@@ -626,10 +626,78 @@ background:#020617;
 
 <script>
 
-const db = supabase.createClient(
-"https://dxkszikemntfusfyrzos.supabase.co",
-"sb_publishable_NNFvdfSXgOdGGVcSbphbjQ_brC3_9ed"
+const SUPABASE_MASTER = supabase.createClient(
+  "https://fcehmjmtxqmrjkuqlkay.supabase.co",
+  "sb_publishable_iCDWHsq6EguNauQPP49JCg_jUNcz30o"
 )
+
+let db = null
+
+async function initSistema(){
+
+  /* 🔒 1. VERIFICA LOGIN */
+  const { data } = await SUPABASE_MASTER.auth.getSession()
+
+  if(!data.session){
+    window.location.href = "index.html"
+    return
+  }
+
+  const user = data.session.user
+  const email = user.email
+
+  /* 🔁 2. PEGA DO STORAGE */
+  let url = localStorage.getItem("SUPABASE_URL")
+  let key = localStorage.getItem("SUPABASE_KEY")
+  let empresaId = localStorage.getItem("EMPRESA_ID")
+
+  /* 🔍 3. SE NÃO TIVER, BUSCA */
+  if(!url || !key || !empresaId){
+
+    const { data: empresa, error } = await SUPABASE_MASTER
+      .from("empresas")
+      .select("*")
+                    .eq("user_id", user.id)
+      .single()
+
+    if(error || !empresa){
+      alert("Empresa não encontrada")
+      return
+    }
+
+    if(empresa.status !== "ativo"){
+      alert("Acesso bloqueado")
+      return
+    }
+
+    /* 💾 SALVA */
+    localStorage.setItem("SUPABASE_URL", empresa.supabase_url)
+    localStorage.setItem("SUPABASE_KEY", empresa.supabase_anon_key)
+    localStorage.setItem("EMPRESA_ID", empresa.id)
+
+    url = empresa.supabase_url
+    key = empresa.supabase_anon_key
+  }
+
+  /* 🚨 4. PROTEÇÃO ANTI-HACK */
+  if(!url.includes("supabase.co")){
+    alert("Credenciais inválidas")
+    localStorage.clear()
+    window.location.href = "index.html"
+    return
+  }
+
+  /* 🔗 5. CRIA DB DINÂMICO */
+  db = supabase.createClient(url, key)
+
+  /* 🚀 6. INICIA APP */
+  iniciarApp()
+}
+
+/* START */
+initSistema()
+
+  
 let pagina = 0
 const limite = 20
 let carregando = false
