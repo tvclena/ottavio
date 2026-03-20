@@ -12,7 +12,7 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#020617">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
@@ -582,9 +582,14 @@ background:#334155;
 
 <div class="header">
 <div class="title">Prompt CMS</div>
+
+<div style="display:flex;gap:10px">
+<button class="btn blue" onclick="baixarPDF()">EXPORTAR PDF</button>
 <button class="btn green" onclick="novo()">NOVO COMANDO</button>
 </div>
 
+</div>
+   
 <div class="search">
 <input id="buscar" placeholder="Buscar prompt">
 </div>
@@ -984,7 +989,107 @@ carregar()
 if("serviceWorker" in navigator){
 navigator.serviceWorker.register("sw.js")
 }
+async function baixarPDF(){
 
+const { jsPDF } = window.jspdf
+const doc = new jsPDF("p","mm","a4")
+
+let y = 20
+
+/* ================= CAPA ================= */
+
+doc.setFillColor(2,6,23)
+doc.rect(0,0,210,297,"F")
+
+doc.setTextColor(255,255,255)
+
+doc.setFont("helvetica","bold")
+doc.setFontSize(28)
+doc.text("PROMPTS MERCATTO",105,120,{align:"center"})
+
+doc.setFontSize(12)
+doc.setTextColor(180,180,180)
+doc.text("Relatório Gerado Automaticamente",105,135,{align:"center"})
+
+doc.addPage()
+
+/* ================= CONTEÚDO ================= */
+
+let pagina = 1
+
+dados
+.filter(p=>p.ativo)
+.forEach((p,i)=>{
+
+/* NOVA PÁGINA AUTOMÁTICA */
+if(y > 260){
+doc.addPage()
+y = 20
+pagina++
+}
+
+/* TÍTULO */
+doc.setFont("helvetica","bold")
+doc.setFontSize(14)
+doc.setTextColor(0,0,0)
+
+doc.text(p.nome.toUpperCase(),15,y)
+
+/* LINHA */
+y+=3
+doc.setDrawColor(200)
+doc.line(15,y,195,y)
+
+y+=6
+
+/* TEXTO */
+doc.setFont("courier","normal")
+doc.setFontSize(10)
+doc.setTextColor(40,40,40)
+
+const linhas = doc.splitTextToSize(p.prompt,180)
+
+linhas.forEach(linha=>{
+
+if(y > 280){
+doc.addPage()
+y = 20
+}
+
+doc.text(linha,15,y)
+y+=5
+
+})
+
+/* ESPAÇO ENTRE PROMPTS */
+y+=10
+
+})
+
+/* RODAPÉ */
+const totalPaginas = doc.getNumberOfPages()
+
+for(let i=1;i<=totalPaginas;i++){
+
+doc.setPage(i)
+
+doc.setFontSize(9)
+doc.setTextColor(120)
+
+doc.text(
+`Mercatto Delícia • Página ${i}/${totalPaginas}`,
+105,
+290,
+{align:"center"}
+)
+
+}
+
+/* DOWNLOAD */
+
+doc.save("prompts-mercatto.pdf")
+
+}
 </script>
 
 </body>
