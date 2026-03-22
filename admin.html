@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel Admin • CB Systems</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+  margin:0;
+  font-family:Inter;
+  background:#f8fafc;
+}
+
+.header{
+  padding:20px;
+  font-weight:800;
+  font-size:22px;
+}
+
+.container{
+  padding:20px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+  box-shadow:0 10px 20px rgba(0,0,0,.05);
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+}
+
+button{
+  margin-top:10px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:#fff;
+  cursor:pointer;
+}
+
+.user{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">Painel Admin</div>
+
+<div class="container">
+
+<div class="card">
+  <h3>Criar Usuário</h3>
+
+  <input id="nome" placeholder="Nome">
+  <input id="email" placeholder="Email">
+  <input id="senha" placeholder="Senha">
+
+  <select id="empresa"></select>
+
+  <select id="perfil">
+    <option value="admin">Admin</option>
+    <option value="gerente">Gerente</option>
+    <option value="usuario">Usuário</option>
+  </select>
+
+  <button onclick="criar()">Criar Usuário</button>
+</div>
+
+<div class="card">
+  <h3>Usuários</h3>
+  <div id="lista"></div>
+</div>
+
+</div>
+
+<script>
+
+const API = "/api/admin-users"
+
+async function carregar(){
+
+  const res = await fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ action:"listar" })
+  })
+
+  const data = await res.json()
+
+  const empresaSelect = document.getElementById("empresa")
+  empresaSelect.innerHTML = ""
+
+  data.empresas.forEach(e=>{
+    empresaSelect.innerHTML += `<option value="${e.id}">${e.nome}</option>`
+  })
+
+  const lista = document.getElementById("lista")
+  lista.innerHTML = ""
+
+  data.usuarios.forEach(u=>{
+
+    const empresa = data.empresas.find(e=>e.id === u.empresa_id)
+
+    lista.innerHTML += `
+      <div class="user">
+        <div>
+          <b>${u.nome || "-"}</b><br>
+          ${u.email}<br>
+          <small>${empresa ? empresa.nome : "-"}</small>
+        </div>
+        <button onclick="excluir('${u.auth_id}')">Excluir</button>
+      </div>
+    `
+  })
+}
+
+async function criar(){
+
+  await fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      action:"criar",
+      nome: nome.value,
+      email: email.value,
+      senha: senha.value,
+      empresa_id: empresa.value,
+      perfil: perfil.value
+    })
+  })
+
+  alert("Usuário criado")
+  carregar()
+}
+
+async function excluir(id){
+
+  if(!confirm("Excluir usuário?")) return
+
+  await fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      action:"excluir",
+      auth_id:id
+    })
+  })
+
+  carregar()
+}
+
+carregar()
+
+</script>
+
+</body>
+</html>
