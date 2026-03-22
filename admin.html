@@ -2,61 +2,134 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Painel Admin • CB Systems</title>
+<title>Admin • CB Systems</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
+
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --border:#e5e7eb;
+  --text:#0f172a;
+  --muted:#64748b;
+  --primary:#2563eb;
+  --danger:#dc2626;
+  --radius:18px;
+  --shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+*{box-sizing:border-box}
 
 body{
   margin:0;
   font-family:Inter;
-  background:#f8fafc;
+  background:var(--bg);
+  color:var(--text);
 }
 
+/* HEADER */
 .header{
-  padding:20px;
-  font-weight:800;
+  padding:20px 30px;
   font-size:22px;
-}
-
-.container{
-  padding:20px;
-}
-
-.card{
+  font-weight:800;
   background:#fff;
-  padding:20px;
-  border-radius:16px;
-  margin-bottom:20px;
-  box-shadow:0 10px 20px rgba(0,0,0,.05);
+  border-bottom:1px solid var(--border);
 }
 
+/* CONTAINER */
+.container{
+  padding:25px;
+  max-width:1200px;
+  margin:auto;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* CARD */
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+/* INPUTS */
 input, select{
   width:100%;
   padding:12px;
   margin-top:10px;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  font-size:14px;
 }
 
+/* BUTTON */
 button{
-  margin-top:10px;
+  margin-top:12px;
   padding:12px;
   border:none;
-  border-radius:10px;
-  background:#2563eb;
-  color:#fff;
+  border-radius:12px;
+  font-weight:600;
   cursor:pointer;
+  background:var(--primary);
+  color:#fff;
+  transition:.2s;
 }
 
+button:hover{
+  transform:scale(1.02);
+}
+
+/* SEARCH */
+.search{
+  margin-bottom:15px;
+}
+
+/* USER CARD */
 .user{
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  margin-bottom:10px;
   display:flex;
   justify-content:space-between;
-  padding:10px;
-  border-bottom:1px solid #eee;
+  align-items:center;
+}
+
+.user-info{
+  font-size:14px;
+}
+
+.user-info b{
+  font-size:15px;
+}
+
+.actions button{
+  background:var(--danger);
+  padding:8px 12px;
+  font-size:13px;
+}
+
+/* EMPTY */
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:20px;
 }
 
 </style>
@@ -64,14 +137,17 @@ button{
 
 <body>
 
-<div class="header">Painel Admin</div>
+<div class="header">⚙️ Painel Administrativo</div>
 
 <div class="container">
 
-<div class="card">
-  <h3>Criar Usuário</h3>
+<div class="grid">
 
-  <input id="nome" placeholder="Nome">
+<!-- CRIAR -->
+<div class="card">
+  <h3>➕ Criar Usuário</h3>
+
+  <input id="nome" placeholder="Nome completo">
   <input id="email" placeholder="Email">
   <input id="senha" placeholder="Senha">
 
@@ -83,12 +159,18 @@ button{
     <option value="usuario">Usuário</option>
   </select>
 
-  <button onclick="criar()">Criar Usuário</button>
+  <button onclick="criar()">Criar usuário</button>
 </div>
 
+<!-- LISTA -->
 <div class="card">
-  <h3>Usuários</h3>
+  <h3>👥 Usuários</h3>
+
+  <input class="search" id="busca" placeholder="Buscar..." oninput="render()">
+
   <div id="lista"></div>
+</div>
+
 </div>
 
 </div>
@@ -97,38 +179,74 @@ button{
 
 const API = "/api/admin-users"
 
+let EMPRESAS = []
+let USUARIOS = []
+
 async function carregar(){
 
-  const res = await fetch(API,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ action:"listar" })
+  try{
+
+    const res = await fetch(API,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ action:"listar" })
+    })
+
+    const data = await res.json()
+
+    EMPRESAS = data.empresas || []
+    USUARIOS = data.usuarios || []
+
+    montarEmpresas()
+    render()
+
+  }catch(err){
+    alert("Erro ao carregar dados")
+    console.error(err)
+  }
+}
+
+function montarEmpresas(){
+  const select = document.getElementById("empresa")
+  select.innerHTML = ""
+
+  EMPRESAS.forEach(e=>{
+    select.innerHTML += `<option value="${e.id}">${e.nome}</option>`
   })
+}
 
-  const data = await res.json()
+function render(){
 
-  const empresaSelect = document.getElementById("empresa")
-  empresaSelect.innerHTML = ""
-
-  data.empresas.forEach(e=>{
-    empresaSelect.innerHTML += `<option value="${e.id}">${e.nome}</option>`
-  })
-
+  const busca = document.getElementById("busca").value.toLowerCase()
   const lista = document.getElementById("lista")
+
   lista.innerHTML = ""
 
-  data.usuarios.forEach(u=>{
+  const filtrados = USUARIOS.filter(u =>
+    (u.nome || "").toLowerCase().includes(busca) ||
+    (u.email || "").toLowerCase().includes(busca)
+  )
 
-    const empresa = data.empresas.find(e=>e.id === u.empresa_id)
+  if(!filtrados.length){
+    lista.innerHTML = `<div class="empty">Nenhum usuário encontrado</div>`
+    return
+  }
+
+  filtrados.forEach(u=>{
+
+    const empresa = EMPRESAS.find(e=>e.id === u.empresa_id)
 
     lista.innerHTML += `
       <div class="user">
-        <div>
+        <div class="user-info">
           <b>${u.nome || "-"}</b><br>
-          ${u.email}<br>
+          ${u.email || "-"}<br>
           <small>${empresa ? empresa.nome : "-"}</small>
         </div>
-        <button onclick="excluir('${u.auth_id}')">Excluir</button>
+
+        <div class="actions">
+          <button onclick="excluir('${u.auth_id}')">Excluir</button>
+        </div>
       </div>
     `
   })
@@ -136,16 +254,26 @@ async function carregar(){
 
 async function criar(){
 
+  const nome = document.getElementById("nome").value
+  const email = document.getElementById("email").value
+  const senha = document.getElementById("senha").value
+  const empresa = document.getElementById("empresa").value
+  const perfil = document.getElementById("perfil").value
+
+  if(!email || !senha){
+    return alert("Preencha email e senha")
+  }
+
   await fetch(API,{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
       action:"criar",
-      nome: nome.value,
-      email: email.value,
-      senha: senha.value,
-      empresa_id: empresa.value,
-      perfil: perfil.value
+      nome,
+      email,
+      senha,
+      empresa_id: empresa,
+      perfil
     })
   })
 
