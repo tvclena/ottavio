@@ -20,7 +20,7 @@
   --green:#16a34a;
   --red:#dc2626;
   --radius:16px;
-  --shadow:0 10px 25px rgba(0,0,0,.08);
+  --shadow:0 15px 35px rgba(0,0,0,.08);
 }
 
 *{box-sizing:border-box}
@@ -34,26 +34,35 @@ body{
 
 /* SIDEBAR */
 .sidebar{
-  width:260px;
-  background:#0f172a;
+  width:280px;
+  background:#020617;
   color:#fff;
   height:100vh;
   padding:20px;
+  overflow:auto;
 }
 
 .sidebar h2{
-  margin:0 0 20px;
+  margin-bottom:20px;
 }
 
-.empresa-item{
+.empresa{
+  display:flex;
+  align-items:center;
+  gap:10px;
   padding:10px;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
-  margin-bottom:5px;
 }
 
-.empresa-item:hover{
+.empresa:hover{
   background:rgba(255,255,255,.08);
+}
+
+.empresa img{
+  width:35px;
+  height:35px;
+  border-radius:10px;
 }
 
 /* MAIN */
@@ -89,7 +98,7 @@ body{
   box-shadow:var(--shadow);
 }
 
-/* BADGE */
+/* BADGES */
 .badge{
   padding:5px 10px;
   border-radius:10px;
@@ -123,16 +132,32 @@ button{
 
 /* USER */
 .user{
-  padding:10px;
-  border-bottom:1px solid var(--border);
   display:flex;
   justify-content:space-between;
+  padding:12px;
+  border-bottom:1px solid var(--border);
 }
 
-.user small{color:var(--muted)}
+.user small{
+  color:var(--muted);
+}
 
 .actions button{
   background:var(--red);
+}
+
+/* INFO GRID */
+.info{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  font-size:14px;
+}
+
+.info div{
+  background:#f8fafc;
+  padding:10px;
+  border-radius:10px;
 }
 
 </style>
@@ -140,28 +165,24 @@ button{
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <h2>Empresas</h2>
   <div id="empresas"></div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
 <div class="top">
-  <h2 id="empresaNome">Selecione uma empresa</h2>
+  <h2 id="nomeEmpresa">Selecione uma empresa</h2>
 </div>
 
 <div class="grid">
 
-<!-- INFO EMPRESA -->
-<div class="card" id="infoEmpresa">
-  <h3>Dados da Empresa</h3>
-  <div id="empresaDados"></div>
+<div class="card">
+  <h3>Informações da Empresa</h3>
+  <div id="dadosEmpresa"></div>
 </div>
 
-<!-- CRIAR USUARIO -->
 <div class="card">
   <h3>Criar Usuário</h3>
 
@@ -180,9 +201,8 @@ button{
 
 </div>
 
-<!-- LISTA USUARIOS -->
 <div class="card" style="margin-top:20px">
-  <h3>Usuários da Empresa</h3>
+  <h3>Usuários</h3>
   <div id="usuarios"></div>
 </div>
 
@@ -219,8 +239,12 @@ function renderEmpresas(){
 
   EMPRESAS.forEach(e=>{
     el.innerHTML += `
-      <div class="empresa-item" onclick="selecionar('${e.id}')">
-        ${e.nome}
+      <div class="empresa" onclick="selecionar('${e.id}')">
+        <img src="${e.logo_url}">
+        <div>
+          <b>${e.nome_fantasia || e.nome}</b><br>
+          <small>${e.cidade || ""}</small>
+        </div>
       </div>
     `
   })
@@ -230,7 +254,7 @@ function selecionar(id){
 
   EMPRESA_ATUAL = EMPRESAS.find(e=>e.id === id)
 
-  document.getElementById("empresaNome").innerText = EMPRESA_ATUAL.nome
+  document.getElementById("nomeEmpresa").innerText = EMPRESA_ATUAL.nome
 
   renderEmpresa()
   renderUsuarios()
@@ -240,21 +264,24 @@ function renderEmpresa(){
 
   const e = EMPRESA_ATUAL
 
-  document.getElementById("empresaDados").innerHTML = `
-    <p><b>CNPJ:</b> ${e.cnpj || "-"}</p>
-    <p><b>Email:</b> ${e.email || "-"}</p>
-    <p><b>Telefone:</b> ${e.telefone || "-"}</p>
-    <p><b>Cidade:</b> ${e.cidade || "-"}</p>
+  document.getElementById("dadosEmpresa").innerHTML = `
+    <div class="info">
+      <div><b>CNPJ:</b><br>${e.cnpj}</div>
+      <div><b>Email:</b><br>${e.email}</div>
+      <div><b>Telefone:</b><br>${e.telefone}</div>
+      <div><b>Cidade:</b><br>${e.cidade}/${e.estado}</div>
 
-    <p><b>Plano:</b> <span class="badge green">${e.plano}</span></p>
-    <p><b>Status:</b> 
-      <span class="badge ${e.status === 'ativo' ? 'green' : 'red'}">
-        ${e.status}
-      </span>
-    </p>
+      <div><b>Plano:</b><br>${e.plano}</div>
+      <div><b>Status:</b><br>
+        <span class="badge ${e.status === 'ativo' ? 'green':'red'}">${e.status}</span>
+      </div>
 
-    <p><b>Usuários limite:</b> ${e.usuarios_limite}</p>
-    <p><b>Vencimento:</b> ${e.assinatura_expira || "-"}</p>
+      <div><b>Valor:</b><br>R$ ${e.valor_mensal}</div>
+      <div><b>Vencimento:</b><br>${e.assinatura_expira}</div>
+
+      <div><b>Usuários:</b><br>${e.usuarios_limite}</div>
+      <div><b>Logins:</b><br>${e.total_logins}</div>
+    </div>
   `
 }
 
@@ -263,17 +290,16 @@ function renderUsuarios(){
   const lista = document.getElementById("usuarios")
   lista.innerHTML = ""
 
-  const filtrados = USUARIOS.filter(u=>u.empresa_id === EMPRESA_ATUAL.id)
+  const filtrados = USUARIOS.filter(u => u.empresa_id === EMPRESA_ATUAL.id)
 
   filtrados.forEach(u=>{
     lista.innerHTML += `
       <div class="user">
         <div>
-          <b>${u.nome || "-"}</b><br>
+          <b>${u.nome}</b><br>
           <small>${u.email}</small><br>
           <small>${u.perfil}</small>
         </div>
-
         <div class="actions">
           <button onclick="excluir('${u.auth_id}')">Excluir</button>
         </div>
@@ -283,8 +309,6 @@ function renderUsuarios(){
 }
 
 async function criar(){
-
-  if(!EMPRESA_ATUAL) return alert("Selecione empresa")
 
   await fetch(API,{
     method:"POST",
