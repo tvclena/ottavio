@@ -7,38 +7,43 @@ const supabase = createClient(
 
 export default async function handler(req, res){
 
-  // 🔐 PROTEÇÃO
-  if (req.headers.authorization !== process.env.ADMIN_TOKEN) {
-    return res.status(401).json({ error: "Não autorizado" })
+  // ============================
+  // METHOD CHECK
+  // ============================
+  if(req.method !== "POST"){
+    return res.status(405).json({ error:"Use POST" })
+  }
+
+  // ============================
+  // AUTH TOKEN
+  // ============================
+  if(req.headers.authorization !== process.env.ADMIN_TOKEN){
+    return res.status(401).json({ error:"Não autorizado" })
   }
 
   try{
 
-    const { action } = req.body || {}
+    const body = req.body || {}
+    const action = body.action
 
-    // =========================================
-    // HEALTH CHECK
-    // =========================================
     if(!action){
       return res.json({ ok:true, message:"API OK" })
     }
 
     // =========================================
-    // LISTAR TUDO
+    // LISTAR
     // =========================================
     if(action === "listar"){
 
-      const { data: empresas } = await supabase
-        .from("empresas")
-        .select("*")
+      const empresasRes = await supabase.from("empresas").select("*")
+      const usuariosRes = await supabase.from("usuarios").select("*")
 
-      const { data: usuarios } = await supabase
-        .from("usuarios")
-        .select("*")
+      if(empresasRes.error) throw empresasRes.error
+      if(usuariosRes.error) throw usuariosRes.error
 
       return res.json({
-        empresas: empresas || [],
-        usuarios: usuarios || []
+        empresas: empresasRes.data || [],
+        usuarios: usuariosRes.data || []
       })
     }
 
@@ -47,22 +52,37 @@ export default async function handler(req, res){
     // =========================================
     if(action === "criar_empresa"){
 
-      const payload = req.body
+      const {
+        nome,
+        nome_fantasia,
+        cnpj,
+        email,
+        telefone,
+        cidade,
+        estado,
+        plano,
+        usuarios_limite,
+        valor_mensal
+      } = body
+
+      if(!nome){
+        return res.status(400).json({ error:"Nome obrigatório" })
+      }
 
       const { data, error } = await supabase
         .from("empresas")
         .insert({
-          nome: payload.nome,
-          nome_fantasia: payload.nome_fantasia,
-          cnpj: payload.cnpj,
-          email: payload.email,
-          telefone: payload.telefone,
-          cidade: payload.cidade,
-          estado: payload.estado,
-          plano: payload.plano || "basic",
+          nome,
+          nome_fantasia,
+          cnpj,
+          email,
+          telefone,
+          cidade,
+          estado,
+          plano: plano || "basic",
           status: "ativo",
-          usuarios_limite: payload.usuarios_limite || 3,
-          valor_mensal: payload.valor_mensal || 0
+          usuarios_limite: usuarios_limite || 3,
+          valor_mensal: valor_mensal || 0
         })
         .select()
         .single()
@@ -77,11 +97,15 @@ export default async function handler(req, res){
     // =========================================
     if(action === "editar_empresa"){
 
-      const { id, ...rest } = req.body
+      const { id, ...dados } = body
+
+      if(!id){
+        return res.status(400).json({ error:"ID obrigatório" })
+      }
 
       const { error } = await supabase
         .from("empresas")
-        .update(rest)
+        .update(dados)
         .eq("id", id)
 
       if(error) throw error
@@ -94,16 +118,21 @@ export default async function handler(req, res){
     // =========================================
     if(action === "excluir_empresa"){
 
-      const { id } = req.body
+      const { id } = body
 
-      // remove usuarios primeiro
+      if(!id){
+        return res.status(400).json({ error:"ID obrigatório" })
+      }
+
       const { data: usuarios } = await supabase
         .from("usuarios")
         .select("auth_id")
         .eq("empresa_id", id)
 
       for(const u of usuarios || []){
-        await supabase.auth.admin.deleteUser(u.auth_id)
+        if(u.auth_id){
+          await supabase.auth.admin.deleteUser(u.auth_id)
+        }
       }
 
       await supabase.from("usuarios").delete().eq("empresa_id", id)
@@ -117,9 +146,13 @@ export default async function handler(req, res){
     // =========================================
     if(action === "criar_usuario"){
 
-      const { email, senha, nome, empresa_id, perfil } = req.body
+      const { email, senha, nome, empresa_id, perfil } = body
 
-      // 🔒 validar limite
+      if(!email || !senha || !empresa_id){
+        return res.status(400).json({ error:"Dados obrigatórios faltando" })
+      }
+
+      // limite
       const { count } = await supabase
         .from("usuarios")
         .select("*", { count:"exact", head:true })
@@ -132,10 +165,10 @@ export default async function handler(req, res){
         .single()
 
       if(count >= empresa.usuarios_limite){
-        return res.status(400).json({ error:"Limite de usuários atingido" })
+        return res.status(400).json({ error:"Limite atingido" })
       }
 
-      // 🔥 cria no auth
+      // criar auth
       const { data, error } = await supabase.auth.admin.createUser({
         email,
         password: senha,
@@ -146,15 +179,17 @@ export default async function handler(req, res){
 
       const userId = data.user.id
 
-      // 🔥 vincula
-      await supabase
+      // vincular
+      const { error: upError } = await supabase
         .from("usuarios")
         .update({
           nome,
           empresa_id,
-          perfil
+          perfil: perfil || "usuario"
         })
         .eq("auth_id", userId)
+
+      if(upError) throw upError
 
       return res.json({ ok:true })
     }
@@ -164,7 +199,11 @@ export default async function handler(req, res){
     // =========================================
     if(action === "editar_usuario"){
 
-      const { auth_id, nome, perfil } = req.body
+      const { auth_id, nome, perfil } = body
+
+      if(!auth_id){
+        return res.status(400).json({ error:"auth_id obrigatório" })
+      }
 
       const { error } = await supabase
         .from("usuarios")
@@ -181,9 +220,14 @@ export default async function handler(req, res){
     // =========================================
     if(action === "excluir_usuario"){
 
-      const { auth_id } = req.body
+      const { auth_id } = body
 
-      await supabase.auth.admin.deleteUser(auth_id)
+      if(!auth_id){
+        return res.status(400).json({ error:"auth_id obrigatório" })
+      }
+
+      const { error } = await supabase.auth.admin.deleteUser(auth_id)
+      if(error) throw error
 
       await supabase
         .from("usuarios")
@@ -194,15 +238,17 @@ export default async function handler(req, res){
     }
 
     // =========================================
-    // LOG DE LOGIN
+    // LOGIN LOG
     // =========================================
     if(action === "log_login"){
 
-      const { auth_id } = req.body
+      const { auth_id } = body
 
-      await supabase.rpc("increment_login", {
-        uid: auth_id
-      })
+      if(!auth_id){
+        return res.status(400).json({ error:"auth_id obrigatório" })
+      }
+
+      await supabase.rpc("increment_login", { uid: auth_id })
 
       return res.json({ ok:true })
     }
@@ -211,11 +257,10 @@ export default async function handler(req, res){
 
   }catch(err){
 
-    console.error("🔥 ERRO:", err)
+    console.error("🔥 ERRO API:", err)
 
     return res.status(500).json({
-      error: err.message,
-      stack: err
+      error: err.message || "Erro interno"
     })
   }
 }
