@@ -7,7 +7,7 @@ const openai = new OpenAI({
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE
+  process.env.SUPABASE_SERVICE_ROLE1
 )
 
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN
