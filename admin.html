@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>CB Systems • Painel SaaS</title>
+<title>CB Systems • Admin</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -19,9 +19,9 @@
 --text:#0f172a;
 --muted:#64748b;
 --primary:#2563eb;
---green:#16a34a;
---red:#dc2626;
---radius:18px;
+--danger:#dc2626;
+--success:#16a34a;
+--radius:16px;
 --shadow:0 15px 35px rgba(0,0,0,.08);
 }
 
@@ -30,8 +30,8 @@
 body{
 margin:0;
 font-family:Inter;
-background:var(--bg);
 display:flex;
+background:var(--bg);
 }
 
 /* SIDEBAR */
@@ -44,25 +44,22 @@ padding:20px;
 overflow:auto;
 }
 
-.sidebar h2{
-margin-bottom:20px;
-}
-
 .empresa{
 display:flex;
 gap:10px;
-align-items:center;
 padding:10px;
 border-radius:12px;
 cursor:pointer;
 }
 
-.empresa:hover{background:rgba(255,255,255,.08)}
+.empresa:hover{
+background:rgba(255,255,255,.08);
+}
 
 .empresa img{
 width:40px;
 height:40px;
-border-radius:12px;
+border-radius:10px;
 }
 
 /* MAIN */
@@ -71,34 +68,18 @@ flex:1;
 padding:25px;
 }
 
-/* HEADER */
+/* TOP */
 .top{
 display:flex;
 justify-content:space-between;
-align-items:center;
 margin-bottom:20px;
 }
 
-button{
-border:none;
-padding:10px 14px;
-border-radius:10px;
-background:var(--primary);
-color:#fff;
-cursor:pointer;
-font-weight:600;
-}
-
-button.red{background:var(--red)}
-
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:20px;
-}
-
-@media(max-width:900px){
-.grid{grid-template-columns:1fr}
 }
 
 .card{
@@ -116,12 +97,33 @@ border:1px solid var(--border);
 border-radius:10px;
 }
 
+button{
+padding:10px;
+border:none;
+border-radius:10px;
+background:var(--primary);
+color:#fff;
+cursor:pointer;
+margin-top:10px;
+}
+
+button.danger{background:var(--danger)}
+
 .user{
 display:flex;
 justify-content:space-between;
-padding:12px;
+padding:10px;
 border-bottom:1px solid var(--border);
 }
+
+.badge{
+padding:4px 8px;
+border-radius:8px;
+font-size:12px;
+}
+
+.green{background:#dcfce7;color:#166534}
+.red{background:#fee2e2;color:#991b1b}
 
 .modal{
 position:fixed;
@@ -150,7 +152,7 @@ width:400px;
 <h2>Empresas</h2>
 <div id="empresas"></div>
 
-<button onclick="abrirEmpresa()">+ Nova Empresa</button>
+<button onclick="novaEmpresa()">+ Empresa</button>
 </div>
 
 <div class="main">
@@ -162,14 +164,16 @@ width:400px;
 <div class="grid">
 
 <div class="card">
-<h3>Dados</h3>
-<div id="dados"></div>
+<h3>Empresa</h3>
+<div id="empresa"></div>
+
 <button onclick="editarEmpresa()">Editar</button>
-<button class="red" onclick="excluirEmpresa()">Excluir</button>
+<button class="danger" onclick="excluirEmpresa()">Excluir</button>
 </div>
 
 <div class="card">
 <h3>Novo Usuário</h3>
+
 <input id="nome" placeholder="Nome">
 <input id="email" placeholder="Email">
 <input id="senha" placeholder="Senha">
@@ -192,13 +196,13 @@ width:400px;
 
 </div>
 
-<!-- MODAL EMPRESA -->
-<div class="modal" id="modalEmpresa">
+<!-- MODAL -->
+<div class="modal" id="modal">
 <div class="modal-box">
 <h3>Empresa</h3>
 
 <input id="e_nome" placeholder="Nome">
-<input id="e_fantasia" placeholder="Nome fantasia">
+<input id="e_fantasia" placeholder="Fantasia">
 <input id="e_email" placeholder="Email">
 <input id="e_cidade" placeholder="Cidade">
 <input id="e_estado" placeholder="Estado">
@@ -215,24 +219,24 @@ const TOKEN="adm_1235"
 
 let EMPRESAS=[]
 let USUARIOS=[]
-let EMPRESA_ATUAL=null
+let ATUAL=null
 
-async function api(body){
+async function api(data){
 const res=await fetch(API,{
 method:"POST",
 headers:{
 "Content-Type":"application/json",
 "Authorization":TOKEN
 },
-body:JSON.stringify(body)
+body:JSON.stringify(data)
 })
 return res.json()
 }
 
-async function carregar(){
-const data=await api({action:"listar"})
-EMPRESAS=data.empresas||[]
-USUARIOS=data.usuarios||[]
+async function load(){
+const d=await api({action:"listar"})
+EMPRESAS=d.empresas||[]
+USUARIOS=d.usuarios||[]
 renderEmpresas()
 }
 
@@ -241,52 +245,51 @@ const el=document.getElementById("empresas")
 el.innerHTML=""
 EMPRESAS.forEach(e=>{
 el.innerHTML+=`
-<div class="empresa" onclick="selecionar('${e.id}')">
+<div class="empresa" onclick="selectEmpresa('${e.id}')">
 <img src="${e.logo_url}">
 <div>
 <b>${e.nome_fantasia||e.nome}</b><br>
 <small>${e.cidade||""}</small>
 </div>
-</div>
-`
+</div>`
 })
 }
 
-function selecionar(id){
-EMPRESA_ATUAL=EMPRESAS.find(e=>e.id===id)
-document.getElementById("titulo").innerText=EMPRESA_ATUAL.nome
+function selectEmpresa(id){
+ATUAL=EMPRESAS.find(e=>e.id===id)
+document.getElementById("titulo").innerText=ATUAL.nome
 renderEmpresa()
 renderUsuarios()
 }
 
 function renderEmpresa(){
-const e=EMPRESA_ATUAL
-document.getElementById("dados").innerHTML=`
-<b>CNPJ:</b> ${e.cnpj||"-"}<br>
-<b>Email:</b> ${e.email||"-"}<br>
-<b>Plano:</b> ${e.plano}<br>
-<b>Status:</b> ${e.status}<br>
-<b>Valor:</b> R$ ${e.valor_mensal}<br>
-<b>Vencimento:</b> ${e.assinatura_expira}
+const e=ATUAL
+document.getElementById("empresa").innerHTML=`
+CNPJ: ${e.cnpj}<br>
+Email: ${e.email}<br>
+Plano: ${e.plano}<br>
+Status: <span class="badge ${e.status==='ativo'?'green':'red'}">${e.status}</span><br>
+Valor: R$ ${e.valor_mensal}<br>
+Vencimento: ${e.assinatura_expira}<br>
+Usuários limite: ${e.usuarios_limite}
 `
 }
 
 function renderUsuarios(){
-const lista=document.getElementById("usuarios")
-lista.innerHTML=""
-USUARIOS.filter(u=>u.empresa_id===EMPRESA_ATUAL.id)
+const el=document.getElementById("usuarios")
+el.innerHTML=""
+USUARIOS.filter(u=>u.empresa_id===ATUAL.id)
 .forEach(u=>{
-lista.innerHTML+=`
+el.innerHTML+=`
 <div class="user">
 <div>
 <b>${u.nome}</b><br>
 <small>${u.email}</small>
 </div>
 <div>
-<button class="red" onclick="excluirUsuario('${u.auth_id}')">Excluir</button>
+<button class="danger" onclick="delUser('${u.auth_id}')">Excluir</button>
 </div>
-</div>
-`
+</div>`
 })
 }
 
@@ -296,20 +299,20 @@ action:"criar_usuario",
 nome:nome.value,
 email:email.value,
 senha:senha.value,
-empresa_id:EMPRESA_ATUAL.id,
+empresa_id:ATUAL.id,
 perfil:perfil.value
 })
-carregar()
+load()
 }
 
-async function excluirUsuario(id){
+async function delUser(id){
 if(!confirm("Excluir?"))return
 await api({action:"excluir_usuario",auth_id:id})
-carregar()
+load()
 }
 
-function abrirEmpresa(){
-document.getElementById("modalEmpresa").style.display="flex"
+function novaEmpresa(){
+modal.style.display="flex"
 }
 
 async function salvarEmpresa(){
@@ -322,27 +325,27 @@ cidade:e_cidade.value,
 estado:e_estado.value,
 plano:e_plano.value
 })
-document.getElementById("modalEmpresa").style.display="none"
-carregar()
+modal.style.display="none"
+load()
 }
 
 function editarEmpresa(){
-e_nome.value=EMPRESA_ATUAL.nome
-e_fantasia.value=EMPRESA_ATUAL.nome_fantasia
-e_email.value=EMPRESA_ATUAL.email
-e_cidade.value=EMPRESA_ATUAL.cidade
-e_estado.value=EMPRESA_ATUAL.estado
-e_plano.value=EMPRESA_ATUAL.plano
-abrirEmpresa()
+e_nome.value=ATUAL.nome
+e_fantasia.value=ATUAL.nome_fantasia
+e_email.value=ATUAL.email
+e_cidade.value=ATUAL.cidade
+e_estado.value=ATUAL.estado
+e_plano.value=ATUAL.plano
+novaEmpresa()
 }
 
 async function excluirEmpresa(){
 if(!confirm("Excluir empresa?"))return
-await api({action:"excluir_empresa",id:EMPRESA_ATUAL.id})
-carregar()
+await api({action:"excluir_empresa",id:ATUAL.id})
+load()
 }
 
-carregar()
+load()
 
 </script>
 
