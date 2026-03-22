@@ -1,3 +1,4 @@
+
 const OpenAI = require("openai")
 const { createClient } = require("@supabase/supabase-js")
 
@@ -6,8 +7,8 @@ const openai = new OpenAI({
 })
 
 const supabase = createClient(
-  process.env.SUPABASE_URL1,
-  process.env.SUPABASE_SERVICE_ROLE1
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE
 )
 
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN
